@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>String My Racket | DA SPORTZ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn-custom {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-family: 'Barlow', sans-serif;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-custom:hover {
+            background-color: #e04800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .top-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--accent-color);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Orange Banner -->
+    <div class="top-bar text-center py-2">
+        🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
+    </div>
+
+    <!-- Black Contact Bar -->
+    <div class="bg-dark text-white py-1 px-3 d-flex justify-content-between align-items-center small">
+        <div>
+            📞 +91-8800505769 &nbsp;&nbsp;
+            📧 sportzda@gmail.com
+        </div>
+        <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+            <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white">
+                <i class="bi bi-google"></i> Google Business
+            </a>
+            <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                class="text-white">
+                <i class="bi bi-instagram"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://sportzda.github.io/#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://sportzda.github.io/#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="string-my-racket.html">String My Racket</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Form Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h2 class="section-title mb-4">🎾 String My Racket</h2>
+                            <form id="stringForm">
+                                <div class="mb-3">
+                                    <label for="racketModel" class="form-label">Racket Model</label>
+                                    <select id="racketModel" class="form-select">
+                                        <option>Yonex Astrox 99</option>
+                                        <option>Li-Ning Turbo X</option>
+                                        <option>Victor Thruster K</option>
+                                        <option>Other</option>
+                                    </select>
+                                    <input type="text" id="customModel" class="form-control mt-2"
+                                        placeholder="Enter custom model if 'Other'" />
+                                </div>
+                                <div class="mb-3">
+                                    <label for="stringType" class="form-label">String Type</label>
+                                    <select id="stringType" class="form-select">
+                                        <option value="BG 65 ₹550">Yonex BG 65 — ₹550</option>
+                                        <option value="BG 65 Titanium ₹600">Yonex BG 65 Titanium — ₹600</option>
+                                        <option value="BG 80 ₹700">Yonex BG 80 — ₹700</option>
+                                        <option value="BG 80 Power ₹800">Yonex BG 80 Power — ₹800</option>
+                                        <option value="BG 66 Ultimax ₹700">Yonex BG 66 Ultimax — ₹700</option>
+                                        <option value="Nanogy 95 ₹800">Yonex Nanogy 95 — ₹800</option>
+                                        <option value="AEROBITE ₹900">Yonex AEROBITE — ₹900</option>
+                                        <option value="AeroBite Boost ₹900">Yonex AeroBite Boost — ₹900</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lbs" class="form-label">Tension (lbs)</label>
+                                    <input type="number" id="lbs" class="form-control"
+                                        placeholder="Enter tension in lbs" min="16" max="35" required />
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="pickupOption">
+                                    <label class="form-check-label" for="pickupOption">
+                                        Free pickup & drop within 2 km
+                                    </label>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Your Address</label>
+                                    <textarea id="address" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" id="phone" class="form-control" placeholder="10-digit number"
+                                        pattern="[0-9]{10}" maxlength="10" required>
+                                </div>
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox" id="onlinePay">
+                                    <label class="form-check-label" for="onlinePay">
+                                        Pay online (₹50 off)
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-custom w-100">Confirm & Send via WhatsApp</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible Price Table -->
+            <div class="text-center mt-5">
+                <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#priceTable">
+                    View All String Options & Pricing
+                </button>
+            </div>
+            <div class="collapse mt-3" id="priceTable">
+                <div class="card card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>String</th>
+                                    <th>Type</th>
+                                    <th>String Cost</th>
+                                    <th>Labour</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Yonex BG 65</td>
+                                    <td>Durability</td>
+                                    <td>₹550</td>
+                                    <td>₹200</td>
+                                    <td>₹750</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex BG 65 Titanium</td>
+                                    <td>All-Round</td>
+                                    <td>₹550</td>
+                                    <td>₹200</td>
+                                    <td>₹750</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex BG 80</td>
+                                    <td>Power</td>
+                                    <td>₹700</td>
+                                    <td>₹200</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex BG 80 Power</td>
+                                    <td>Power</td>
+                                    <td>₹750</td>
+                                    <td>₹200</td>
+                                    <td>₹950</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex BG 66 Ultimax</td>
+                                    <td>Repulsion</td>
+                                    <td>₹700</td>
+                                    <td>₹200</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex Nanogy 95</td>
+                                    <td>Durability</td>
+                                    <td>₹700</td>
+                                    <td>₹200</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex AEROBITE</td>
+                                    <td>Control (Hybrid)</td>
+                                    <td>₹800</td>
+                                    <td>₹200</td>
+                                    <td>₹1000</td>
+                                </tr>
+                                <tr>
+                                    <td>Yonex AeroBite Boost</td>
+                                    <td>Control/Spin</td>
+                                    <td>₹800</td>
+                                    <td>₹200</td>
+                                    <td>₹1000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-4" style="background-color: var(--primary-color); color: white;">
+        <div class="container">
+            <p>&copy; 2025 DA SPORTZ. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("stringForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const racket = document.getElementById("racketModel").value === "Other"
+                ? document.getElementById("customModel").value.trim()
+                : document.getElementById("racketModel").value;
+            const [stringName, stringPrice] = document.getElementById("stringType").value.split(" ₹");
+            const lbs = document.getElementById("lbs").value;
+            const pickup = document.getElementById("pickupOption").checked ? "Yes" : "No";
+            const address = document.getElementById("address").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            if (!/^\d{10}$/.test(phone)) {
+                alert("Please enter a valid 10-digit phone number.");
+                return;
+            }
+            const online = document.getElementById("onlinePay").checked;
+            const total = parseInt(stringPrice) - (online ? 50 : 0);
+            const msg = `🎽 New Stringing Order\n• Racket: ${racket}\n• String: ${stringName} (₹${stringPrice})\n• Tension: ${lbs} lbs\n• Pickup: ${pickup}\n• Address: ${address}\n• Phone: ${phone}\n• Online Pay: ${online ? "Yes (₹50 off)" : "No"}\n• Total: ₹${total}`;
+            window.open(`https://wa.me/918800505769?text=${encodeURIComponent(msg)}`, "_blank");
+        });
+    </script>
+</body>
+
+</html>
