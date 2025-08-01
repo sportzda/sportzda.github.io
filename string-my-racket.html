@@ -5,14 +5,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>String My Racket | DA SPORTZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #1f1f1f;
             --accent-color: #ff5900;
+            --nav-hover: #ff5900;
             --bg-light: #f4f4f4;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -23,6 +29,8 @@
             color: var(--primary-color);
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .btn-custom {
@@ -31,9 +39,11 @@
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: 25px;
-            font-weight: 600;
+            font-weight: 500;
             font-family: 'Barlow', sans-serif;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease-in-out;
+            margin-top: 1rem;
         }
 
         .btn-custom:hover {
@@ -43,26 +53,51 @@
         }
 
         .section-title {
+            font-family: 'Barlow', sans-serif;
             font-weight: 700;
             color: var(--primary-color);
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 80px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 2rem;
         }
 
         .top-bar {
-            background-color: var(--accent-color);
+            background-color: var(--primary-color);
             color: #fff;
-            font-family: 'Barlow', sans-serif;
             font-size: 0.9rem;
-            font-weight: 600;
         }
 
-        .navbar {
-            background-color: #fff;
+        .top-bar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        nav.navbar {
+            background: #ffffff;
             border-bottom: 1px solid #e1e1e1;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
         }
 
         .navbar-brand {
+            font-family: 'Barlow', sans-serif;
             font-weight: 800;
             font-size: 2rem;
             letter-spacing: 1px;
@@ -80,7 +115,7 @@
             display: block;
             height: 2px;
             width: 0;
-            background: var(--accent-color);
+            background: var(--nav-hover);
             transition: width 0.3s ease-in-out;
             position: absolute;
             bottom: -6px;
@@ -91,45 +126,98 @@
         .nav-link.active::after {
             width: 100%;
         }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .table {
+            font-family: 'Barlow', sans-serif;
+        }
+
+        .table th {
+            background: var(--bg-light);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .table td {
+            color: var(--primary-color);
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- Orange Banner -->
-    <div class="top-bar text-center py-2">
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
         🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
     </div>
-
-    <!-- Black Contact Bar -->
-    <div class="bg-dark text-white py-1 px-3 d-flex justify-content-between align-items-center small">
-        <div>
-            📞 +91-8800505769 &nbsp;&nbsp;
-            📧 sportzda@gmail.com
-        </div>
-        <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
-            <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white">
-                <i class="bi bi-google"></i> Google Business
-            </a>
-            <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
-                class="text-white">
-                <i class="bi bi-instagram"></i>
-            </a>
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> sportzda@gmail.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
+                    Google Business</a>
+                <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                    class="text-white"><i class="bi bi-instagram"></i></a>
+            </div>
         </div>
     </div>
-
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="index.html">DA SPORTZ</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://sportzda.github.io/#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://sportzda.github.io/#contact">Contact</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="string-my-racket.html">String My Racket</a>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about"><i class="bi bi-info-circle"></i>
+                            About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact"><i
+                                class="bi bi-envelope-open"></i> Contact</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="string-my-racket.html"><i
+                                class="bi bi-activity"></i> String My Racket</a></li>
+                    <li class="nav-item ms-3">
+                        <a href="#" class="btn btn-custom btn-sm px-3 py-2 d-inline-flex align-items-center">Shop
+                            Now</a>
                     </li>
                 </ul>
             </div>
@@ -289,13 +377,39 @@
     </section>
 
     <!-- Footer -->
-    <footer class="text-center py-4" style="background-color: var(--primary-color); color: white;">
+    <footer class="mt-5">
         <div class="container">
-            <p>&copy; 2025 DA SPORTZ. All rights reserved.</p>
+            <div class="row text-center text-md-start">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:sportzda@gmail.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
     <script>
         document.getElementById("stringForm").addEventListener("submit", function (e) {
             e.preventDefault();

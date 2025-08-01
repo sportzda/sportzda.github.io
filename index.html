@@ -28,28 +28,6 @@
             scroll-behavior: smooth;
         }
 
-        @media (max-width: 768px) {
-            .carousel-caption h1 {
-                font-size: 2rem;
-            }
-
-            .carousel-caption p {
-                font-size: 1rem;
-            }
-
-            .btn-custom {
-                background-color: var(--accent-color);
-                color: #fff;
-                padding: 0.75rem 1.5rem;
-                border: none;
-                border-radius: 25px;
-                font-weight: 600;
-                font-family: 'Barlow', sans-serif;
-                letter-spacing: 0.5px;
-                transition: all 0.3s ease-in-out;
-            }
-        }
-
         :root {
             --primary-color: #1f1f1f;
             --accent-color: #ff5900;
@@ -74,11 +52,13 @@
             flex-direction: column;
             justify-content: space-between;
             padding: 1rem;
-            /* Bootstrap p-3 equivalent */
         }
 
         .card-title {
             min-height: 3em;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.1rem;
         }
 
         .card-text {
@@ -86,7 +66,22 @@
         }
 
         .btn-custom {
-            margin-top: auto;
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: all 0.3s ease-in-out;
+            font-family: 'Barlow', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-custom:hover {
+            background-color: #e04800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .top-bar {
@@ -138,49 +133,83 @@
             width: 100%;
         }
 
-        .hero {
+        .nav-link.dropdown-toggle::after {
+            display: none !important;
+        }
+
+        .nav-item.dropdown .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-item.dropdown .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .hero,
+        .carousel.hero,
+        .carousel.hero .carousel-inner,
+        .carousel.hero .carousel-item {
+            height: 70vh;
+            min-height: 400px;
             position: relative;
-            height: 100vh;
             overflow: hidden;
         }
 
-        .hero img {
+        .carousel.hero .carousel-item img,
+        .carousel.hero .carousel-item video {
+            object-fit: cover;
             width: 100%;
             height: 100%;
-            object-fit: cover;
             filter: brightness(0.45);
         }
 
         .carousel-caption {
             top: 50%;
+            left: 10%;
+            right: auto;
+            bottom: unset;
             transform: translateY(-50%);
             text-align: left;
+            width: 40vw;
+            min-width: 270px;
+            max-width: 600px;
+            padding-bottom: 0;
+            position: absolute;
         }
 
         .carousel-caption h1 {
             font-size: 4rem;
             font-weight: 700;
             color: #fff;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
         }
 
         .carousel-caption p {
             font-size: 1.2rem;
             color: #f8f9fa;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
         }
 
-        .btn-custom {
-            background-color: var(--accent-color);
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            font-weight: 500;
+        .carousel-control-prev,
+        .carousel-control-next {
+            top: 50%;
+            transform: translateY(-50%);
+            height: 60px;
+            width: 60px;
+            opacity: 0.8;
         }
 
-        .btn-custom:hover {
-            background-color: #e04800;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-size: 2rem 2rem;
         }
 
         .section-title {
@@ -213,33 +242,6 @@
             transform: translateY(-5px);
         }
 
-        .card-title {
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 1.1rem;
-        }
-
-        .nav-link.dropdown-toggle::after {
-            display: none !important;
-            /* Hide Bootstrap's caret */
-        }
-
-        .nav-item.dropdown .nav-link::before {
-            content: '';
-            display: block;
-            height: 2px;
-            width: 0;
-            background: var(--nav-hover);
-            transition: width 0.3s ease-in-out;
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-        }
-
-        .nav-item.dropdown .nav-link:hover::before {
-            width: 100%;
-        }
-
         footer {
             background: var(--primary-color);
             color: #fff;
@@ -250,35 +252,26 @@
             color: var(--accent-color);
         }
 
-        /* Ensure carousel takes up enough height */
-        .carousel.hero {
-            min-height: 70vh;
-        }
+        @media (max-width: 768px) {
+            .carousel-caption {
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90vw;
+                text-align: center;
+                padding: 0 1rem;
+            }
 
-        .carousel.hero .carousel-item {
-            height: 70vh;
-            position: relative;
-        }
+            .carousel-caption h1 {
+                font-size: 2rem;
+            }
 
-        .carousel.hero .carousel-item img {
-            object-fit: cover;
-            height: 100%;
-            width: 100%;
-        }
+            .carousel-caption p {
+                font-size: 1rem;
+            }
 
-        .carousel-caption {
-            bottom: 10%;
-            padding-bottom: 2rem;
-        }
-
-        .carousel-caption h1,
-        .carousel-caption p {
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-        }
-
-        .btn-custom {
-            margin-top: 1rem;
+            .btn-custom {
+                font-size: 1rem;
+            }
         }
     </style>
     <script async src="https://www.instagram.com/embed.js"></script>
@@ -323,6 +316,7 @@
                             <li><a class="dropdown-item coming-soon" href="#">Gloves</a></li>
                             <li><a class="dropdown-item coming-soon" href="#">Pads</a></li>
                             <li><a class="dropdown-item coming-soon" href="#">Kit Bags</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Balls</a></li>
                             <li><a class="dropdown-item coming-soon" href="#">Shoes</a></li>
                         </ul>
                     </li>
@@ -350,11 +344,6 @@
                         </a>
                     </li>
                     <!-- Shop Now Button -->
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-1" href="terms.html">
-                            <i class="bi bi-file-earmark-text"></i> Terms of Service
-                        </a>
-                    </li>
                     <li class="nav-item ms-3">
                         <a href="#" class="btn btn-custom btn-sm px-3 py-2 d-inline-flex align-items-center">Shop
                             Now</a>
@@ -369,45 +358,42 @@
     <!-- Hero Carousel Section -->
     <div id="heroCarousel" class="carousel slide hero" data-bs-ride="carousel">
         <div class="carousel-inner">
-            <!-- Slide 1: Cricket Gear -->
+            <!-- Slide 1 -->
             <div class="carousel-item active">
                 <img src="img/SG_st_icon_black.jpeg" class="d-block w-100" alt="Cricket Gear" loading="lazy">
-                <div class="carousel-caption d-none d-md-block">
+                <div
+                    class="carousel-caption d-flex flex-column justify-content-center align-items-start h-100 text-start">
                     <h1>Gear Up with DA SPORTZ</h1>
                     <p>Your one-stop shop for cricket equipment</p>
                     <a href="#" class="btn btn-custom">Shop Now</a>
                 </div>
             </div>
-
-            <!-- Slide 2: Badminton Stringing -->
+            <!-- Slide 2 -->
             <div class="carousel-item">
                 <img src="img/badminton_string.jpeg" class="d-block w-100" alt="Racket Stringing" loading="lazy">
-                <div class="carousel-caption d-none d-md-block">
+                <div
+                    class="carousel-caption d-flex flex-column justify-content-center align-items-start h-100 text-start">
                     <h1>Expert Racket Stringing</h1>
                     <p>Same-day service using precision stringing machines</p>
                     <a href="string-my-racket.html" class="btn btn-custom">String My Racket</a>
                 </div>
             </div>
-
-            <!-- Slide 3: Video -->
+            <!-- Slide 3 (Video) -->
             <div class="carousel-item">
-                <div class="position-relative" style="height: 70vh; overflow: hidden; background-color: black;">
-                    <video autoplay muted loop playsinline class="position-absolute top-50 start-50 translate-middle"
-                        style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                <div class="position-relative w-100 h-100" style="height: 70vh; background: #000;">
+                    <video autoplay muted loop playsinline class="w-100 h-100" style="object-fit: cover;">
                         <source src="videos/knocking_video.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
-                    <div class="carousel-caption d-none d-md-block">
+                    <div
+                        class="carousel-caption d-flex flex-column justify-content-center align-items-start h-100 text-start">
                         <h1>See Cricket Bats in Action</h1>
                         <p>Experience pro-grade knocking and personalized laser engraving in action.</p>
                         <a href="#" class="btn btn-custom">Explore More</a>
                     </div>
                 </div>
             </div>
-
-
         </div>
-
         <!-- Controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -672,10 +658,11 @@
                 <div class="col-md-4 mb-4">
                     <h5 class="text-uppercase">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
                         <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
                         <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
                     </ul>
                 </div>
