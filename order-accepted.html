@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- SEO & Open Graph Meta Tags -->
+    <meta name="description" content="Your order has been placed! Thank you for shopping with DA SPORTZ.">
+    <meta name="keywords" content="DA SPORTZ, order confirmation, online shopping, sports gear">
+    <meta name="author" content="DA SPORTZ">
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="DA SPORTZ | Order Confirmed">
+    <meta property="og:description" content="Thank you for your order. We appreciate your business.">
+    <meta property="og:image" content="https://yourdomain.com/assets/order-success.jpg">
+    <meta property="og:url" content="https://yourdomain.com/order-accepted.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Accepted - DA SPORTZ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous" />
+    <link href="css/style.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --nav-hover: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            font-size: 1rem;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .btn-custom {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: all 0.3s ease-in-out;
+            font-family: 'Barlow', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-custom:hover {
+            background-color: #e04800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-bar {
+            background-color: var(--primary-color);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .top-bar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        nav.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.dropdown-toggle::after {
+            display: none !important;
+        }
+
+        .nav-item.dropdown .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-item.dropdown .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .section-title {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 80px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 2rem;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2rem 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+        }
+
+        .text-success-icon {
+            font-size: 4rem;
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .btn-custom {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sticky Offer Bar -->
+    <div class="text-white text-center py-2" style="background-color: #ff5900; font-weight: 500; font-size: 0.95rem;">
+        🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
+    </div>
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
+                    Google Business</a>
+                <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                    class="text-white"><i class="bi bi-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button"
+                            data-bs-toggle="dropdown">
+                            <img src="assets/icons/cricket-bat.svg" alt="Cricket Icon" width="18" height="18" /> Cricket
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item coming-soon" href="#">Bats</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Gloves</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Pads</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Kit Bags</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Balls</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Shoes</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button"
+                            data-bs-toggle="dropdown">
+                            <img src="assets/icons/badminton.svg" alt="Badminton Icon" width="18" height="18" />
+                            Badminton
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item coming-soon" href="#">Rackets</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Shuttles</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Stringing</a></li>
+                            <li><a class="dropdown-item coming-soon" href="#">Grips</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1" href="#about">
+                            <i class="bi bi-info-circle"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1" href="#contact">
+                            <i class="bi bi-envelope-open"></i> Contact
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a href="#" class="btn btn-custom btn-sm px-3 py-2 d-inline-flex align-items-center">Shop
+                            Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Order Confirmation Section -->
+    <section class="container my-5 text-center">
+        <i class="bi bi-check-circle text-success-icon mb-3"></i>
+        <h1>Thank You! Your Order Is Confirmed</h1>
+        <p class="lead">We appreciate your business. Your order has been placed and is being processed.</p>
+        <p>If you have any questions, feel free to <a href="index.html#contact" class="text-decoration-none">contact
+                us</a>. We will send you an email with your order details.</p>
+        <a href="index.html" class="btn btn-custom mt-3">Continue Shopping</a>
+    </section>
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"
+        defer></script>
+    <script>
+        const comingSoonButtons = document.querySelectorAll('.coming-soon');
+        comingSoonButtons.forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.location.href = 'coming-soon.html';
+            });
+        });
+    </script>
+</body>
+
+</html>

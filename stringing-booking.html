@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DA SPORTZ — Premium Sports Services</title>
+
+    <!-- SEO -->
+    <meta name="description"
+        content="DA SPORTZ — Jersey sublimation, racket stringing, machine bat knocking & trophies. Professional quality, fast turnaround." />
+
+    <!-- Fonts & Bootstrap -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0f1723;
+            --accent: #ff5900;
+            --accent-2: #00d4aa;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --nav-hover: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Barlow', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: #f5f7fb;
+            color: var(--primary);
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: #fff;
+            font-size: .95rem
+        }
+
+        .top-bar a {
+            color: #fff
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.6rem
+        }
+
+        .nav-link {
+            color: var(--muted)
+        }
+
+        .dropdown-menu {
+            --bs-dropdown-link-hover-bg: #ff59001a;
+            --bs-dropdown-link-active-bg: #ff5900;
+            --bs-dropdown-link-active-color: #fff;
+        }
+
+        .nav-link:focus,
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .dropdown-toggle::after {
+            border-top-color: var(--accent-color);
+            border-right-color: transparent;
+            border-bottom: 0;
+            border-left-color: transparent;
+        }
+
+        .dropdown-toggle.show::after {
+            border-top-color: var(--accent-color);
+        }
+
+        .hero {
+            padding: 48px 0 56px
+        }
+
+        .hero-card {
+            background: linear-gradient(180deg, rgba(15, 23, 35, 0.96), rgba(15, 23, 35, 0.82));
+            color: #fff;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 10px 40px rgba(15, 23, 35, 0.12)
+        }
+
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: .6rem
+        }
+
+        .hero-sub {
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1rem
+        }
+
+        .cta {
+            background: linear-gradient(90deg, var(--accent), #e04800);
+            border-radius: 40px;
+            padding: 12px 22px;
+            color: #fff;
+            font-weight: 700
+        }
+
+        .mockup {
+            width: 100%;
+            height: auto;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #0f1723;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .carousel-item .img-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 420px;
+        }
+
+        .service-card {
+            border-radius: 12px;
+            background: var(--card-bg);
+            padding: 20px;
+            box-shadow: 0 6px 22px rgba(16, 24, 40, 0.06)
+        }
+
+        .service-title {
+            font-weight: 700;
+            margin-bottom: .4rem
+        }
+
+        .service-badge {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: #fff;
+            padding: .35rem .6rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: .8rem
+        }
+
+        .features .feature {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.04);
+        }
+
+        .contact-card {
+            border-radius: 12px;
+            padding: 22px;
+            background: linear-gradient(180deg, #0f172325, #ffffff);
+            box-shadow: 0 10px 40px rgba(2, 6, 23, 0.04)
+        }
+
+        footer {
+            background: #0b1220;
+            color: #e6eef6;
+            padding: 36px 0
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #25d366;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(10, 10, 10, 0.15);
+            z-index: 1200
+        }
+
+        @media(min-width:992px) {
+            .hero {
+                padding: 80px 0 84px
+            }
+
+            .hero-title {
+                font-size: 3rem
+            }
+
+            .mockup {
+                height: 520px
+            }
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-bar {
+            margin-bottom: 0;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .hero {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        #heroCarouselFull {
+            border-radius: 0;
+        }
+
+        .carousel-inner,
+        .carousel-item {
+            border-radius: 0;
+        }
+
+        .img-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 520px;
+            background: var(--primary);
+        }
+
+        .mockup {
+            width: 100%;
+            height: auto;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 0;
+            background: transparent;
+            display: block;
+            margin: 0;
+        }
+
+        :root {
+            --topbar-h: 48px;
+            --navbar-h: 64px;
+        }
+
+        body {
+            padding-top: 0;
+        }
+
+        .top-bar {
+            position: relative;
+        }
+
+        .navbar {
+            position: relative;
+        }
+
+        .hero {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .container-fluid.px-0 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .top-bar,
+        .navbar {
+            margin-bottom: 0 !important;
+        }
+
+        .hero.py-5 {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        .container-fluid.px-0,
+        #heroCarouselFull {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .navbar {
+            border-bottom: 0 none !important;
+        }
+
+        .py-5 {
+            padding-top: 0 !important;
+        }
+
+        #heroCarouselFull {
+            margin-top: -2px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .btn-custom {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            font-family: 'Barlow', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease-in-out;
+            margin-top: 1rem;
+        }
+
+        .btn-custom:hover {
+            background-color: #e04800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 80px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 2rem;
+        }
+
+        .top-bar {
+            background-color: var(--primary-color);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .top-bar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        nav.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .table {
+            font-family: 'Barlow', sans-serif;
+        }
+
+        .table th {
+            background: var(--bg-light);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .table td {
+            color: var(--primary-color);
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+        }
+
+        .muted {
+            color: #6c6c6c;
+            font-size: .95rem;
+        }
+
+        .racket-card {
+            border-radius: 10px;
+            border: 1px solid #eee;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .remove-racket {
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        .conditions {
+            background-color: rgba(255, 89, 0, 0.1);
+            border: 1px solid rgba(255, 89, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: background-color 0.3s ease;
+        }
+
+        .conditions:hover {
+            background-color: rgba(255, 89, 0, 0.15);
+        }
+
+        .conditions h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .conditions .highlight-condition {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-left: 4px solid var(--accent-color);
+            padding: 0.5rem 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 89, 0, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        .conditions label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .conditions input[type="checkbox"]:not(:checked)+label {
+            color: var(--accent-color);
+        }
+
+        .small-muted {
+            font-size: 0.9rem;
+            color: #6c6c6c;
+        }
+
+        .brand-group {
+            font-weight: 600;
+            color: var(--accent-color);
+            background-color: #f8f9fa;
+        }
+
+        .btn-cta {
+            background-color: var(--accent-color);
+            color: #fff;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-cta:hover {
+            background-color: #e04800;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
+        🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
+                    Google Business</a>
+                <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                    class="text-white"><i class="bi bi-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-house"></i> Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#services" id="servicesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-tools"></i> Services
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <li><a class="dropdown-item" href="#jersey-sublimation">Jersey Sublimation</a></li>
+                            <li><a class="dropdown-item" href="stringing-booking.html">Racket Stringing</a></li>
+                            <li><a class="dropdown-item" href="#bat-knocking">Machine Bat Knocking</a></li>
+                            <li><a class="dropdown-item" href="#custom-trophies">Custom Trophies</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#about"><i class="bi bi-info-circle"></i> About</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#contact"><i class="bi bi-envelope-open"></i>
+                            Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero py-5">
+        <div class="container-fluid px-0">
+            <div id="heroCarouselFull" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="img-wrap">
+                            <img src="/img/T1.png" class="d-block w-100 mockup" alt="Jersey 1" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T2.png" class="d-block w-100 mockup" alt="Jersey 2" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T3.png" class="d-block w-100 mockup" alt="Jersey 3" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T4.png" class="d-block w-100 mockup" alt="Jersey 4" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T5.png" class="d-block w-100 mockup" alt="Jersey 5" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T6.png" class="d-block w-100 mockup" alt="Jersey 6" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T7.png" class="d-block w-100 mockup" alt="Jersey 7" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr1.jpg" class="d-block w-100 mockup" alt="Trophy 1" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr2.jpg" class="d-block w-100 mockup" alt="Trophy 2" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr3.jpg" class="d-block w-100 mockup" alt="Trophy 3" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr4.jpg" class="d-block w-100 mockup" alt="Trophy 4" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr5.jpg" class="d-block w-100 mockup" alt="Trophy 5" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr6.jpg" class="d-block w-100 mockup" alt="Trophy 6" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr7.jpg" class="d-block w-100 mockup" alt="Trophy 7" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarouselFull"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroCarouselFull"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <div class="row align-items-center mb-4">
+                <div class="col-lg-8">
+                    <h3 class="mb-0">Our Expert Services</h3>
+                    <p class="text-muted">From jersey sublimation to racket stringing & trophies — professional-grade
+                        work with quick turnarounds.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="#contact" class="btn btn-outline-primary">Request a Quote</a>
+                </div>
+            </div>
+
+            <div class="row gy-4">
+                <div class="col-md-6">
+                    <div class="service-card d-flex gap-3 flex-column" id="jersey-sublimation">
+                        <div class="d-flex gap-3">
+                            <img src="/img/T1.png" alt="jersey"
+                                style="width:110px; height:110px; object-fit:cover; border-radius:10px">
+                            <div>
+                                <div class="service-title">Jersey Sublimation</div>
+                                <p class="mb-1 text-muted">Vibrant, long-lasting prints on breathable fabrics. Full
+                                    customization — names, numbers, sponsors.</p>
+                                <div class="small text-muted">From ₹299 / piece • Team pricing available</div>
+                            </div>
+                        </div>
+                        <a href="under-construction.html" class="btn btn-cta align-self-start">Book Now</a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-card d-flex gap-3 flex-column" id="racket-stringing">
+                        <div class="d-flex gap-3">
+                            <img src="/img/racket-stringing.jpg" alt="stringing"
+                                style="width:110px; height:110px; object-fit:cover; border-radius:10px">
+                            <div>
+                                <div class="service-title">Racket Stringing</div>
+                                <p class="mb-1 text-muted">Precision tensioning with pro machines — same-day turnaround
+                                    available.</p>
+                                <div class="small text-muted">From ₹150 / string • Tension reports on request</div>
+                            </div>
+                        </div>
+                        <a href="stringing-booking.html" class="btn btn-cta align-self-start">Book Now</a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-card d-flex gap-3 flex-column" id="bat-knocking">
+                        <div class="d-flex gap-3">
+                            <img src="/img/machine_knocking.jpg" alt="bat-knocking"
+                                style="width:110px; height:110px; object-fit:cover; border-radius:10px">
+                            <div>
+                                <div class="service-title">Machine Bat Knocking</div>
+                                <p class="mb-1 text-muted">Machine-precision knocking for improved pickup and lifespan
+                                    of your bat.</p>
+                                <div class="small text-muted">From ₹500 / bat • Balanced pressure control</div>
+                            </div>
+                        </div>
+                        <a href="under-construction.html" class="btn btn-cta align-self-start">Book Now</a>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="service-card d-flex gap-3 flex-column" id="custom-trophies">
+                        <div class="d-flex gap-3">
+                            <img src="/img/Trophy.jpg" alt="trophies"
+                                style="width:110px; height:110px; object-fit:cover; border-radius:10px">
+                            <div>
+                                <div class="service-title">Custom Trophies</div>
+                                <p class="mb-1 text-muted">Bespoke trophies for events — engraving, plating, and premium
+                                    finishes.</p>
+                                <div class="small text-muted">From ₹199 / trophy • Bulk discounts</div>
+                            </div>
+                        </div>
+                        <a href="under-construction.html" class="btn btn-cta align-self-start">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section id="process" class="py-5 bg-white">
+        <div class="container">
+            <h4 class="mb-3">How It Works</h4>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">1</div>
+                        <div class="fw-bold">Book & Pay Online</div>
+                        <div class="small text-muted">Choose your service, share details like specs or designs, and pay
+                            easily through our site or app.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">2</div>
+                        <div class="fw-bold">Drop Off or Send</div>
+                        <div class="small text-muted">For racket stringing or bat knocking: Drop at our store. For
+                            jerseys or trophies: We handle everything and deliver to your home.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">3</div>
+                        <div class="fw-bold">We Get to Work</div>
+                        <div class="small text-muted">Our team processes your order with care. You'll get WhatsApp
+                            updates at every step, like when we start and finish.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">4</div>
+                        <div class="fw-bold">Pickup or Delivery</div>
+                        <div class="small text-muted">Get a WhatsApp notification when ready. Pick up from store for
+                            rackets/bats, or enjoy home delivery for jerseys/trophies.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="py-5 bg-white">
+        <div class="container">
+            <h4 class="mb-3">About Us</h4>
+            <p class="lead text-center">Crafting champions since 2015. At DA SPORTZ, we've been fueling athletes'
+                passions for over a decade with top-notch jersey customization, expert racket stringing, precise bat
+                knocking, and stunning trophies. Our commitment? Unmatched quality, speedy service, and a love for the
+                game that keeps you winning.</p>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="contact-card">
+                        <h5>Get a Quote</h5>
+                        <p class="small text-muted">Tell us what you need and we'll respond quickly with pricing and
+                            timelines.</p>
+                        <form id="contactForm">
+                            <div class="mb-3">
+                                <label class="form-label small">Name</label>
+                                <input class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Phone</label>
+                                <input class="form-control" name="phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Service</label>
+                                <select class="form-select" name="service" required>
+                                    <option value="">Choose a service</option>
+                                    <option value="jersey">Jersey Sublimation</option>
+                                    <option value="stringing">Racket Stringing</option>
+                                    <option value="knocking">Machine Bat Knocking</option>
+                                    <option value="trophy">Custom Trophy</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Message</label>
+                                <textarea class="form-control" name="message" rows="3"></textarea>
+                            </div>
+                            <div id="form-status" class="mb-2 small text-muted"></div>
+                            <button class="btn cta">Send Request</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="p-4"
+                        style="border-radius:12px; background:linear-gradient(180deg,#ffffff,#f6fbff); box-shadow:0 8px 30px rgba(2,6,23,0.04)">
+                        <h5 class="mb-3">Visit Our Outlets</h5>
+                        <p class="mb-1"><strong>Main Branch - Gaur City 1</strong><br>Gaur Sports Complex, Greater Noida
+                            West</p>
+                        <p class="mb-1"><strong>Workshop - Gaur City 2</strong><br>SF 53, High Street Market</p>
+                        <p class="small text-muted">Call: +91-8800505769 • Email: contact@dasportz.com</p>
+
+                        <div class="mt-3">
+                            <a href="https://wa.me/918800505769" class="btn btn-success me-2"><i
+                                    class="bi bi-whatsapp me-2"></i>WhatsApp</a>
+                            <a href="#" class="btn btn-outline-primary">Get Directions</a>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="mb-2">Why customers pick us</h6>
+                        <ul class="small text-muted">
+                            <li>Advanced sublimation printers for crisp colors</li>
+                            <li>Professional-grade stringing machines</li>
+                            <li>Quality control on every order</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp floating -->
+    <a href="https://wa.me/918800505769?text=Hi!%20I'm%20interested%20in%20your%20services" target="_blank"
+        class="whatsapp-float" title="WhatsApp">
+        <i class="bi bi-whatsapp fs-4"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Contact form simple handler (uses Formspree or your endpoint)
+        document.getElementById('contactForm')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = Object.fromEntries(new FormData(form).entries());
+            const status = document.getElementById('form-status');
+            status.textContent = 'Sending...';
+
+            try {
+                // replace endpoint if you want: currently posts to Formspree example
+                const res = await fetch('https://formspree.io/f/meokygdb', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+                });
+                if (res.ok) { status.textContent = 'Thanks — we will contact you shortly.'; form.reset(); }
+                else { status.textContent = 'Error. Please call us directly.' }
+            } catch (err) { status.textContent = 'Network error. Please call us.' }
+        });
+    </script>
+</body>
+
+</html>
