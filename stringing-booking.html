@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>String My Racket | DA SPORTZ</title>
+
+    <!-- Bootstrap and Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        /* === KEEP SITE THEME / COLORS / FONTS (unchanged) === */
+        :root {
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --nav-hover: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .btn-custom {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            font-family: 'Barlow', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease-in-out;
+            margin-top: 1rem;
+        }
+
+        .btn-custom:hover {
+            background-color: #e04800;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 80px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 2rem;
+        }
+
+        .top-bar {
+            background-color: var(--primary-color);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .top-bar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        nav.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .table {
+            font-family: 'Barlow', sans-serif;
+        }
+
+        .table th {
+            background: var(--bg-light);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .table td {
+            color: var(--primary-color);
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+        }
+
+        /* small helpers */
+        .muted {
+            color: #6c6c6c;
+            font-size: .95rem;
+        }
+
+        .racket-card {
+            border-radius: 10px;
+            border: 1px solid #eee;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .remove-racket {
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Conditions Block */
+        .conditions {
+            background-color: rgba(255, 89, 0, 0.1);
+            border: 1px solid rgba(255, 89, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: background-color 0.3s ease;
+        }
+
+        .conditions:hover {
+            background-color: rgba(255, 89, 0, 0.15);
+        }
+
+        .conditions h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .conditions .highlight-condition {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-left: 4px solid var(--accent-color);
+            padding: 0.5rem 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 89, 0, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        .conditions label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .conditions input[type="checkbox"]:not(:checked)+label {
+            color: var(--accent-color);
+        }
+
+        .small-muted {
+            font-size: 0.9rem;
+            color: #6c6c6c;
+        }
+
+        /* Brand groups in select */
+        .brand-group {
+            font-weight: 600;
+            color: var(--accent-color);
+            background-color: #f8f9fa;
+        }
+
+        /* Test mode indicator */
+        .test-mode-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Test Mode Indicator (will be shown only in test mode) -->
+    <div id="testModeIndicator" class="test-mode-indicator" style="display: none;">
+        TEST MODE ENABLED
+    </div>
+
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
+        🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
+                    Google Business</a>
+                <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                    class="text-white"><i class="bi bi-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about"><i class="bi bi-info-circle"></i>
+                            About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact"><i
+                                class="bi bi-envelope-open"></i> Contact</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="stringing-booking.html"><i
+                                class="bi bi-activity"></i> String My Racket</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Form Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h2 class="section-title mb-1">🏸 String My Racket</h2>
+                            <p class="muted mb-3">📲 Get live updates on your racket stringing — from start to finish!
+                            </p>
+
+                            <form id="stringForm" novalidate>
+                                <!-- Store Select -->
+                                <div class="mb-3">
+                                    <label for="storeLocation" class="form-label">Select Store</label>
+                                    <select id="storeLocation" class="form-select" required>
+                                        <option value="">-- Choose Store --</option>
+                                        <option>Gaur City 1</option>
+                                        <option>Gaur City 2</option>
+                                    </select>
+                                </div>
+
+                                <!-- Customer Name -->
+                                <div class="mb-3">
+                                    <label for="customerName" class="form-label">Your Name</label>
+                                    <input type="text" id="customerName" class="form-control" required
+                                        placeholder="Enter your full name">
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" id="phone" class="form-control" placeholder="10-digit number"
+                                        pattern="[0-9]{10}" maxlength="10" required>
+                                </div>
+
+                                <hr />
+
+                                <!-- Rackets List (dynamic) -->
+                                <div id="racketsContainer"></div>
+
+                                <div class="d-flex gap-2 mb-3">
+                                    <button type="button" id="addRacketBtn" class="btn btn-outline-dark btn-sm">
+                                        + Add Another Racket
+                                    </button>
+                                    <button type="button" id="removeRacketBtn" class="btn btn-outline-danger btn-sm">
+                                        - Remove Last Racket
+                                    </button>
+                                </div>
+
+                                <!-- Express Service -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="expressService">
+                                    <label class="form-check-label" for="expressService">
+                                        Express Service (Within 1 hour) — ₹20 extra
+                                    </label>
+                                </div>
+
+                                <!-- Pickup & Drop -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="pickupDrop">
+                                    <label class="form-check-label" for="pickupDrop">
+                                        Pickup & Drop by porter (charges borne by customer)
+                                    </label>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="mb-3">
+                                    <label for="paymentMethod" class="form-label">Payment Method</label>
+                                    <select id="paymentMethod" class="form-select" required>
+                                        <option value="">-- Select Payment Method --</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Online">Online Payment (₹10 off)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Summary -->
+                                <div class="card p-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong id="summaryCount">0</strong> racket(s) •
+                                            <span id="summaryService">Normal (within 4 hours)</span>
+                                        </div>
+                                        <div>
+                                            <strong>Total: ₹<span id="summaryTotal">0</span></strong>
+                                        </div>
+                                    </div>
+                                    <p class="muted small mb-0 mt-2">We'll send real-time status updates to the phone
+                                        number you provide via WhatsApp.</p>
+                                </div>
+
+                                <!-- Terms & Conditions -->
+                                <div class="conditions">
+                                    <h5>Important Service Conditions</h5>
+                                    <ul>
+                                        <li>We take utmost care during stringing. However, in rare cases, older or
+                                            structurally weak rackets may break during the process. Unfortunately, we
+                                            cannot offer a replacement or compensation in such cases.</li>
+                                        <li>Normal service time is 4 hours, but during busy periods (especially weekends
+                                            or tournaments) it may take longer. We will keep you updated in real time.
+                                        </li>
+                                        <li>Prices are fixed and include labour cost of ₹100 per racket, plus string
+                                            cost. Express service is ₹20 extra per racket.</li>
+                                        <li>Online payments get ₹10 off per order. Offer not applicable with other
+                                            discounts.</li>
+                                        <li>Customers are advised to double-check tension and string selection before
+                                            confirming, as changes after stringing has begun may incur extra charges.
+                                        </li>
+                                        <li>Please collect your racket within 7 days after completion to avoid storage
+                                            charges.</li>
+                                        <li>Pickup & Drop is available via a trusted third-party porter service. Porter
+                                            charges are borne by the customer.</li>
+                                        <li>While we coordinate for smooth and careful handling, DA SPORTZ isn't
+                                            responsible for handling during transit or any accidental damage that may
+                                            occur while your racket(s)/product is with the porter.</li>
+                                    </ul>
+
+                                    <div class="confirm-box">
+                                        <input type="checkbox" id="acceptTerms">
+                                        <label for="acceptTerms">I have read and agree to the above service
+                                            conditions</label>
+                                    </div>
+                                </div>
+
+                                <button id="confirmButton" type="button" class="btn-custom w-100" disabled>
+                                    Pay Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible Price Table -->
+            <div class="text-center mt-5">
+                <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#priceTable">
+                    View All String Options & Pricing
+                </button>
+            </div>
+
+            <div class="collapse mt-3" id="priceTable">
+                <div class="card card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Brand</th>
+                                    <th>String</th>
+                                    <th>Type</th>
+                                    <th>String Cost</th>
+                                    <th>Labour</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- YONEX -->
+                                <tr class="table-secondary">
+                                    <td colspan="6" class="fw-bold">YONEX</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>BG 65</td>
+                                    <td>Durability</td>
+                                    <td>₹450</td>
+                                    <td>₹100</td>
+                                    <td>₹550</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>BG 65 Titanium</td>
+                                    <td>All-Round</td>
+                                    <td>₹500</td>
+                                    <td>₹100</td>
+                                    <td>₹600</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>BG 80</td>
+                                    <td>Power</td>
+                                    <td>₹600</td>
+                                    <td>₹100</td>
+                                    <td>₹700</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>BG 80 Power</td>
+                                    <td>Power</td>
+                                    <td>₹700</td>
+                                    <td>₹100</td>
+                                    <td>₹800</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>BG 66 Ultimax</td>
+                                    <td>Repulsion</td>
+                                    <td>₹700</td>
+                                    <td>₹100</td>
+                                    <td>₹800</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Nanogy 95</td>
+                                    <td>Durability</td>
+                                    <td>₹700</td>
+                                    <td>₹100</td>
+                                    <td>₹800</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>AEROBITE</td>
+                                    <td>Control (Hybrid)</td>
+                                    <td>₹800</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>AeroBite Boost</td>
+                                    <td>Control/Spin</td>
+                                    <td>₹800</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
+                                </tr>
+
+                                <!-- LI-NING -->
+                                <tr class="table-secondary">
+                                    <td colspan="6" class="fw-bold">LI-NING</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>No.1</td>
+                                    <td>All-Round</td>
+                                    <td>₹450</td>
+                                    <td>₹100</td>
+                                    <td>₹550</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>No.1 Boost</td>
+                                    <td>All-Round</td>
+                                    <td>₹800</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>No.7</td>
+                                    <td>Repulsion</td>
+                                    <td>₹400</td>
+                                    <td>₹100</td>
+                                    <td>₹500</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>No.7 Boost</td>
+                                    <td>Repulsion</td>
+                                    <td>₹650</td>
+                                    <td>₹100</td>
+                                    <td>₹750</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>NS95</td>
+                                    <td>Control</td>
+                                    <td>₹750</td>
+                                    <td>₹100</td>
+                                    <td>₹850</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>NS50</td>
+                                    <td>All-Round</td>
+                                    <td>₹550</td>
+                                    <td>₹100</td>
+                                    <td>₹650</td>
+                                </tr>
+
+                                <!-- HUNDRED -->
+                                <tr class="table-secondary">
+                                    <td colspan="6" class="fw-bold">HUNDRED</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Power</td>
+                                    <td>Power</td>
+                                    <td>₹300</td>
+                                    <td>₹100</td>
+                                    <td>₹400</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Control</td>
+                                    <td>Control</td>
+                                    <td>₹350</td>
+                                    <td>₹100</td>
+                                    <td>₹450</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Pro</td>
+                                    <td>All-Round</td>
+                                    <td>₹380</td>
+                                    <td>₹100</td>
+                                    <td>₹480</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>JP 65</td>
+                                    <td>All-Round</td>
+                                    <td>₹800</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>JP 65 Magnite</td>
+                                    <td>Durability</td>
+                                    <td>₹650</td>
+                                    <td>₹100</td>
+                                    <td>₹750</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>66X Boost</td>
+                                    <td>Repulsion</td>
+                                    <td>₹570</td>
+                                    <td>₹100</td>
+                                    <td>₹670</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>70X Boost</td>
+                                    <td>Power</td>
+                                    <td>₹500</td>
+                                    <td>₹100</td>
+                                    <td>₹600</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Z63</td>
+                                    <td>Control</td>
+                                    <td>₹600</td>
+                                    <td>₹100</td>
+                                    <td>₹700</td>
+                                </tr>
+
+                                <!-- KIZUNA -->
+                                <tr class="table-secondary">
+                                    <td colspan="6" class="fw-bold">KIZUNA</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>D66 Lusty</td>
+                                    <td>All-Round</td>
+                                    <td>₹350</td>
+                                    <td>₹100</td>
+                                    <td>₹450</td>
+                                </tr>
+
+                                <!-- HEAD TENNIS -->
+                                <tr class="table-secondary">
+                                    <td colspan="6" class="fw-bold">HEAD TENNIS</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Master 300</td>
+                                    <td>All-Round</td>
+                                    <td>₹450</td>
+                                    <td>₹100</td>
+                                    <td>₹550</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="muted small mt-3 mb-0">Normal service: within 4 hours. Express service: within 1 hour
+                            (+₹20). Online payment: ₹10 off.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+
+    <!-- Zoho widget + payment handling script (replace existing payment script) -->
+    <script src="https://static.zohocdn.com/zpay/zpay-js/v1/zpayments.js"></script>
+    <script>
+        (function () {
+            const BACKEND_BASE = 'https://backend-process-payments.onrender.com';
+
+            // ---------- IMPORTANT: put your Zoho widget/API key here ----------
+            // You can also change code to receive this from your server as zpayConfig.otherOptions.api_key
+            const ZOHO_WIDGET_API_KEY = '1003.b03980822c145cb80d00b97288514519.783c4164ef793ebfbe77bf1098160aad';
+
+            // Check if test mode is enabled via URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const testMode = urlParams.get('test') === 'true';
+
+            // Show test mode indicator if enabled
+            if (testMode) {
+                document.getElementById('testModeIndicator').style.display = 'block';
+            }
+
+            /* ---------- Price map (same as before) ---------- */
+            const PRICE_MAP = {
+                "Yonex BG 65": 550, "Yonex BG 65 Titanium": 600, "Yonex BG 80": 700, "Yonex BG 80 Power": 800,
+                "Yonex BG 66 Ultimax": 700, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 900,
+                "Yonex BG Ultimax": 800,
+                "Li-Ning No.1": 550, "Li-Ning No.7": 500, "Li-Ning NS95": 850, "Li-Ning No.1 Boost": 900,
+                "Li-Ning NS50 (680)": 680, "Li-Ning No7 Boost": 750, "Li-Ning NS50 (650)": 650,
+                "Hundred Power": 400, "Hundred Control": 450, "Hundred Pro": 480, "Hundred JP 65 Magnite": 750,
+                "Hundred 66X Boost": 670, "Hundred JP 65": 900, "Hundred 70X Boost": 600, "Hundred Z63": 700,
+                "KIZUNA D66 Lusty": 450, "Head Master 300": 300
+            };
+
+            // Add test product if in test mode
+            if (testMode) {
+                PRICE_MAP["TEST STRING (TEST MODE ONLY)"] = 0.1;
+            }
+
+            /* ---------- DOM refs (unchanged) ---------- */
+            const racketsContainer = document.getElementById('racketsContainer');
+            const addBtn = document.getElementById('addRacketBtn');
+            const removeBtn = document.getElementById('removeRacketBtn');
+            const summaryCountEl = document.getElementById('summaryCount');
+            const summaryTotalEl = document.getElementById('summaryTotal');
+            const expressCheckbox = document.getElementById('expressService');
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            const acceptTerms = document.getElementById('acceptTerms');
+            const confirmButton = document.getElementById('confirmButton');
+            const storeSelect = document.getElementById('storeLocation');
+            const nameInput = document.getElementById('customerName');
+            const phoneInput = document.getElementById('phone');
+            const summaryServiceEl = document.getElementById('summaryService');
+
+            /* ---------- small helpers (same as before) ---------- */
+            function createStringSelect(selected = '') {
+                const select = document.createElement('select');
+                select.className = 'form-select form-select-sm racketName';
+                select.required = true;
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = '-- Select String --';
+                select.appendChild(placeholder);
+
+                const brands = {
+                    'YONEX': [
+                        'Yonex BG 65', 'Yonex BG 65 Titanium', 'Yonex BG 80', 'Yonex BG 80 Power',
+                        'Yonex BG 66 Ultimax', 'Yonex Nanogy 95', 'Yonex AEROBITE', 'Yonex AeroBite Boost'
+                    ],
+                    'LI-NING': [
+                        'Li-Ning No.1', 'Li-Ning No.1 Boost', 'Li-Ning No.7', 'Li-Ning No.7 Boost',
+                        'Li-Ning NS95', 'Li-Ning NS50 (680)'
+                    ],
+                    'HUNDRED': [
+                        'Hundred Power', 'Hundred Control', 'Hundred Pro', 'Hundred JP 65',
+                        'Hundred JP 65 Magnite', 'Hundred 66X Boost', 'Hundred 70X Boost', 'Hundred Z63'
+                    ],
+                    'KIZUNA': ['KIZUNA D66 Lusty'],
+                    'HEAD TENNIS': ['Head Master 300']
+                };
+
+                // Add test brand if in test mode
+                if (testMode) {
+                    brands['TEST MODE'] = ['TEST STRING (TEST MODE ONLY)'];
+                }
+
+                Object.keys(brands).forEach(brandName => {
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = brandName;
+                    optgroup.className = 'brand-group';
+                    brands[brandName].forEach(stringName => {
+                        const opt = document.createElement('option');
+                        opt.value = stringName;
+                        opt.textContent = `${stringName.replace(brandName.split(' ')[0] + ' ', '')} — ₹${PRICE_MAP[stringName] || ''}`;
+                        if (stringName === selected) opt.selected = true;
+                        optgroup.appendChild(opt);
+                    });
+                    select.appendChild(optgroup);
+                });
+                return select;
+            }
+
+            function createRacketRow(prefill = {}) {
+                const row = document.createElement('div');
+                row.className = 'racket-row racket-card mb-3 d-flex flex-wrap align-items-end gap-2';
+
+                const col1 = document.createElement('div'); col1.style.flex = '1 1 220px';
+                const label1 = document.createElement('label'); label1.className = 'form-label small mb-1'; label1.textContent = 'String Type';
+                col1.appendChild(label1); col1.appendChild(createStringSelect(prefill.id || prefill.string || ''));
+                row.appendChild(col1);
+
+                const col2 = document.createElement('div'); col2.style.width = '110px';
+                const label2 = document.createElement('label'); label2.className = 'form-label small mb-1'; label2.textContent = 'Quantity';
+                col2.appendChild(label2);
+                const qty = document.createElement('input'); qty.type = 'number'; qty.min = '1'; qty.value = prefill.qty || 1;
+                qty.className = 'form-control form-control-sm quantity';
+                col2.appendChild(qty); row.appendChild(col2);
+
+                const col3 = document.createElement('div'); col3.style.width = '140px';
+                const label3 = document.createElement('label'); label3.className = 'form-label small mb-1'; label3.textContent = 'Tension (lbs)';
+                col3.appendChild(label3);
+                const tension = document.createElement('input'); tension.type = 'number'; tension.min = '10'; tension.max = '35'; tension.value = prefill.tension || 24;
+                tension.className = 'form-control form-control-sm stringTension';
+                col3.appendChild(tension); row.appendChild(col3);
+
+                const col4 = document.createElement('div'); col4.style.minWidth = '130px';
+                const label4 = document.createElement('label'); label4.className = 'form-label small mb-1 d-block'; label4.textContent = 'Line Total';
+                const priceBadge = document.createElement('div'); priceBadge.className = 'fw-bold'; priceBadge.textContent = '₹0'; priceBadge.style.fontSize = '0.95rem';
+                col4.appendChild(label4); col4.appendChild(priceBadge); row.appendChild(col4);
+
+                // Listeners
+                row.querySelector('.racketName').addEventListener('change', updateAllTotals);
+                row.querySelector('.quantity').addEventListener('input', updateAllTotals);
+                row.querySelector('.stringTension').addEventListener('input', updateAllTotals);
+
+                row._priceEl = priceBadge;
+                return row;
+            }
+
+            function addInitialRow() {
+                const r = createRacketRow();
+                racketsContainer.appendChild(r);
+                updateAllTotals();
+            }
+
+            addBtn.addEventListener('click', function () {
+                const r = createRacketRow();
+                racketsContainer.appendChild(r);
+                r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                updateAllTotals();
+            });
+
+            removeBtn.addEventListener('click', function () {
+                const rows = racketsContainer.querySelectorAll('.racket-row');
+                if (rows.length > 0) {
+                    rows[rows.length - 1].remove();
+                    updateAllTotals();
+                }
+            });
+
+            function updateAllTotals() {
+                const rows = racketsContainer.querySelectorAll('.racket-row');
+                let total = 0; let count = 0;
+                rows.forEach(row => {
+                    const name = (row.querySelector('.racketName')?.value || '').trim();
+                    const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
+                    let perItem = 0;
+                    if (name && PRICE_MAP[name] !== undefined) perItem = PRICE_MAP[name];
+                    const expressCharge = expressCheckbox.checked ? 20 : 0;
+                    const lineTotal = (perItem + expressCharge) * qty;
+                    total += lineTotal;
+                    count += qty;
+                    if (row._priceEl) row._priceEl.textContent = `₹${lineTotal}`;
+                });
+
+                const onlineSelected = paymentMethodSelect.value === 'Online';
+                const discount = (onlineSelected && !testMode) ? 10 : 0;
+                const finalTotal = Math.max(0, total - discount);
+
+                summaryCountEl.textContent = count;
+                summaryTotalEl.textContent = finalTotal;
+                summaryServiceEl.textContent = expressCheckbox.checked ? 'Express (within 1 hour)' : 'Normal (within 4 hours)';
+
+                const canPay = acceptTerms.checked && (paymentMethodSelect.value === 'Online' || paymentMethodSelect.value === 'Cash') && count > 0 && finalTotal >= 0;
+                confirmButton.disabled = !canPay;
+            }
+
+            expressCheckbox.addEventListener('change', updateAllTotals);
+            paymentMethodSelect.addEventListener('change', updateAllTotals);
+            acceptTerms.addEventListener('change', updateAllTotals);
+            addInitialRow();
+
+            function validPhone(phone) {
+                const digits = (phone || '').replace(/\D/g, '');
+                return digits.length === 10;
+            }
+
+            function buildPayload() {
+                const rows = racketsContainer.querySelectorAll('.racket-row');
+                const racketDetails = [];
+                rows.forEach(row => {
+                    const id = row.querySelector('.racketName')?.value || '';
+                    const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
+                    const tension = row.querySelector('.stringTension')?.value || '';
+                    const cost = PRICE_MAP[id] || 0;
+                    if (id) {
+                        racketDetails.push({
+                            id,
+                            qty,
+                            tension,
+                            cost
+                        });
+                    }
+                });
+
+                return {
+                    customerName: nameInput.value.trim(),
+                    phone: phoneInput.value.replace(/\D/g, '').trim(),
+                    store: storeSelect.value,
+                    racketDetails,
+                    express: expressCheckbox.checked,
+                    paymentMethod: paymentMethodSelect.value,
+                    pickupDrop: document.getElementById('pickupDrop')?.checked || false,
+                    testMode: testMode // Include test mode flag in payload
+                };
+            }
+
+            function setButtonLoading(loading, text) {
+                confirmButton.disabled = loading;
+                confirmButton.innerHTML = loading ? `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${text || 'Processing...'}` : 'Pay Now';
+            }
+
+            /* ---------- MAIN: create order -> start Zoho widget -> verify payment ---------- */
+            async function onPayNowClicked(e) {
+                e.preventDefault();
+                const payload = buildPayload(); // your existing function
+                if (!payload.customerName || !payload.phone || !payload.store) {
+                    alert('Please enter name, phone and select a store.');
+                    return;
+                }
+                if (!validPhone(payload.phone)) {
+                    alert('Enter a valid 10-digit phone number.');
+                    return;
+                }
+                if (!payload.racketDetails || payload.racketDetails.length === 0) {
+                    alert('Please add at least one racket with string selection.');
+                    return;
+                }
+                if (!acceptTerms.checked) {
+                    alert('Please accept the terms & conditions.');
+                    return;
+                }
+                if (!['Online', 'Cash'].includes(payload.paymentMethod)) {
+                    alert('Select a payment method.');
+                    return;
+                }
+
+                try {
+                    setButtonLoading(true, 'Creating order...');
+
+                    const createResp = await fetch(`${BACKEND_BASE}/api/create-order`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const createData = await createResp.json().catch(() => ({}));
+                    if (!createData || !createData.success) {
+                        setButtonLoading(false);
+                        console.error('create-order failed', createData);
+                        alert('Failed to create order. ' + (createData?.message || JSON.stringify(createData)));
+                        return;
+                    }
+
+                    // CASH flow: redirect to order accepted like before
+                    if (payload.paymentMethod === 'Cash') {
+                        const order = createData.order || createData.data || {};
+                        const orderId = order.order_id || (createData.data && createData.data.order_id) || '';
+                        const amount = (order.amount || createData.data?.amount || createData.amount || 0).toString();
+                        const params = new URLSearchParams({ oid: orderId, amount, name: payload.customerName, store: payload.store });
+                        window.location.href = `/order-accepted.html?${params.toString()}`;
+                        return;
+                    }
+
+                    // ONLINE flow (Zoho Payment Session + zpayments widget)
+                    const resp = (createData.data || createData);
+                    const paymentsSessionId = resp.payments_session_id || resp.paymentsSessionId || resp.payments_session || resp.payments_session_id;
+                    const amount = resp.amount || resp.amount_due || summaryTotalEl.textContent || '';
+
+                    if (!paymentsSessionId) {
+                        setButtonLoading(false);
+                        console.error('Missing payments_session_id from server', createData);
+                        alert('Payment session creation failed on server.');
+                        return;
+                    }
+
+                    // Get zpayConfig returned by server if present (account_id + domain). If not, set manually.
+                    const zpayConfig = resp.zpayConfig || { account_id: '60044148024', domain: 'IN' };
+                    const apiKey = resp.zpayConfig?.api_key || ZOHO_WIDGET_API_KEY;
+                    if (!zpayConfig.account_id || !apiKey) {
+                        setButtonLoading(false);
+                        console.error('Missing zpay config / api_key', zpayConfig);
+                        alert('Payment widget configuration missing. Contact support.');
+                        return;
+                    }
+
+                    // instantiate widget
+                    const instance = new window.ZPayments({
+                        account_id: String(zpayConfig.account_id),
+                        domain: String(zpayConfig.domain || 'IN'),
+                        otherOptions: {
+                            api_key: apiKey
+                        }
+                    });
+
+                    // prepare widget options (docs example)
+                    const widgetOptions = {
+                        amount: (Number(amount) || 0).toString(),       // e.g. "550"
+                        currency_code: 'INR',
+                        payments_session_id: String(paymentsSessionId),
+                        currency_symbol: '₹',
+                        business: 'DA SPORTZ',
+                        description: 'Racket Stringing',
+                        invoice_number: zpayConfig.invoice_number || '',       // optional
+                        reference_number: zpayConfig.reference_number || '',
+                        address: {
+                            name: payload.customerName,
+                            email: payload.email || (payload.phone + '@dasportz.com'),
+                            phone: payload.phone
+                        }
+                    };
+
+                    setButtonLoading(true, 'Opening checkout...');
+
+                    let widgetResponse;
+                    try {
+                        widgetResponse = await instance.requestPaymentMethod(widgetOptions);
+                        // widgetResponse should include payment_id (or nested object) per docs
+                    } catch (widgetErr) {
+                        // user closed widget or error happened
+                        if (widgetErr && widgetErr.code === 'widget_closed') {
+                            console.warn('Widget closed by user');
+                            alert('Payment cancelled.');
+                        } else if (widgetErr && widgetErr.code === 'invalid_payment_session') {
+                            console.warn('Payment session invalid/expired');
+                            alert('Payment session expired. Please try again.');
+                        } else {
+                            console.error('Widget error', widgetErr);
+                            alert('Payment failed or was cancelled. Please try again.');
+                        }
+                        return;
+                    } finally {
+                        try { await instance.close(); } catch (_) { }
+                    }
+
+                    // get payment id (widget returns it in response)
+                    const paymentId = widgetResponse?.payment_id || widgetResponse?.payment?.payment_id || widgetResponse?.paymentId || widgetResponse?.paymentId_;
+                    if (!paymentId) {
+                        console.error('No payment_id returned from widget', widgetResponse);
+                        alert('Payment could not be confirmed. Please contact support.');
+                        return;
+                    }
+
+                    // verify payment with backend
+                    setButtonLoading(true, 'Verifying payment...');
+                    const verifyResp = await fetch(`${BACKEND_BASE}/api/verify-payment`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ payment_id: paymentId })
+                    });
+
+                    const verifyData = await verifyResp.json().catch(() => ({}));
+                    if (verifyData && verifyData.success) {
+                        // success -> redirect
+                        const orderId = resp.order_id || referenceId;
+                        const params = new URLSearchParams(
+                            {
+                                pid: paymentId,
+                                amount: amount.toString(),
+                                name: payload.customerName,
+                                oid: orderId
+                            });
+                        window.location.href = `/payment-success.html?${params.toString()}`;
+                        return;
+                    } else {
+                        console.error('Payment verify failed', verifyData);
+                        alert('Payment was processed but verification failed. Please contact support with payment id: ' + paymentId);
+                        return;
+                    }
+
+                } catch (err) {
+                    console.error('Payment flow error', err);
+                    alert('Something went wrong while processing payment. Please try again.');
+                } finally {
+                    setButtonLoading(false);
+                }
+            }
+
+            confirmButton.addEventListener('click', onPayNowClicked);
+        })();
+    </script>
+
+
+
+</body>
+
+</html>
