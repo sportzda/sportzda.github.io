@@ -5,11 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>String My Racket | DA SPORTZ</title>
+
+    <!-- Bootstrap and Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
+        /* === KEEP SITE THEME / COLORS / FONTS (unchanged) === */
         :root {
             --primary-color: #1f1f1f;
             --accent-color: #ff5900;
@@ -167,6 +171,23 @@
             color: var(--accent-color);
         }
 
+        /* small helpers */
+        .muted {
+            color: #6c6c6c;
+            font-size: .95rem;
+        }
+
+        .racket-card {
+            border-radius: 10px;
+            border: 1px solid #eee;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .remove-racket {
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .card-body {
                 padding: 1rem;
@@ -176,6 +197,51 @@
                 font-size: 2rem;
             }
         }
+
+        /* Conditions Block */
+        .conditions {
+            background-color: rgba(255, 89, 0, 0.1);
+            /* Light --accent-color tint */
+            border: 1px solid rgba(255, 89, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: background-color 0.3s ease;
+        }
+
+        .conditions:hover {
+            background-color: rgba(255, 89, 0, 0.15);
+        }
+
+        .conditions h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .conditions .highlight-condition {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-left: 4px solid var(--accent-color);
+            padding: 0.5rem 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 89, 0, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        .conditions label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .conditions input[type="checkbox"]:not(:checked)+label {
+            color: var(--accent-color);
+        }
     </style>
 </head>
 
@@ -184,12 +250,13 @@
     <div class="offer-bar text-center py-2">
         🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
     </div>
+
     <!-- Top Bar -->
     <div class="top-bar py-2 border-bottom">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
             <div class="d-flex align-items-center gap-3">
                 <span><i class="bi bi-telephone"></i> +91-8800505769</span>
-                <span><i class="bi bi-envelope"></i> sportzda@gmail.com</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
             </div>
             <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
                 <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
@@ -199,6 +266,7 @@
             </div>
         </div>
     </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm">
         <div class="container">
@@ -213,7 +281,7 @@
                             About</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.html#contact"><i
                                 class="bi bi-envelope-open"></i> Contact</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="string-my-racket.html"><i
+                    <li class="nav-item"><a class="nav-link active" href="stringing-booking.html"><i
                                 class="bi bi-activity"></i> String My Racket</a></li>
                     <li class="nav-item ms-3">
                         <a href="#" class="btn btn-custom btn-sm px-3 py-2 d-inline-flex align-items-center">Shop
@@ -228,62 +296,129 @@
     <section class="py-5">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-lg-7">
+                <div class="col-lg-8">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h2 class="section-title mb-4">🎾 String My Racket</h2>
-                            <form id="stringForm">
+                            <h2 class="section-title mb-1">🎾 String My Racket</h2>
+                            <p class="muted mb-3">📲 Get live updates on your racket stringing — from start to finish!
+                            </p>
+
+                            <form id="stringForm" novalidate>
+                                <!-- Store Select -->
                                 <div class="mb-3">
-                                    <label for="racketModel" class="form-label">Racket Model</label>
-                                    <select id="racketModel" class="form-select">
-                                        <option>Yonex Astrox 99</option>
-                                        <option>Li-Ning Turbo X</option>
-                                        <option>Victor Thruster K</option>
-                                        <option>Other</option>
-                                    </select>
-                                    <input type="text" id="customModel" class="form-control mt-2"
-                                        placeholder="Enter custom model if 'Other'" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="stringType" class="form-label">String Type</label>
-                                    <select id="stringType" class="form-select">
-                                        <option value="BG 65 ₹550">Yonex BG 65 — ₹550</option>
-                                        <option value="BG 65 Titanium ₹600">Yonex BG 65 Titanium — ₹600</option>
-                                        <option value="BG 80 ₹700">Yonex BG 80 — ₹700</option>
-                                        <option value="BG 80 Power ₹800">Yonex BG 80 Power — ₹800</option>
-                                        <option value="BG 66 Ultimax ₹700">Yonex BG 66 Ultimax — ₹700</option>
-                                        <option value="Nanogy 95 ₹800">Yonex Nanogy 95 — ₹800</option>
-                                        <option value="AEROBITE ₹900">Yonex AEROBITE — ₹900</option>
-                                        <option value="AeroBite Boost ₹900">Yonex AeroBite Boost — ₹900</option>
+                                    <label for="storeLocation" class="form-label">Select Store</label>
+                                    <select id="storeLocation" class="form-select" required>
+                                        <option value="">-- Choose Store --</option>
+                                        <option>Gaur City 1</option>
+                                        <option>Sector 45 Noida</option>
                                     </select>
                                 </div>
+
+                                <!-- Customer Name -->
                                 <div class="mb-3">
-                                    <label for="lbs" class="form-label">Tension (lbs)</label>
-                                    <input type="number" id="lbs" class="form-control"
-                                        placeholder="Enter tension in lbs" min="16" max="35" required />
+                                    <label for="customerName" class="form-label">Your Name</label>
+                                    <input type="text" id="customerName" class="form-control" required
+                                        placeholder="Enter your full name">
                                 </div>
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="pickupOption">
-                                    <label class="form-check-label" for="pickupOption">
-                                        Free pickup & drop within 2 km
-                                    </label>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Your Address</label>
-                                    <textarea id="address" class="form-control" rows="3" required></textarea>
-                                </div>
+
+                                <!-- Phone -->
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">Phone Number</label>
                                     <input type="tel" id="phone" class="form-control" placeholder="10-digit number"
                                         pattern="[0-9]{10}" maxlength="10" required>
                                 </div>
-                                <div class="form-check mb-4">
-                                    <input class="form-check-input" type="checkbox" id="onlinePay">
-                                    <label class="form-check-label" for="onlinePay">
-                                        Pay online (₹50 off)
+
+                                <hr />
+
+                                <!-- Rackets List (dynamic) -->
+                                <div id="racketsContainer"></div>
+
+                                <div class="d-flex gap-2 mb-3">
+                                    <button type="button" id="addRacketBtn" class="btn btn-outline-dark btn-sm">
+                                        + Add Another Racket
+                                    </button>
+                                    <button type="button" id="removeRacketBtn" class="btn btn-outline-danger btn-sm">
+                                        - Remove Last Racket
+                                    </button>
+                                </div>
+
+                                <!-- Express Service -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="expressService">
+                                    <label class="form-check-label" for="expressService">
+                                        Express Service (Within 1 hour) — ₹20 extra
                                     </label>
                                 </div>
-                                <button type="submit" class="btn btn-custom w-100">Confirm & Send via WhatsApp</button>
+
+                                <!-- Pickup & Drop -->
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="pickupDrop">
+                                    <label class="form-check-label" for="pickupDrop">
+                                        Pickup & Drop by porter (charges borne by customer)
+                                    </label>
+                                </div>
+
+                                <!-- Payment Method -->
+                                <div class="mb-3">
+                                    <label for="paymentMethod" class="form-label">Payment Method</label>
+                                    <select id="paymentMethod" class="form-select" required>
+                                        <option value="">-- Select Payment Method --</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Online">Online Payment (₹10 off)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Summary -->
+                                <div class="card p-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong id="summaryCount">0</strong> racket(s) •
+                                            <span id="summaryService">Normal (within 4 hours)</span>
+                                        </div>
+                                        <div>
+                                            <strong>Total: ₹<span id="summaryTotal">0</span></strong>
+                                        </div>
+                                    </div>
+                                    <p class="muted small mb-0 mt-2">We'll send real-time status updates to the phone
+                                        number you provide via WhatsApp.</p>
+                                </div>
+
+                                <!-- Terms & Conditions -->
+                                <div class="conditions">
+                                    <h5>Important Service Conditions</h5>
+                                    <ul>
+                                        <li>We take utmost care during stringing. However, in rare cases, older or
+                                            structurally weak rackets may break during the process. Unfortunately, we
+                                            cannot offer a replacement or compensation in such cases.</li>
+                                        <li>Normal service time is 4 hours, but during busy periods (especially weekends
+                                            or tournaments) it may take longer. We will keep you updated in real time.
+                                        </li>
+                                        <li>Prices are fixed and include labour cost of ₹100 per racket, plus string
+                                            cost. Express service is ₹20 extra per racket.</li>
+                                        <li>Online payments get ₹10 off per order. Offer not applicable with other
+                                            discounts.</li>
+                                        <li>Customers are advised to double-check tension and string selection before
+                                            confirming, as changes after stringing has begun may incur extra charges.
+                                        </li>
+                                        <li>Please collect your racket within 7 days after completion to avoid storage
+                                            charges.</li>
+                                        <li>Pickup & Drop is available via a trusted third-party porter service. Porter
+                                            charges are borne by the customer.</li>
+                                        <li>While we coordinate for smooth and careful handling, DA SPORTZ isn’t
+                                            responsible for handling during transit or any accidental damage that may
+                                            occur while your racket(s)/product is with the porter.</li>
+                                    </ul>
+
+                                    <div class="confirm-box">
+                                        <input type="checkbox" id="acceptTerms">
+                                        <label for="acceptTerms">I have read and agree to the above service
+                                            conditions</label>
+                                    </div>
+                                </div>
+
+                                <button id="confirmButton" class="btn-custom w-100" disabled>
+                                    Confirm & Send via WhatsApp
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -297,6 +432,7 @@
                     View All String Options & Pricing
                 </button>
             </div>
+
             <div class="collapse mt-3" id="priceTable">
                 <div class="card card-body">
                     <div class="table-responsive">
@@ -311,68 +447,107 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <!-- YONEX -->
                                 <tr>
                                     <td>Yonex BG 65</td>
                                     <td>Durability</td>
+                                    <td>₹450</td>
+                                    <td>₹100</td>
                                     <td>₹550</td>
-                                    <td>₹200</td>
-                                    <td>₹750</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex BG 65 Titanium</td>
                                     <td>All-Round</td>
-                                    <td>₹550</td>
-                                    <td>₹200</td>
-                                    <td>₹750</td>
+                                    <td>₹500</td>
+                                    <td>₹100</td>
+                                    <td>₹600</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex BG 80</td>
                                     <td>Power</td>
+                                    <td>₹600</td>
+                                    <td>₹100</td>
                                     <td>₹700</td>
-                                    <td>₹200</td>
-                                    <td>₹900</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex BG 80 Power</td>
                                     <td>Power</td>
-                                    <td>₹750</td>
-                                    <td>₹200</td>
-                                    <td>₹950</td>
+                                    <td>₹700</td>
+                                    <td>₹100</td>
+                                    <td>₹800</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex BG 66 Ultimax</td>
                                     <td>Repulsion</td>
+                                    <td>₹600</td>
+                                    <td>₹100</td>
                                     <td>₹700</td>
-                                    <td>₹200</td>
-                                    <td>₹900</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex Nanogy 95</td>
                                     <td>Durability</td>
                                     <td>₹700</td>
-                                    <td>₹200</td>
-                                    <td>₹900</td>
+                                    <td>₹100</td>
+                                    <td>₹800</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex AEROBITE</td>
                                     <td>Control (Hybrid)</td>
                                     <td>₹800</td>
-                                    <td>₹200</td>
-                                    <td>₹1000</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
                                 </tr>
                                 <tr>
                                     <td>Yonex AeroBite Boost</td>
                                     <td>Control/Spin</td>
                                     <td>₹800</td>
-                                    <td>₹200</td>
-                                    <td>₹1000</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
+                                </tr>
+                                <!-- LI-NING -->
+                                <tr>
+                                    <td>Li-Ning No.1</td>
+                                    <td>All-Round</td>
+                                    <td>₹450</td>
+                                    <td>₹100</td>
+                                    <td>₹550</td>
+                                </tr>
+                                <tr>
+                                    <td>Li-Ning No.7</td>
+                                    <td>Repulsion</td>
+                                    <td>₹400</td>
+                                    <td>₹100</td>
+                                    <td>₹500</td>
+                                </tr>
+                                <!-- HUNDRED -->
+                                <tr>
+                                    <td>Hundred Power</td>
+                                    <td>Power</td>
+                                    <td>₹300</td>
+                                    <td>₹100</td>
+                                    <td>₹400</td>
+                                </tr>
+                                <tr>
+                                    <td>Hundred Control</td>
+                                    <td>Control</td>
+                                    <td>₹350</td>
+                                    <td>₹100</td>
+                                    <td>₹450</td>
+                                </tr>
+                                <tr>
+                                    <td>Hundred Pro</td>
+                                    <td>All-Round</td>
+                                    <td>₹380</td>
+                                    <td>₹100</td>
+                                    <td>₹480</td>
                                 </tr>
                             </tbody>
                         </table>
+                        <p class="muted small mt-3 mb-0">Normal service: within 4 hours. Express service: within 1 hour
+                            (+₹20). Online payment: ₹10 off.</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -399,7 +574,7 @@
                     <h5 class="text-uppercase">Follow Us</h5>
                     <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
                         class="me-3"><i class="bi bi-instagram"></i></a>
-                    <a href="mailto:sportzda@gmail.com"><i class="bi bi-envelope"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
                 </div>
             </div>
             <div class="text-center pt-3 border-top border-secondary">
@@ -408,29 +583,12 @@
         </div>
     </footer>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-    <script>
-        document.getElementById("stringForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const racket = document.getElementById("racketModel").value === "Other"
-                ? document.getElementById("customModel").value.trim()
-                : document.getElementById("racketModel").value;
-            const [stringName, stringPrice] = document.getElementById("stringType").value.split(" ₹");
-            const lbs = document.getElementById("lbs").value;
-            const pickup = document.getElementById("pickupOption").checked ? "Yes" : "No";
-            const address = document.getElementById("address").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            if (!/^\d{10}$/.test(phone)) {
-                alert("Please enter a valid 10-digit phone number.");
-                return;
-            }
-            const online = document.getElementById("onlinePay").checked;
-            const total = parseInt(stringPrice) - (online ? 50 : 0);
-            const msg = `🎽 New Stringing Order\n• Racket: ${racket}\n• String: ${stringName} (₹${stringPrice})\n• Tension: ${lbs} lbs\n• Pickup: ${pickup}\n• Address: ${address}\n• Phone: ${phone}\n• Online Pay: ${online ? "Yes (₹50 off)" : "No"}\n• Total: ₹${total}`;
-            window.open(`https://wa.me/918800505769?text=${encodeURIComponent(msg)}`, "_blank");
-        });
-    </script>
+
+    <!-- Custom JS -->
+    <script src="stringing-booking.js"></script>
 </body>
 
 </html>
