@@ -1,68 +1,343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <!-- SEO & Open Graph Meta Tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DA SPORTZ — Premium Sports Services</title>
+
+    <!-- SEO -->
     <meta name="description"
-        content="DA SPORTZ - Your trusted store for cricket & badminton gear. Premium products, expert stringing & top deals.">
-    <meta name="keywords" content="DA SPORTZ, cricket gear, badminton rackets, sports shop Delhi, stringing services">
-    <meta name="author" content="DA SPORTZ">
+        content="DA SPORTZ — Jersey sublimation, racket stringing, machine bat knocking & trophies. Professional quality, fast turnaround." />
 
-    <!-- Open Graph Tags for Social Sharing -->
-    <meta property="og:title" content="DA SPORTZ | Cricket & Badminton Gear">
-    <meta property="og:description"
-        content="Shop premium cricket and badminton equipment at DA SPORTZ. Trusted by champions.">
-    <meta property="og:image" content="https://yourdomain.com/assets/hero1.jpg">
-    <meta property="og:url" content="https://yourdomain.com/">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DA SPORTZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        crossorigin="anonymous" />
+    <!-- Fonts & Bootstrap -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
 
+    <style>
         :root {
+            --primary: #0f1723;
+            --accent: #ff5900;
+            --accent-2: #00d4aa;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
             --primary-color: #1f1f1f;
             --accent-color: #ff5900;
             --nav-hover: #ff5900;
             --bg-light: #f4f4f4;
         }
 
+        * {
+            box-sizing: border-box
+        }
+
         body {
-            font-family: 'Barlow', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-light);
-            color: var(--primary-color);
+            font-family: 'Barlow', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: #f5f7fb;
+            color: var(--primary);
             font-size: 1rem;
             line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
-        .card-body {
+        a {
+            text-decoration: none
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: #fff;
+            font-size: .95rem
+        }
+
+        .top-bar a {
+            color: #fff
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.6rem
+        }
+
+        .nav-link {
+            color: var(--muted)
+        }
+
+        .dropdown-menu {
+            --bs-dropdown-link-hover-bg: #ff59001a;
+            --bs-dropdown-link-active-bg: #ff5900;
+            --bs-dropdown-link-active-color: #fff;
+        }
+
+        .nav-link:focus,
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .dropdown-toggle::after {
+            border-top-color: var(--accent-color);
+            border-right-color: transparent;
+            border-bottom: 0;
+            border-left-color: transparent;
+        }
+
+        .dropdown-toggle.show::after {
+            border-top-color: var(--accent-color);
+        }
+
+        .hero {
+            padding: 48px 0 56px
+        }
+
+        .hero-card {
+            background: linear-gradient(180deg, rgba(15, 23, 35, 0.96), rgba(15, 23, 35, 0.82));
+            color: #fff;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 10px 40px rgba(15, 23, 35, 0.12)
+        }
+
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: .6rem
+        }
+
+        .hero-sub {
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1rem
+        }
+
+        .cta {
+            background: linear-gradient(90deg, var(--accent), #e04800);
+            border-radius: 40px;
+            padding: 12px 22px;
+            color: #fff;
+            font-weight: 700
+        }
+
+        .mockup {
+            width: 100%;
+            height: auto;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #0f1723;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .carousel-item .img-wrap {
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 1rem;
+            align-items: center;
+            justify-content: center;
+            min-height: 420px;
         }
 
-        .card-title {
-            min-height: 3em;
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 1.1rem;
+        .service-card {
+            border-radius: 12px;
+            background: var(--card-bg);
+            padding: 20px;
+            box-shadow: 0 6px 22px rgba(16, 24, 40, 0.06)
         }
 
-        .card-text {
-            flex-grow: 1;
+        .service-title {
+            font-weight: 700;
+            margin-bottom: .4rem
+        }
+
+        .service-badge {
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            color: #fff;
+            padding: .35rem .6rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: .8rem
+        }
+
+        .features .feature {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 8px 30px rgba(2, 6, 23, 0.04);
+        }
+
+        .contact-card {
+            border-radius: 12px;
+            padding: 22px;
+            background: linear-gradient(180deg, #0f172325, #ffffff);
+            box-shadow: 0 10px 40px rgba(2, 6, 23, 0.04)
+        }
+
+        footer {
+            background: #0b1220;
+            color: #e6eef6;
+            padding: 36px 0
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #25d366;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(10, 10, 10, 0.15);
+            z-index: 1200
+        }
+
+        @media(min-width:992px) {
+            .hero {
+                padding: 80px 0 84px
+            }
+
+            .hero-title {
+                font-size: 3rem
+            }
+
+            .mockup {
+                height: 520px
+            }
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-bar {
+            margin-bottom: 0;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .hero {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        #heroCarouselFull {
+            border-radius: 0;
+        }
+
+        .carousel-inner,
+        .carousel-item {
+            border-radius: 0;
+        }
+
+        .img-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 520px;
+            background: var(--primary);
+        }
+
+        .mockup {
+            width: 100%;
+            height: auto;
+            max-height: 520px;
+            object-fit: contain;
+            border-radius: 0;
+            background: transparent;
+            display: block;
+            margin: 0;
+        }
+
+        :root {
+            --topbar-h: 48px;
+            --navbar-h: 64px;
+        }
+
+        body {
+            padding-top: 0;
+        }
+
+        .top-bar {
+            position: relative;
+        }
+
+        .navbar {
+            position: relative;
+        }
+
+        .hero {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .container-fluid.px-0 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .top-bar,
+        .navbar {
+            margin-bottom: 0 !important;
+        }
+
+        .hero.py-5 {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
+        .container-fluid.px-0,
+        #heroCarouselFull {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .navbar {
+            border-bottom: 0 none !important;
+        }
+
+        .py-5 {
+            padding-top: 0 !important;
+        }
+
+        #heroCarouselFull {
+            margin-top: -2px;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         .btn-custom {
@@ -72,16 +347,35 @@
             border: none;
             border-radius: 25px;
             font-weight: 500;
-            margin-top: 1rem;
-            transition: all 0.3s ease-in-out;
             font-family: 'Barlow', sans-serif;
             letter-spacing: 0.5px;
+            transition: all 0.3s ease-in-out;
+            margin-top: 1rem;
         }
 
         .btn-custom:hover {
             background-color: #e04800;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 80px;
+            background: var(--accent-color);
+            margin: 0.5rem auto 2rem;
         }
 
         .top-bar {
@@ -93,6 +387,13 @@
         .top-bar a {
             color: #fff;
             text-decoration: none;
+        }
+
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
         }
 
         nav.navbar {
@@ -116,177 +417,154 @@
             position: relative;
         }
 
-        .nav-link::after {
-            content: '';
-            display: block;
-            height: 2px;
-            width: 0;
-            background: var(--nav-hover);
-            transition: width 0.3s ease-in-out;
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
-        }
-
-        .nav-link.dropdown-toggle::after {
-            display: none !important;
-        }
-
-        .nav-item.dropdown .nav-link::before {
-            content: '';
-            display: block;
-            height: 2px;
-            width: 0;
-            background: var(--nav-hover);
-            transition: width 0.3s ease-in-out;
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-        }
-
-        .nav-item.dropdown .nav-link:hover::before {
-            width: 100%;
-        }
-
-        .hero,
-        .carousel.hero,
-        .carousel.hero .carousel-inner,
-        .carousel.hero .carousel-item {
-            height: 70vh;
-            min-height: 400px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .carousel.hero .carousel-item img,
-        .carousel.hero .carousel-item video {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-            filter: brightness(0.45);
-        }
-
-        .carousel-caption {
-            top: 50%;
-            left: 10%;
-            right: auto;
-            bottom: unset;
-            transform: translateY(-50%);
-            text-align: left;
-            width: 40vw;
-            min-width: 270px;
-            max-width: 600px;
-            padding-bottom: 0;
-            position: absolute;
-        }
-
-        .carousel-caption h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-        }
-
-        .carousel-caption p {
-            font-size: 1.2rem;
-            color: #f8f9fa;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            top: 50%;
-            transform: translateY(-50%);
-            height: 60px;
-            width: 60px;
-            opacity: 0.8;
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-size: 2rem 2rem;
-        }
-
-        .section-title {
-            font-family: 'Barlow', sans-serif;
-            font-weight: 700;
+        .form-label {
+            font-weight: 500;
             color: var(--primary-color);
-            text-align: center;
-            margin-top: 4rem;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            height: 3px;
-            width: 80px;
-            background: var(--accent-color);
-            margin: 0.5rem auto 2rem;
         }
 
         .card {
             border: none;
-            border-radius: 0;
-            transition: all 0.3s ease;
+            border-radius: 0.5rem;
             background: #fff;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
         }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .card-body {
+            padding: 2rem;
+        }
+
+        .table {
+            font-family: 'Barlow', sans-serif;
+        }
+
+        .table th {
+            background: var(--bg-light);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .table td {
+            color: var(--primary-color);
         }
 
         footer {
             background: var(--primary-color);
             color: #fff;
-            padding: 2rem 0;
+            padding: 2rem 0 1rem 0;
         }
 
         footer a {
             color: var(--accent-color);
         }
 
+        .muted {
+            color: #6c6c6c;
+            font-size: .95rem;
+        }
+
+        .racket-card {
+            border-radius: 10px;
+            border: 1px solid #eee;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .remove-racket {
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
-            .carousel-caption {
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 90vw;
-                text-align: center;
-                padding: 0 1rem;
+            .card-body {
+                padding: 1rem;
             }
 
-            .carousel-caption h1 {
+            .section-title {
                 font-size: 2rem;
             }
+        }
 
-            .carousel-caption p {
-                font-size: 1rem;
-            }
+        .conditions {
+            background-color: rgba(255, 89, 0, 0.1);
+            border: 1px solid rgba(255, 89, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: background-color 0.3s ease;
+        }
 
-            .btn-custom {
-                font-size: 1rem;
-            }
+        .conditions:hover {
+            background-color: rgba(255, 89, 0, 0.15);
+        }
+
+        .conditions h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-left: 12px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .conditions .highlight-condition {
+            color: var(--accent-color);
+            font-weight: 600;
+            border-left: 4px solid var(--accent-color);
+            padding: 0.5rem 0.75rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 89, 0, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        .conditions label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .conditions input[type="checkbox"]:not(:checked)+label {
+            color: var(--accent-color);
+        }
+
+        .small-muted {
+            font-size: 0.9rem;
+            color: #6c6c6c;
+        }
+
+        .brand-group {
+            font-weight: 600;
+            color: var(--accent-color);
+            background-color: #f8f9fa;
+        }
+
+        .btn-cta {
+            background-color: var(--accent-color);
+            color: #fff;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-cta:hover {
+            background-color: #e04800;
+            color: #fff;
         }
     </style>
-    <script async src="https://www.instagram.com/embed.js"></script>
 </head>
 
 <body>
-    <!-- Sticky Offer Bar -->
-    <div class="text-white text-center py-2" style="background-color: #ff5900; font-weight: 500; font-size: 0.95rem;">
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
         🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
     </div>
+
+    <!-- Top Bar -->
     <div class="top-bar py-2 border-bottom">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
             <div class="d-flex align-items-center gap-3">
                 <span><i class="bi bi-telephone"></i> +91-8800505769</span>
-                <span><i class="bi bi-envelope"></i> sportzda@gmail.com</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
             </div>
             <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
                 <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
@@ -296,361 +574,570 @@
             </div>
         </div>
     </div>
-    </div>
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand" href="#">DA SPORTZ</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
-                <!-- Nav Links -->
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-house"></i> Home</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button"
-                            data-bs-toggle="dropdown">
-                            <img src="assets/icons/cricket-bat.svg" alt="Cricket Icon" width="18" height="18" /> Cricket
+                        <a class="nav-link dropdown-toggle" href="#services" id="servicesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-tools"></i> Services
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item coming-soon" href="#">Bats</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Gloves</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Pads</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Kit Bags</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Balls</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Shoes</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <li><a class="dropdown-item" href="#jersey-sublimation">Jersey Sublimation</a></li>
+                            <li><a class="dropdown-item" href="stringing-booking.html">Racket Stringing</a></li>
+                            <li><a class="dropdown-item" href="#bat-knocking">Machine Bat Knocking</a></li>
+                            <li><a class="dropdown-item" href="#custom-trophies">Custom Trophies</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" role="button"
-                            data-bs-toggle="dropdown">
-                            <img src="assets/icons/badminton.svg" alt="Badminton Icon" width="18" height="18" />
-                            Badminton
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item coming-soon" href="#">Rackets</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Shuttles</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Stringing</a></li>
-                            <li><a class="dropdown-item coming-soon" href="#">Grips</a></li>
-                        </ul>
+                    <li class="nav-item"><a class="nav-link" href="#about"><i class="bi bi-info-circle"></i> About</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-1" href="#about">
-                            <i class="bi bi-info-circle"></i> About
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-1" href="#contact">
-                            <i class="bi bi-envelope-open"></i> Contact
-                        </a>
-                    </li>
-                    <!-- Shop Now Button -->
-                    <li class="nav-item ms-3">
-                        <a href="#" class="btn btn-custom btn-sm px-3 py-2 d-inline-flex align-items-center">Shop
-                            Now</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#contact"><i class="bi bi-envelope-open"></i>
+                            Contact</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-
-
-    <!-- Hero Carousel Section -->
-    <div id="heroCarousel" class="carousel slide hero" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <!-- Slide 1 -->
-            <div class="carousel-item active">
-                <img src="img/SG_st_icon_black.jpeg" class="d-block w-100" alt="Cricket Gear" loading="lazy">
-                <div
-                    class="carousel-caption d-flex flex-column justify-content-center align-items-start h-100 text-start">
-                    <h1>Gear Up with DA SPORTZ</h1>
-                    <p>Your one-stop shop for cricket equipment</p>
-                    <a href="#" class="btn btn-custom">Shop Now</a>
+    <!-- HERO -->
+    <section class="hero py-5">
+        <div class="container-fluid px-0">
+            <div id="heroCarouselFull" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="img-wrap">
+                            <img src="/img/T1.png" class="d-block w-100 mockup" alt="Jersey 1" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T2.png" class="d-block w-100 mockup" alt="Jersey 2" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T3.png" class="d-block w-100 mockup" alt="Jersey 3" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T4.png" class="d-block w-100 mockup" alt="Jersey 4" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T5.png" class="d-block w-100 mockup" alt="Jersey 5" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T6.png" class="d-block w-100 mockup" alt="Jersey 6" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/T7.png" class="d-block w-100 mockup" alt="Jersey 7" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr1.jpg" class="d-block w-100 mockup" alt="Trophy 1" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr2.jpg" class="d-block w-100 mockup" alt="Trophy 2" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr3.jpg" class="d-block w-100 mockup" alt="Trophy 3" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr4.jpg" class="d-block w-100 mockup" alt="Trophy 4" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr5.jpg" class="d-block w-100 mockup" alt="Trophy 5" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr6.jpg" class="d-block w-100 mockup" alt="Trophy 6" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/Tr7.jpg" class="d-block w-100 mockup" alt="Trophy 7" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/R1.jpg" class="d-block w-100 mockup" alt="Racket 1 loading=" lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/R2.jpg" class="d-block w-100 mockup" alt="Racket 2 loading=" lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/R3.jpg" class="d-block w-100 mockup" alt="Racket 3 loading=" lazy">
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="img-wrap">
+                            <img src="/img/R4.jpg" class="d-block w-100 mockup" alt="Racket 4 loading=" lazy">
+                        </div>
+                    </div>
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#heroCarouselFull"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#heroCarouselFull"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <!-- Slide 2 -->
-            <div class="carousel-item">
-                <img src="img/badminton_string.jpeg" class="d-block w-100" alt="Racket Stringing" loading="lazy">
-                <div
-                    class="carousel-caption d-flex flex-column justify-content-center align-items-start h-100 text-start">
-                    <h1>Expert Racket Stringing</h1>
-                    <p>Same-day service using precision stringing machines</p>
-                    <a href="string-my-racket.html" class="btn btn-custom">String My Racket</a>
+        </div>
+    </section>
+
+    <!-- ACHIEVEMENTS STATS SECTION -->
+    <section class="py-5" style="background: linear-gradient(135deg, #fdfbfb, #ebedee);">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-3" style="font-size: 2rem;">Our Achievements Speak for Themselves</h2>
+            <p class="text-muted mb-5">Trusted by athletes, clubs & sports enthusiasts nationwide</p>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Balls Knocked -->
+                <div class="col-6 col-md-3">
+                    <div class="achievement-card p-4 shadow rounded-4 bg-white">
+                        <img src="/img/ball.avif" alt="Cricket Ball" width="70" height="70"
+                            class="mb-2 animated-icon cricket-ball">
+                        <h2 class="fw-bold display-6 counter" data-target="2" data-suffix="Cr+">0</h2>
+                        <p class="mb-0 small text-muted">Balls Knocked on Bats</p>
+                    </div>
                 </div>
-            </div>
-            <!-- Slide 3 (Video) -->
-            <div class="carousel-item">
-                <div class="position-relative w-100 h-100" style="height: 70vh; background: #000;">
-                    <video autoplay muted loop playsinline class="w-100 h-100" style="object-fit: cover;">
-                        <source src="videos/knocking_video.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <div
-                        class="carousel-caption d-flex flex-column justify-content-center align-items-start h-100 text-start">
-                        <h1>See Cricket Bats in Action</h1>
-                        <p>Experience pro-grade knocking and personalized laser engraving in action.</p>
-                        <a href="#" class="btn btn-custom">Explore More</a>
+
+                <!-- Rackets Strung -->
+                <div class="col-6 col-md-3">
+                    <div class="achievement-card p-4 shadow rounded-4 bg-white">
+                        <img src="/img/badminton-racket.jpg" alt="Badminton Racket" width="70" height="70"
+                            class="mb-2 animated-icon badminton-racket">
+                        <h2 class="fw-bold display-6 counter" data-target="5" data-suffix="K+">0</h2>
+                        <p class="mb-0 small text-muted">Rackets Strung</p>
+                    </div>
+                </div>
+
+                <!-- Trophies Delivered -->
+                <div class="col-6 col-md-3">
+                    <div class="achievement-card p-4 shadow rounded-4 bg-white">
+                        <img src="/img/Trophyvector.jpg" alt="Trophy" width="70" height="70"
+                            class="mb-2 animated-icon trophy">
+                        <h2 class="fw-bold display-6 counter" data-target="10" data-suffix="K+">0</h2>
+                        <p class="mb-0 small text-muted">Trophies & Medals Delivered</p>
+                    </div>
+                </div>
+
+                <!-- Clients Served -->
+                <div class="col-6 col-md-3">
+                    <div class="achievement-card p-4 shadow rounded-4 bg-white">
+                        <img src="/img/client.png" alt="Clients" width="70" height="70"
+                            class="mb-2 animated-icon clients">
+                        <h2 class="fw-bold display-6 counter" data-target="5" data-suffix="K+">0</h2>
+                        <p class="mb-0 small text-muted">Esteemed Clients Served</p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
+    </section>
 
-    <!-- Instagram embed initializer -->
-    <script>
-        window.addEventListener('load', function () {
-            if (window.instgrm) {
-                window.instgrm.Embeds.process();
+    <!-- CSS FOR ANIMATIONS & HOVER EFFECTS -->
+    <style>
+        .achievement-card {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            border-radius: 15px;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Common animation base for icons */
+        .animated-icon {
+            transition: transform 0.5s ease-in-out;
+            display: inline-block;
+        }
+
+        /* Cricket ball spin on hover */
+        .achievement-card:hover .cricket-ball {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
             }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Badminton racket swing on hover */
+        .achievement-card:hover .badminton-racket {
+            animation: swing 0.6s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+
+        @keyframes swing {
+            from {
+                transform: rotate(-12deg);
+            }
+
+            to {
+                transform: rotate(12deg);
+            }
+        }
+
+        /* Trophy bounce animation */
+        .achievement-card:hover .trophy {
+            animation: bounce 0.7s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            from {
+                transform: translateY(0px);
+            }
+
+            to {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Clients icon pulse animation */
+        .achievement-card:hover .clients {
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+        }
+    </style>
+
+    <!-- JS FOR NUMBER COUNTING ANIMATION -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const counters = document.querySelectorAll(".counter");
+            const speed = 80; // Lower = faster animation
+
+            const startCounting = (counter) => {
+                const target = +counter.getAttribute("data-target");
+                const suffix = counter.getAttribute("data-suffix") || "";
+                let count = 0;
+
+                const updateCount = () => {
+                    const increment = Math.ceil(target / speed);
+                    if (count < target) {
+                        count += increment;
+                        counter.textContent = count + suffix;
+                        setTimeout(updateCount, 40);
+                    } else {
+                        counter.textContent = target + suffix;
+                    }
+                };
+
+                updateCount();
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startCounting(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            counters.forEach(counter => observer.observe(counter));
         });
     </script>
-    <!-- Product Section -->
-    <section class="container my-5">
-        <h2 class="section-title">Shop by Category</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 text-center p-4">
-                    <img src="assets/cricket-category.jpg" class="card-img-top mb-3" alt="Cricket Gear" loading="lazy">
-                    <h5 class="card-title">Cricket Gear</h5>
-                    <p class="card-text">Explore a wide range of professional cricket equipment including bats, gloves,
-                        and pads.</p>
-                    <a href="#" class="btn btn-custom coming-soon">Shop Cricket</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 text-center p-4">
-                    <img src="assets/badminton-category.jpg" class="card-img-top mb-3" alt="Badminton Gear"
-                        loading="lazy">
-                    <h5 class="card-title">Badminton Gear</h5>
-                    <p class="card-text">Top-quality badminton rackets, shuttles, and accessories for every level of
-                        play.</p>
-                    <a href="#" class="btn btn-custom coming-soon">Shop Badminton</a>
-                </div>
-            </div>
 
-        </div>
-    </section>
 
-    <!-- Best Sellers Section -->
-    <section class="container my-5">
-        <h2 class="section-title">Best Sellers</h2>
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="img/dsc_thumpa_3000.jpg" class="card-img-top"
-                        alt="DSC Thumpa 3000 English Willow Cricket Bat" loading="lazy">
-                    <div class="card-body text-center">
-                        <h6 class="card-title">DSC Thumpa 3000 Bat</h6>
-                        <p class="card-text">
-                            Premium English willow bat with thick edges and a big sweet spot—designed for power hitters.
+
+
+
+    <!-- OUR EXPERT SERVICES -->
+    <section id="services" class="py-5" style="background: #f8faff;">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-3" style="font-size: 2rem; color: #0f1723;">Our Expert Services</h2>
+            <p class="text-muted mb-5" style="font-size: 1rem;">
+                Premium sports services — designed to make athletes, teams, and champions stand out!
+            </p>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Jersey Sublimation -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-box shadow-sm p-4 rounded-4 bg-white text-center h-100">
+                        <img src="/img/T1.png" alt="Jersey Sublimation" class="service-img mb-3">
+                        <h5 class="fw-bold">Jersey Sublimation</h5>
+                        <p class="small text-muted mb-2">
+                            High-quality, vibrant prints on breathable fabrics — fully customizable with names, numbers
+                            & sponsors.
                         </p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
+                        <p class="fw-semibold text-primary mb-3">From ₹299 / piece</p>
+                        <a href="under-construction.html" class="btn btn-custom">Book Now</a>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="img/sg_st_black.jpg" class="card-img-top" alt="SG Sunny Tonny Black Edition Bat"
-                        loading="lazy">
-                    <div class="card-body text-center">
-                        <h6 class="card-title">SG Sunny Tonny Black</h6>
-                        <p class="card-text">Premium English willow bat with bold black decals – built for power
-                            hitters.</p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="img/y_nr_18i.jpg" class="card-img-top" alt="Yonex Nanoray Light 18i Racket"
-                        loading="lazy">
-                    <div class="card-body text-center">
-                        <h6 class="card-title">Yonex Nanoray Light 18i</h6>
-                        <p class="card-text">Ultra-light 77 g graphite racket – built for speed & precision play.</p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card h-100">
-                    <img src="img/dsc_jaffa_22.jpg" class="card-img-top" alt="DSC Jaffa Cricket Shoes" loading="lazy">
-                    <div class="card-body text-center">
-                        <h6 class="card-title">DSC Jaffa Shoes</h6>
-                        <p class="card-text">Lightweight cricket shoes with superior grip, EVA cushioning & TPU support.
+                <!-- Racket Stringing -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-box shadow-sm p-4 rounded-4 bg-white text-center h-100">
+                        <img src="/img/racket-stringing.jpg" alt="Racket Stringing" class="service-img mb-3">
+                        <h5 class="fw-bold">Racket Stringing</h5>
+                        <p class="small text-muted mb-2">
+                            Precision tensioning with professional machines — guaranteed consistency & same-day
+                            turnaround.
                         </p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
+                        <p class="fw-semibold text-primary mb-3">From ₹150 / racket</p>
+                        <a href="stringing-booking.html" class="btn btn-custom">Book Now</a>
                     </div>
                 </div>
-            </div>
 
-        </div>
-    </section>
-
-    <!-- Product Section -->
-    <section class="container my-5">
-        <h2 class="section-title">Featured Products</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img src="assets/product1.jpg" class="card-img-top" alt="Cricket Bat" loading="lazy">
-                    <div class="card-body">
-                        <h5 class="card-title">DSC Cricket Bat</h5>
-                        <p class="card-text">Power-packed bat with premium English willow. Ideal for competitive
-                            matches.</p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img src="assets/product2.jpg" class="card-img-top" alt="Kit Bag" loading="lazy">
-                    <div class="card-body">
-                        <h5 class="card-title">DSC Kit Bag</h5>
-                        <p class="card-text">Spacious and stylish kit bag with multiple compartments and durable build.
+                <!-- Machine Bat Knocking -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-box shadow-sm p-4 rounded-4 bg-white text-center h-100">
+                        <img src="/img/machine_knocking.jpg" alt="Machine Bat Knocking" class="service-img mb-3">
+                        <h5 class="fw-bold">Machine Bat Knocking</h5>
+                        <p class="small text-muted mb-2">
+                            Advanced machine knocking for perfect bat conditioning — enhancing performance & durability.
                         </p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
+                        <p class="fw-semibold text-primary mb-3">From ₹500 / bat</p>
+                        <a href="under-construction.html" class="btn btn-custom">Book Now</a>
+                    </div>
+                </div>
+
+                <!-- Custom Trophies -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="service-box shadow-sm p-4 rounded-4 bg-white text-center h-100">
+                        <img src="/img/Trophy.jpg" alt="Custom Trophies" class="service-img mb-3">
+                        <h5 class="fw-bold">Custom Trophies</h5>
+                        <p class="small text-muted mb-2">
+                            Premium trophies with custom engraving & laser finishing — perfect for tournaments &
+                            corporate events.
+                        </p>
+                        <p class="fw-semibold text-primary mb-3">From ₹199 / trophy</p>
+                        <a href="under-construction.html" class="btn btn-custom">Book Now</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img src="assets/product3.jpg" class="card-img-top" alt="Badminton Racket" loading="lazy">
-                    <div class="card-body">
-                        <h5 class="card-title">Yonex Badminton Racket</h5>
-                        <p class="card-text">Lightweight racket designed for precision smashes and superior control.</p>
-                        <a href="#" class="btn btn-custom coming-soon">Buy Now</a>
+        </div>
+    </section>
+
+    <!-- ADD CSS -->
+    <style>
+        .service-box {
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #e9ecef;
+        }
+
+        .service-box:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #ff5900;
+        }
+
+        .service-img {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .service-box:hover .service-img {
+            transform: scale(1.05);
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #ff5900, #ff7e33);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #e04800, #ff5900);
+            transform: scale(1.05);
+        }
+    </style>
+
+
+    <!-- PROCESS -->
+    <section id="process" class="py-5 bg-white">
+        <div class="container">
+            <h4 class="mb-3">How It Works</h4>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">1</div>
+                        <div class="fw-bold">Book & Pay Online</div>
+                        <div class="small text-muted">Choose your service, share details like specs or designs, and pay
+                            easily through our site or app.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">2</div>
+                        <div class="fw-bold">Drop Off or Send</div>
+                        <div class="small text-muted">For racket stringing or bat knocking: Drop at our store. For
+                            jerseys or trophies: We handle everything and deliver to your home.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">3</div>
+                        <div class="fw-bold">We Get to Work</div>
+                        <div class="small text-muted">Our team processes your order with care. You'll get WhatsApp
+                            updates at every step, like when we start and finish.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="features feature p-3 text-center">
+                        <div class="h2 text-primary">4</div>
+                        <div class="fw-bold">Pickup or Delivery</div>
+                        <div class="small text-muted">Get a WhatsApp notification when ready. Pick up from store for
+                            rackets/bats, or enjoy home delivery for jerseys/trophies.</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/919999999999" class="position-fixed" style="bottom: 20px; right: 20px; z-index: 9999;"
-        target="_blank">
-        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp"
-            style="width: 60px; height: 60px;" loading="lazy">
-    </a>
+    <!-- ABOUT -->
+    <section id="about" class="py-5 bg-white">
+        <div class="container">
+            <h4 class="mb-3">About Us</h4>
+            <p class="lead text-center">Crafting champions since 2015. At DA SPORTZ, we've been fueling athletes'
+                passions for over a decade with top-notch jersey customization, expert racket stringing, precise bat
+                knocking, and stunning trophies. Our commitment? Unmatched quality, speedy service, and a love for the
+                game that keeps you winning.</p>
+        </div>
+    </section>
 
-    <!-- About Section -->
-    <section id="about" class="container my-5">
-        <h2 class="section-title">About Us</h2>
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <img src="assets/about.jpg" alt="About DA SPORTZ" class="img-fluid rounded shadow-sm" loading="lazy">
-            </div>
-            <div class="col-md-6">
-                <p>DA SPORTZ is your trusted destination for high-quality cricket and badminton gear. From
-                    professional-grade bats to precision stringing services, we cater to athletes of all levels. Our
-                    commitment is to offer the best sporting equipment at competitive prices with top-notch service.</p>
-                <p>Visit us in-store or explore our latest collections online.</p>
-                <a href="#contact" class="btn btn-custom mt-3">Contact Us</a>
+    <!-- CONTACT -->
+    <section id="contact" class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="contact-card">
+                        <h5>Get a Quote</h5>
+                        <p class="small text-muted">Tell us what you need and we'll respond quickly with pricing and
+                            timelines.</p>
+                        <form id="contactForm">
+                            <div class="mb-3">
+                                <label class="form-label small">Name</label>
+                                <input class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Phone</label>
+                                <input class="form-control" name="phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Service</label>
+                                <select class="form-select" name="service" required>
+                                    <option value="">Choose a service</option>
+                                    <option value="jersey">Jersey Sublimation</option>
+                                    <option value="stringing">Racket Stringing</option>
+                                    <option value="knocking">Machine Bat Knocking</option>
+                                    <option value="trophy">Custom Trophy</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Message</label>
+                                <textarea class="form-control" name="message" rows="3"></textarea>
+                            </div>
+                            <div id="form-status" class="mb-2 small text-muted"></div>
+                            <button class="btn cta">Send Request</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="p-4"
+                        style="border-radius:12px; background:linear-gradient(180deg,#ffffff,#f6fbff); box-shadow:0 8px 30px rgba(2,6,23,0.04)">
+                        <h5 class="mb-3">Visit Our Outlets</h5>
+                        <p class="mb-1"><strong>Main Branch - Gaur City 1</strong><br>Gaur Sports Complex, Greater Noida
+                            West</p>
+                        <p class="mb-1"><strong>Workshop - Gaur City 2</strong><br>SF 53, High Street Market</p>
+                        <p class="small text-muted">Call: +91-8800505769 • Email: contact@dasportz.com</p>
+
+                        <div class="mt-3">
+                            <a href="https://wa.me/918800505769" class="btn btn-success me-2">
+                                <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                            </a>
+                            <a href="https://www.google.com/maps/dir//DA+SPORTZ+(Gear+Up.+Game+On.),+Sports+Complex,+Greater+Noida+W+Rd,+near+Radha+Krishna+Temple,+E+Block,+Gaur+City+1,+Sector+4,+Greater+Noida,+Ghaziabad,+Uttar+Pradesh+201318/@28.6104278,77.4243708,17z/data=!4m8!4m7!1m0!1m5!1m1!1s0x390cefd906dbdc11:0xd95b3fa0ee66eb28!2m2!1d77.4269457!2d28.6104231?entry=ttu&g_ep=EgoyMDI1MDgxOS4wIKXMDSoASAFQAw%3D%3D"
+                                class="btn btn-outline-primary" target="_blank" rel="noopener noreferrer">
+                                Get Directions
+                            </a>
+                        </div>
+
+
+                        <hr class="my-4">
+                        <h6 class="mb-2">Why customers pick us</h6>
+                        <ul class="small text-muted">
+                            <li>Advanced sublimation printers for crisp colors</li>
+                            <li>Professional-grade stringing machines</li>
+                            <li>Quality control on every order</li>
+                            <li>Premium trophies & medals with custom engraving</li>
+                            <li>Laser engraving for precise, high-quality personalization</li>
+                            <li>Expert cricket bat repairs — handle replacement, toe guard & weight balancing</li>
+                            <li>Professional cricket gloves repairs — re-padding, stitching & grip restoration</li>
+                            <li>Cricket pad repairs — foam replacement, strap fixing & complete refurbishing</li>
+                        </ul>
+
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="container my-5">
-        <h2 class="section-title">Customer Testimonials</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 p-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="https://i.pravatar.cc/50?img=1" class="rounded-circle me-2" alt="Customer 1"
-                            loading="lazy">
-                        <strong>Amit R.</strong>
-                    </div>
-                    <p class="mb-0">“Amazing experience! Got my racket strung within hours. Highly recommend DA SPORTZ.”
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 p-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="https://i.pravatar.cc/50?img=2" class="rounded-circle me-2" alt="Customer 2"
-                            loading="lazy">
-                        <strong>Sneha M.</strong>
-                    </div>
-                    <p class="mb-0">“Bought a DSC kit bag here—great price and quality! Will shop again.”</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 p-3">
-                    <div class="d-flex align-items-center mb-2">
-                        <img src="https://i.pravatar.cc/50?img=3" class="rounded-circle me-2" alt="Customer 3"
-                            loading="lazy">
-                        <strong>Rohan S.</strong>
-                    </div>
-                    <p class="mb-0">“They have all the latest cricket gear. Very helpful staff. Great store for
-                        athletes.”</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="container my-5">
-        <h2 class="section-title">Get in Touch</h2>
-        <div class="row">
-            <div class="col-md-6">
-                <form id="contactForm">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com"
-                            required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="4"
-                            placeholder="Your message..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-custom">Send Message</button>
-                    <div id="form-status" class="mt-2 text-success"></div>
-                </form>
-            </div>
-
-            <div class="col-md-6">
-                <h5>Store Addresses</h5>
-
-                <p><strong>Outlet 1 – Gaur City 1 (Main Branch):</strong><br>
-                    Gaur Sports Complex, Greater Noida West, near Radha Krishna Temple, E Block, Gaur City 1, Sector 4,
-                    Uttar Pradesh 201009</p>
-
-                <p><strong>Outlet 2 – (DT SPORTS) Gaur City 2: (Repair workshop and warehouse)</strong><br>
-                    SF 53, High Street Market, 14th Ave, near Indian Oil Petrol Pump, Noida Extension, Gaur City 2,
-                    Chipyana Khurd Urf Tigri, Uttar Pradesh 201318</p>
-
-                <h5>Phone</h5>
-                <p>+91-8800505769</p>
-
-                <h5>Email</h5>
-                <p>sportzda@gmail.com</p>
-
-                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="btn btn-outline-dark mt-3">View DA SPORTZ on
-                    Google Maps</a>
-            </div>
-
-        </div>
-    </section>
-    <!-- Footer -->
+    <!-- FOOTER -->
     <footer class="mt-5">
         <div class="container">
-            <div class="row text-center text-md-start">
+            <div class="row text-center">
                 <div class="col-md-4 mb-4">
                     <h5 class="text-uppercase">DA SPORTZ</h5>
                     <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
@@ -658,9 +1145,9 @@
                 <div class="col-md-4 mb-4">
                     <h5 class="text-uppercase">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="index.html#about">About Us</a></li>
-                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
                         <li><a href="terms.html">Terms of Service</a></li>
                         <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
                         <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
@@ -670,7 +1157,7 @@
                     <h5 class="text-uppercase">Follow Us</h5>
                     <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
                         class="me-3"><i class="bi bi-instagram"></i></a>
-                    <a href="mailto:sportzda@gmail.com"><i class="bi bi-envelope"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
                 </div>
             </div>
             <div class="text-center pt-3 border-top border-secondary">
@@ -679,66 +1166,78 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"
-        defer></script>
-    <!-- Language Dropdown -->
-    <div class="position-fixed top-0 end-0 m-2" style="z-index: 9999;">
-        <select class="form-select form-select-sm" onchange="changeLanguage(this.value)" title="Language selector">
-            <option value="en" selected>English</option>
-            <option value="hi">हिंदी</option>
-        </select>
-    </div>
+    <!-- WhatsApp floating -->
+    <a href="https://wa.me/918800505769?text=Hi!%20I'm%20interested%20in%20your%20services" target="_blank"
+        class="whatsapp-float" title="WhatsApp">
+        <i class="bi bi-whatsapp fs-4"></i>
+    </a>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function changeLanguage(lang) {
-            alert('Language switch functionality to ' + lang + ' is under development.');
-        }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const comingSoonButtons = document.querySelectorAll('.coming-soon');
-            comingSoonButtons.forEach(btn => {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    window.location.href = 'coming-soon.html';
-                });
-            });
-        });
-    </script>
-    <script>
-        document.getElementById('contactForm').addEventListener('submit', async function (e) {
+        // Contact form simple handler (uses Formspree or your endpoint)
+        document.getElementById('contactForm')?.addEventListener('submit', async function (e) {
             e.preventDefault();
-
             const form = e.target;
-            const data = {
-                name: form.name.value,
-                email: form.email.value,
-                message: form.message.value
-            };
+            const data = Object.fromEntries(new FormData(form).entries());
+            const status = document.getElementById('form-status');
+            status.textContent = 'Sending...';
 
             try {
-                const response = await fetch('https://formspree.io/f/meokygdb', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data)
+                // replace endpoint if you want: currently posts to Formspree example
+                const res = await fetch('https://formspree.io/f/meokygdb', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
                 });
-
-                const status = document.getElementById('form-status');
-                if (response.ok) {
-                    status.textContent = "Thanks! Your message has been sent.";
-                    form.reset();
-                } else {
-                    status.textContent = "Oops! There was a problem.";
-                }
-            } catch (err) {
-                document.getElementById('form-status').textContent = "Error: " + err.message;
-            }
+                if (res.ok) { status.textContent = 'Thanks — we will contact you shortly.'; form.reset(); }
+                else { status.textContent = 'Error. Please call us directly.' }
+            } catch (err) { status.textContent = 'Network error. Please call us.' }
         });
     </script>
+
+
+    <!-- DA SPORTZ – SVG ICONS -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <!-- Jersey -->
+        <symbol id="icon-jersey" viewBox="0 0 24 24">
+            <path
+                d="M8 2l2.2 1.8a4 4 0 0 0 3.6 0L16 2l3 2 3 1v4l-2 .8V21a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.8L2 9V5l3-1 3-2Z"
+                fill="currentColor" />
+            <path d="M8 9h8v2H8zM8 13h8v2H8z" fill="currentColor" opacity=".55" />
+        </symbol>
+
+        <!-- Badminton Racket -->
+        <symbol id="icon-racket" viewBox="0 0 24 24">
+            <circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8" />
+            <path d="M13 13l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M6 6l6 6M12 6L6 12" stroke="currentColor" stroke-width="1" opacity=".65" />
+            <path d="M20 21l-2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </symbol>
+
+        <!-- Cricket Bat -->
+        <symbol id="icon-bat" viewBox="0 0 24 24">
+            <path
+                d="M13.5 3.5l7 7c.7.7.7 1.9 0 2.6l-7.7 7.7a1.9 1.9 0 0 1-2.6 0l-1.7-1.7a1.9 1.9 0 0 1 0-2.6l7.7-7.7c.7-.7.7-1.9 0-2.6l-1.7-1.7Z"
+                fill="currentColor" />
+            <rect x="3" y="18" width="6" height="3" rx="1.5" fill="currentColor" opacity=".7" />
+        </symbol>
+
+        <!-- Trophy -->
+        <symbol id="icon-trophy" viewBox="0 0 24 24">
+            <path
+                d="M7 4h10a1 1 0 0 1 1 1v1h2a1 1 0 0 1 1 1c0 3.9-2.2 7-6 7H9C5.2 14 3 10.9 3 7a1 1 0 0 1 1-1h2V5a1 1 0 0 1 1-1Z"
+                fill="currentColor" />
+            <path d="M9 14v2a3 3 0 0 0 6 0v-2" stroke="currentColor" stroke-width="1.6" fill="none" />
+            <rect x="7" y="20" width="10" height="2" rx="1" fill="currentColor" opacity=".8" />
+        </symbol>
+
+        <!-- Clients (People) -->
+        <symbol id="icon-clients" viewBox="0 0 24 24">
+            <circle cx="8" cy="8" r="3" fill="currentColor" />
+            <circle cx="16" cy="7" r="2.5" fill="currentColor" opacity=".85" />
+            <path d="M3 18a5 5 0 0 1 10 0v2H3v-2Z" fill="currentColor" />
+            <path d="M14 20v-1.2a4 4 0 0 1 6-3.4" stroke="currentColor" stroke-width="1.6" fill="none" opacity=".85" />
+        </symbol>
+    </svg>
 
 </body>
 
