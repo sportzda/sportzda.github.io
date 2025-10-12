@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,8 +10,10 @@
   <style>
     #coming-soon-overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0, 0, 0, 0.95);
       color: #fff;
       display: flex;
@@ -20,10 +23,12 @@
       z-index: 9999;
       font-family: 'Barlow', sans-serif;
     }
+
     #coming-soon-overlay h1 {
       font-size: 3rem;
       margin-bottom: 1rem;
     }
+
     #coming-soon-overlay button {
       background: #ff5900;
       color: white;
@@ -34,6 +39,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div id="coming-soon-overlay">
@@ -45,4 +51,5 @@
   {{ content }}
 
 </body>
+
 </html>
