@@ -397,7 +397,7 @@
                                     <select id="paymentMethod" class="form-select" required>
                                         <option value="">-- Select Payment Method --</option>
                                         <option value="Cash">Cash</option>
-                                        <option value="Online">Online Payment (₹10 off)</option>
+                                        <option value="Online">Online Payment</option>
                                     </select>
                                 </div>
 
@@ -417,37 +417,32 @@
                                 </div>
 
                                 <!-- Terms & Conditions -->
-                                <div class="conditions">
-                                    <h5>Important Service Conditions</h5>
-                                    <ul>
-                                        <li>We take utmost care during stringing. However, in rare cases, older or
-                                            structurally weak rackets may break during the process. Unfortunately, we
-                                            cannot offer a replacement or compensation in such cases.</li>
-                                        <li>Normal service time is 4 hours, but during busy periods (especially weekends
-                                            or tournaments) it may take longer. We will keep you updated in real time.
-                                        </li>
-                                        <li>Prices are fixed and include labour cost of ₹100 per racket, plus string
-                                            cost. Express service is ₹20 extra per racket.</li>
-                                        <li>Online payments get ₹10 off per order. Offer not applicable with other
-                                            discounts.</li>
-                                        <li>Customers are advised to double-check tension and string selection before
-                                            confirming, as changes after stringing has begun may incur extra charges.
-                                        </li>
-                                        <li>Please collect your racket within 7 days after completion to avoid storage
-                                            charges.</li>
-                                        <li>Pickup & Drop is available via a trusted third-party porter service. Porter
-                                            charges are borne by the customer.</li>
-                                        <li>While we coordinate for smooth and careful handling, DA SPORTZ isn't
-                                            responsible for handling during transit or any accidental damage that may
-                                            occur while your racket(s)/product is with the porter.</li>
-                                    </ul>
+                                <div id="service-notes" class="conditions">
+                                    <h5>Important Service Notes</h5>
 
-                                    <div class="confirm-box">
-                                        <input type="checkbox" id="acceptTerms">
-                                        <label for="acceptTerms">I have read and agree to the above service
-                                            conditions</label>
-                                    </div>
+                                    <ul>
+                                        <li><strong>⚡ Safety:</strong> We handle your racket with utmost care. Weak or
+                                            old rackets may break; <strong>we cannot replace them</strong>.</li>
+
+                                        <li><strong>⏱ Service Time:</strong> Normal: <strong>~4 hours</strong>. Busy
+                                            periods may take longer. <strong>Real-time updates</strong> will be
+                                            provided.</li>
+
+                                        <li><strong>💰 Pricing:</strong> Labour: <strong>₹100 per racket</strong>.
+                                            Express service: <strong>+₹20 per racket</strong>. Confirm <strong>tension &
+                                                string choice</strong> before stringing.</li>
+
+                                        <li><strong>📦 Pickup & Storage:</strong> Collect within <strong>7 days</strong>
+                                            to avoid storage charges. Pickup/Drop via porter is extra. <strong>We are
+                                                not responsible for damage during transit.</strong></li>
+                                    </ul>
                                 </div>
+
+                                <p style="font-size:0.9rem; color:#555;">
+                                    By clicking “Place Order,” you confirm you’ve read and agree to our
+                                    <a href="#service-notes" style="color:#007bff;">service notes</a>.
+                                </p>
+
 
                                 <button id="confirmButton" type="button" class="btn-custom w-100" disabled>
                                     Pay Now
@@ -548,6 +543,14 @@
                                     <td>₹800</td>
                                     <td>₹100</td>
                                     <td>₹900</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>BG6</td>
+                                    <td>Soft feel, Decent Repulsion, and Durability</td>
+                                    <td>₹200</td>
+                                    <td>₹100</td>
+                                    <td>₹300</td>
                                 </tr>
 
                                 <!-- LI-NING -->
@@ -697,10 +700,22 @@
                                     <td>₹100</td>
                                     <td>₹550</td>
                                 </tr>
+                                <!-- GRAVITY -->
+                                <tr class="table-secondary">
+                                    <td colspan="6" class="fw-bold">GRAVITY</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>Gravity-GR 65</td>
+                                    <td>Durable</td>
+                                    <td>₹200</td>
+                                    <td>₹100</td>
+                                    <td>300</td>
+                                </tr>
                             </tbody>
                         </table>
                         <p class="muted small mt-3 mb-0">Normal service: within 4 hours. Express service: within 1 hour
-                            (+₹20). Online payment: ₹10 off.</p>
+                            (+₹20).</p>
                     </div>
                 </div>
             </div>
@@ -747,7 +762,7 @@
     <script src="https://static.zohocdn.com/zpay/zpay-js/v1/zpayments.js"></script>
     <script>
         (function () {
-            const BACKEND_BASE = 'https://backend-process-payments.onrender.com';
+            const BACKEND_BASE = 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
 
             // ---------- IMPORTANT: put your Zoho widget/API key here ----------
             // You can also change code to receive this from your server as zpayConfig.otherOptions.api_key
@@ -767,11 +782,12 @@
                 "Yonex BG 65": 550, "Yonex BG 65 Titanium": 600, "Yonex BG 80": 700, "Yonex BG 80 Power": 800,
                 "Yonex BG 66 Ultimax": 700, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 900,
                 "Yonex BG Ultimax": 800,
+                "Yonex BG6": 300,
                 "Li-Ning No.1": 550, "Li-Ning No.7": 500, "Li-Ning NS95": 850, "Li-Ning No.1 Boost": 900,
-                "Li-Ning NS50 (680)": 680, "Li-Ning No7 Boost": 750, "Li-Ning NS50 (650)": 650,
+                "Li-Ning NS50 (680)": 680, "Li-Ning No.7 Boost": 750, "Li-Ning NS50 (650)": 650,
                 "Hundred Power": 400, "Hundred Control": 450, "Hundred Pro": 480, "Hundred JP 65 Magnite": 750,
                 "Hundred 66X Boost": 670, "Hundred JP 65": 900, "Hundred 70X Boost": 600, "Hundred Z63": 700,
-                "KIZUNA D66 Lusty": 450, "Head Master 300": 300
+                "KIZUNA D66 Lusty": 450, "Head Master 300": 300, "Gravity-GR 65": 300
             };
 
             // Add test product if in test mode
@@ -787,7 +803,7 @@
             const summaryTotalEl = document.getElementById('summaryTotal');
             const expressCheckbox = document.getElementById('expressService');
             const paymentMethodSelect = document.getElementById('paymentMethod');
-            const acceptTerms = document.getElementById('acceptTerms');
+            // const acceptTerms = document.getElementById('acceptTerms');
             const confirmButton = document.getElementById('confirmButton');
             const storeSelect = document.getElementById('storeLocation');
             const nameInput = document.getElementById('customerName');
@@ -807,7 +823,7 @@
                 const brands = {
                     'YONEX': [
                         'Yonex BG 65', 'Yonex BG 65 Titanium', 'Yonex BG 80', 'Yonex BG 80 Power',
-                        'Yonex BG 66 Ultimax', 'Yonex Nanogy 95', 'Yonex AEROBITE', 'Yonex AeroBite Boost'
+                        'Yonex BG 66 Ultimax', 'Yonex BG6', 'Yonex Nanogy 95', 'Yonex AEROBITE', 'Yonex AeroBite Boost'
                     ],
                     'LI-NING': [
                         'Li-Ning No.1', 'Li-Ning No.1 Boost', 'Li-Ning No.7', 'Li-Ning No.7 Boost',
@@ -818,7 +834,8 @@
                         'Hundred JP 65 Magnite', 'Hundred 66X Boost', 'Hundred 70X Boost', 'Hundred Z63'
                     ],
                     'KIZUNA': ['KIZUNA D66 Lusty'],
-                    'HEAD TENNIS': ['Head Master 300']
+                    'HEAD TENNIS': ['Head Master 300'],
+                    'GRAVITY': ['Gravity-GR 65']
                 };
 
                 // Add test brand if in test mode
@@ -842,43 +859,89 @@
                 return select;
             }
 
+            // Updated createRacketRow to handle prefill properly
             function createRacketRow(prefill = {}) {
                 const row = document.createElement('div');
                 row.className = 'racket-row racket-card mb-3 d-flex flex-wrap align-items-end gap-2';
 
-                const col1 = document.createElement('div'); col1.style.flex = '1 1 220px';
-                const label1 = document.createElement('label'); label1.className = 'form-label small mb-1'; label1.textContent = 'String Type';
-                col1.appendChild(label1); col1.appendChild(createStringSelect(prefill.id || prefill.string || ''));
+                // Racket Name
+                const col0 = document.createElement('div');
+                col0.style.flex = '1 1 220px';
+                const label0 = document.createElement('label');
+                label0.className = 'form-label small mb-1';
+                label0.textContent = 'Racket Name *';
+                col0.appendChild(label0);
+                const racketNameInput = document.createElement('input');
+                racketNameInput.type = 'text';
+                racketNameInput.className = 'form-control form-control-sm racketCustomName';
+                racketNameInput.placeholder = 'Enter racket name';
+                racketNameInput.required = true;
+                if (prefill.racketName) racketNameInput.value = prefill.racketName;
+                col0.appendChild(racketNameInput);
+                row.appendChild(col0);
+
+                // String Type
+                const col1 = document.createElement('div');
+                col1.style.flex = '1 1 220px';
+                const label1 = document.createElement('label');
+                label1.className = 'form-label small mb-1';
+                label1.textContent = 'String Type';
+                col1.appendChild(label1);
+                col1.appendChild(createStringSelect(prefill.string || ''));
                 row.appendChild(col1);
 
-                const col2 = document.createElement('div'); col2.style.width = '110px';
-                const label2 = document.createElement('label'); label2.className = 'form-label small mb-1'; label2.textContent = 'Quantity';
+                // Quantity
+                const col2 = document.createElement('div');
+                col2.style.width = '110px';
+                const label2 = document.createElement('label');
+                label2.className = 'form-label small mb-1';
+                label2.textContent = 'Quantity';
                 col2.appendChild(label2);
-                const qty = document.createElement('input'); qty.type = 'number'; qty.min = '1'; qty.value = prefill.qty || 1;
+                const qty = document.createElement('input');
+                qty.type = 'number';
+                qty.min = '1';
+                qty.value = prefill.qty || 1;
                 qty.className = 'form-control form-control-sm quantity';
-                col2.appendChild(qty); row.appendChild(col2);
+                col2.appendChild(qty);
+                row.appendChild(col2);
 
-                const col3 = document.createElement('div'); col3.style.width = '140px';
-                const label3 = document.createElement('label'); label3.className = 'form-label small mb-1'; label3.textContent = 'Tension (lbs)';
+                // Tension
+                const col3 = document.createElement('div');
+                col3.style.width = '140px';
+                const label3 = document.createElement('label');
+                label3.className = 'form-label small mb-1';
+                label3.textContent = 'Tension (lbs)';
                 col3.appendChild(label3);
-                const tension = document.createElement('input'); tension.type = 'number'; tension.min = '10'; tension.max = '35'; tension.value = prefill.tension || 24;
+                const tension = document.createElement('input');
+                tension.type = 'number';
+                tension.min = '10';
+                tension.max = '35';
+                tension.value = prefill.tension || 24;
                 tension.className = 'form-control form-control-sm stringTension';
-                col3.appendChild(tension); row.appendChild(col3);
+                col3.appendChild(tension);
+                row.appendChild(col3);
 
-                const col4 = document.createElement('div'); col4.style.minWidth = '130px';
-                const label4 = document.createElement('label'); label4.className = 'form-label small mb-1 d-block'; label4.textContent = 'Line Total';
-                const priceBadge = document.createElement('div'); priceBadge.className = 'fw-bold'; priceBadge.textContent = '₹0'; priceBadge.style.fontSize = '0.95rem';
-                col4.appendChild(label4); col4.appendChild(priceBadge); row.appendChild(col4);
+                // Line Total
+                const col4 = document.createElement('div');
+                col4.style.minWidth = '130px';
+                const label4 = document.createElement('label');
+                label4.className = 'form-label small mb-1 d-block';
+                label4.textContent = 'Line Total';
+                const priceBadge = document.createElement('div');
+                priceBadge.className = 'fw-bold';
+                priceBadge.textContent = '₹0';
+                priceBadge.style.fontSize = '0.95rem';
+                col4.appendChild(label4);
+                col4.appendChild(priceBadge);
+                row.appendChild(col4);
 
                 // Listeners
                 row.querySelector('.racketName').addEventListener('change', updateAllTotals);
                 row.querySelector('.quantity').addEventListener('input', updateAllTotals);
                 row.querySelector('.stringTension').addEventListener('input', updateAllTotals);
-
                 row._priceEl = priceBadge;
                 return row;
             }
-
             function addInitialRow() {
                 const r = createRacketRow();
                 racketsContainer.appendChild(r);
@@ -917,19 +980,19 @@
 
                 const onlineSelected = paymentMethodSelect.value === 'Online';
                 const discount = (onlineSelected && !testMode) ? 10 : 0;
-                const finalTotal = Math.max(0, total - discount);
+                const finalTotal = Math.max(0, total);
 
                 summaryCountEl.textContent = count;
                 summaryTotalEl.textContent = finalTotal;
                 summaryServiceEl.textContent = expressCheckbox.checked ? 'Express (within 1 hour)' : 'Normal (within 4 hours)';
 
-                const canPay = acceptTerms.checked && (paymentMethodSelect.value === 'Online' || paymentMethodSelect.value === 'Cash') && count > 0 && finalTotal >= 0;
+                const canPay = (paymentMethodSelect.value === 'Online' || paymentMethodSelect.value === 'Cash') && count > 0 && finalTotal >= 0;
                 confirmButton.disabled = !canPay;
             }
 
             expressCheckbox.addEventListener('change', updateAllTotals);
             paymentMethodSelect.addEventListener('change', updateAllTotals);
-            acceptTerms.addEventListener('change', updateAllTotals);
+            // acceptTerms.addEventListener('change', updateAllTotals);
             addInitialRow();
 
             function validPhone(phone) {
@@ -937,20 +1000,54 @@
                 return digits.length === 10;
             }
 
+            // function buildPayload() {
+            //     const rows = racketsContainer.querySelectorAll('.racket-row');
+            //     const racketDetails = [];
+            //     rows.forEach(row => {
+            //         const id = row.querySelector('.racketName')?.value || '';
+            //         const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
+            //         const tension = row.querySelector('.stringTension')?.value || '';
+            //         const cost = PRICE_MAP[id] || 0;
+            //         if (id) {
+            //             racketDetails.push({
+            //                 id,
+            //                 qty,
+            //                 tension,
+            //                 cost
+            //             });
+            //         }
+            //     });
+
+            //     return {
+            //         customerName: nameInput.value.trim(),
+            //         phone: phoneInput.value.replace(/\D/g, '').trim(),
+            //         store: storeSelect.value,
+            //         racketDetails,
+            //         express: expressCheckbox.checked,
+            //         paymentMethod: paymentMethodSelect.value,
+            //         pickupDrop: document.getElementById('pickupDrop')?.checked || false,
+            //         testMode: testMode // Include test mode flag in payload
+            //     };
+            // }
             function buildPayload() {
                 const rows = racketsContainer.querySelectorAll('.racket-row');
                 const racketDetails = [];
+
                 rows.forEach(row => {
-                    const id = row.querySelector('.racketName')?.value || '';
+                    const racketName = row.querySelector('.racketCustomName')?.value?.trim() || '';
+                    const stringType = row.querySelector('.racketName')?.value || '';
                     const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
                     const tension = row.querySelector('.stringTension')?.value || '';
-                    const cost = PRICE_MAP[id] || 0;
-                    if (id) {
+                    const cost = PRICE_MAP[stringType] || 0;
+
+                    if (racketName && stringType) {
                         racketDetails.push({
-                            id,
+                            racketName: racketName,  // Actual racket name from input
+                            string: stringType,       // String type from dropdown
                             qty,
                             tension,
-                            cost
+                            cost,
+                            id: `RQ_${crypto.randomUUID()}`
                         });
                     }
                 });
@@ -963,7 +1060,7 @@
                     express: expressCheckbox.checked,
                     paymentMethod: paymentMethodSelect.value,
                     pickupDrop: document.getElementById('pickupDrop')?.checked || false,
-                    testMode: testMode // Include test mode flag in payload
+                    testMode: testMode
                 };
             }
 
@@ -988,10 +1085,10 @@
                     alert('Please add at least one racket with string selection.');
                     return;
                 }
-                if (!acceptTerms.checked) {
-                    alert('Please accept the terms & conditions.');
-                    return;
-                }
+                // if (!acceptTerms.checked) {
+                //     alert('Please accept the terms & conditions.');
+                //     return;
+                // }
                 if (!['Online', 'Cash'].includes(payload.paymentMethod)) {
                     alert('Select a payment method.');
                     return;
