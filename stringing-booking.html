@@ -540,9 +540,9 @@
                                     <td></td>
                                     <td>AeroBite Boost</td>
                                     <td>Control/Spin</td>
-                                    <td>₹800</td>
+                                    <td>₹1000</td>
                                     <td>₹100</td>
-                                    <td>₹900</td>
+                                    <td>₹1100</td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -780,7 +780,7 @@
             /* ---------- Price map (same as before) ---------- */
             const PRICE_MAP = {
                 "Yonex BG 65": 550, "Yonex BG 65 Titanium": 600, "Yonex BG 80": 700, "Yonex BG 80 Power": 800,
-                "Yonex BG 66 Ultimax": 700, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 900,
+                "Yonex BG 66 Ultimax": 700, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 1100,
                 "Yonex BG Ultimax": 800,
                 "Yonex BG6": 300,
                 "Li-Ning No.1": 550, "Li-Ning No.7": 500, "Li-Ning NS95": 850, "Li-Ning No.1 Boost": 900,
@@ -1102,7 +1102,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-
+                    console.log(`createResp: ${JSON.stringify(createResp)}`);
                     const createData = await createResp.json().catch(() => ({}));
                     if (!createData || !createData.success) {
                         setButtonLoading(false);
