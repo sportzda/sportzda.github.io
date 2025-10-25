@@ -123,7 +123,9 @@ test.describe('Stringing Booking UI', () => {
     });
 
     test('Online flow stubs widget and verifies payment (CORS handled)', async ({ page }) => {
-        await page.addInitScript(() => {
+        await page.goto('/stringing-booking.html?test=true');
+        // Ensure our stub overrides any external script definition
+        await page.evaluate(() => {
             // @ts-ignore
             window.ZPayments = class {
                 constructor() { }
@@ -131,8 +133,6 @@ test.describe('Stringing Booking UI', () => {
                 async close() { }
             };
         });
-
-        await page.goto('/stringing-booking.html?test=true');
 
         const BACKEND_BASE = await getBackendBase(page);
         let sawCreate = false;
@@ -178,11 +178,13 @@ test.describe('Stringing Booking UI', () => {
 
         const confirm = page.locator('#confirmButton');
         await expect(confirm).toBeEnabled();
+        // Proactively wait for the verify-payment request to be issued by the app
+        const verifyReqPromise = page.waitForRequest((req) => req.url().includes('/api/verify-payment'), { timeout: 10000 }).catch(() => null);
         await confirm.click();
-        // Give time for the flow to call verify and attempt redirect
-        await page.waitForTimeout(1000);
 
+        // Ensure create and verify were called
+        const verifyReq = await verifyReqPromise;
         expect(sawCreate).toBeTruthy();
-        expect(sawVerify).toBeTruthy();
+        expect(!!verifyReq || sawVerify).toBeTruthy();
     });
 });
