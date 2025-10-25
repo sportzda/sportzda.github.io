@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+package-lock.json
 
 # Playwright outputs
 playwright-report/
@@ -10,7 +11,7 @@ test-results/
 npm-debug.log*
 *.log
 
-# Env
+# Environment files
 .env
 .env.*
 
@@ -18,10 +19,15 @@ npm-debug.log*
 .vscode/
 .idea/
 .DS_Store
+*.swp
+*.swo
+*~
 
-# Builds
+# Build outputs
 coverage/
 dist/
+build/
 
 # Misc
 *.local
+.cache/
