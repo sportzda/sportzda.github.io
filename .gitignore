@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Playwright outputs
+playwright-report/
+test-results/
+.ms-playwright/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Environment files
+.env
+.env.*
+
+# Editors/OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Build outputs
+coverage/
+dist/
+build/
+
+# Misc
+*.local
+.cache/
