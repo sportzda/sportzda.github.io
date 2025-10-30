@@ -55,12 +55,20 @@
             letter-spacing: 0.5px;
             transition: all 0.3s ease-in-out;
             margin-top: 1rem;
+            cursor: pointer;
         }
 
-        .btn-custom:hover {
+        .btn-custom:hover:not(:disabled) {
             background-color: #e04800;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-custom:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .section-title {
@@ -445,7 +453,7 @@
                                 </p>
 
 
-                                <button id="confirmButton" type="button" class="btn-custom w-100" disabled>
+                                <button id="confirmButton" type="button" class="btn-custom w-100">
                                     Pay Now
                                 </button>
                             </form>
@@ -517,9 +525,9 @@
                                     <td></td>
                                     <td>BG 66 Ultimax</td>
                                     <td>Repulsion</td>
-                                    <td>₹700</td>
-                                    <td>₹100</td>
                                     <td>₹800</td>
+                                    <td>₹100</td>
+                                    <td>₹900</td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -549,9 +557,9 @@
                                     <td></td>
                                     <td>BG6</td>
                                     <td>Soft feel, Decent Repulsion, and Durability</td>
-                                    <td>₹200</td>
+                                    <td>₹350</td>
                                     <td>₹100</td>
-                                    <td>₹300</td>
+                                    <td>₹450</td>
                                 </tr>
 
                                 <!-- LI-NING -->
@@ -809,9 +817,9 @@
             /* ---------- Price map (same as before) ---------- */
             const PRICE_MAP = {
                 "Yonex BG 65": 550, "Yonex BG 65 Titanium": 600, "Yonex BG 80": 700, "Yonex BG 80 Power": 900,
-                "Yonex BG 66 Ultimax": 700, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 1100,
+                "Yonex BG 66 Ultimax": 900, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 1100,
                 "Yonex BG Ultimax": 800,
-                "Yonex BG6": 300,
+                "Yonex BG6": 450,
                 "Li-Ning No.1": 550, "Li-Ning No.7": 500, "Li-Ning NS95": 850, "Li-Ning No.1 Boost": 900,
                 "Li-Ning NS50 (680)": 680, "Li-Ning No.7 Boost": 750, "Li-Ning NS50 (650)": 650,
                 "Hundred Power": 400, "Hundred Control": 450, "Hundred Pro": 480, "Hundred JP 65 Magnite": 750,
@@ -1017,8 +1025,7 @@
                 summaryTotalEl.textContent = finalTotal;
                 summaryServiceEl.textContent = expressCheckbox.checked ? 'Express (within 1 hour)' : 'Normal (within 4 hours)';
 
-                const canPay = (paymentMethodSelect.value === 'Online' || paymentMethodSelect.value === 'Cash') && count > 0 && finalTotal >= 0;
-                confirmButton.disabled = !canPay;
+                // Button is always enabled - validation happens on click
             }
 
             expressCheckbox.addEventListener('change', updateAllTotals);
@@ -1100,16 +1107,70 @@
                 confirmButton.innerHTML = loading ? `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${text || 'Processing...'}` : 'Pay Now';
             }
 
+            /* ---------- Validation helper function to check mandatory fields ---------- */
+            function checkMandatoryFields() {
+                const missingFields = [];
+
+                if (!storeSelect.value) missingFields.push('Store location');
+                if (!nameInput.value.trim()) missingFields.push('Your name');
+
+                // Phone number validation
+                const phoneValue = phoneInput.value.trim();
+                if (!phoneValue) {
+                    missingFields.push('WhatsApp number');
+                } else if (!/^\d{10}$/.test(phoneValue)) {
+                    missingFields.push('Valid 10-digit WhatsApp number');
+                }
+
+                const rows = racketsContainer.querySelectorAll('.racket-row');
+                if (rows.length === 0) {
+                    missingFields.push('At least one racket');
+                }
+
+                if (!paymentMethodSelect.value) missingFields.push('Payment method');
+
+                return missingFields;
+            }
+
             /* ---------- MAIN: create order -> start Zoho widget -> verify payment ---------- */
             async function onPayNowClicked(e) {
                 e.preventDefault();
+
+                const missingFields = checkMandatoryFields();
+                if (missingFields.length > 0) {
+                    alert(`Please complete the following fields:\n\n- ${missingFields.join('\n- ')}\n\nBefore proceeding with payment.`);
+                    return;
+                }
+
+                // Additional validation for racket details
+                const rows = racketsContainer.querySelectorAll('.racket-row');
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    const racketName = row.querySelector('.racketCustomName')?.value?.trim();
+                    const stringType = row.querySelector('.racketName')?.value;
+                    const tension = row.querySelector('.stringTension')?.value;
+
+                    if (!racketName) {
+                        alert(`Please enter a racket name for racket #${i + 1}`);
+                        return;
+                    }
+                    if (!stringType) {
+                        alert(`Please select a string type for racket #${i + 1}`);
+                        return;
+                    }
+                    if (!tension || tension < 10 || tension > 35) {
+                        alert(`Please enter a valid tension (10-35 lbs) for racket #${i + 1}`);
+                        return;
+                    }
+                }
+
                 const payload = buildPayload(); // your existing function
                 if (!payload.customerName || !payload.phone || !payload.store) {
                     alert('Please enter name, phone and select a store.');
                     return;
                 }
                 if (!validPhone(payload.phone)) {
-                    alert('Enter a valid 10-digit phone number.');
+                    alert('Enter a valid 10-digit WhatsApp number.');
                     return;
                 }
                 if (!payload.racketDetails || payload.racketDetails.length === 0) {

@@ -1,7 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page, Route, Dialog } from '@playwright/test';
 
 // Helper to extract BACKEND_BASE from inline script in stringing-booking.html
-async function getBackendBase(page: any): Promise<string> {
+async function getBackendBase(page: Page): Promise<string> {
     const html = await page.content();
     const match = html.match(/const\s+BACKEND_BASE\s*=\s*['\"]([^'\"]+)['\"]/);
     if (!match) throw new Error('Could not find BACKEND_BASE in HTML');
@@ -23,16 +23,23 @@ test.describe('Stringing Booking UI', () => {
         await expect(summary).toContainText(/Express/i);
     });
 
-    test('Confirm disabled until form valid', async ({ page }) => {
+    test('Shows validation alerts for incomplete form', async ({ page }) => {
         await page.goto('/stringing-booking.html?test=true');
 
-        const confirm = page.locator('#confirmButton');
-        await expect(confirm).toBeDisabled();
+        let alertMessage = '';
+        page.on('dialog', async dialog => {
+            alertMessage = dialog.message();
+            await dialog.accept();
+        });
 
-        await page.locator('#storeLocation').selectOption({ index: 1 });
-        await page.locator('#customerName').fill('Test User');
-        await page.locator('#phone').fill('9876543210');
-        await expect(confirm).toBeDisabled();
+        // Click Pay Now without filling anything
+        await page.locator('#confirmButton').click();
+
+        // Verify alert shows missing fields
+        expect(alertMessage).toContain('Store location');
+        expect(alertMessage).toContain('Your name');
+        expect(alertMessage).toContain('WhatsApp number');
+        expect(alertMessage).toContain('Payment method');
 
         const firstRow = page.locator('.racket-row').first();
         await expect(firstRow).toBeVisible();
@@ -43,10 +50,7 @@ test.describe('Stringing Booking UI', () => {
             const val = await options[i].getAttribute('value');
             if (val && val.trim()) { await stringSelect.selectOption(val); break; }
         }
-        await expect(confirm).toBeDisabled();
-
         await page.locator('#paymentMethod').selectOption('Cash');
-        await expect(confirm).toBeEnabled();
     });
 
     test('Price calculation and Express fee applied', async ({ page }) => {
@@ -186,5 +190,107 @@ test.describe('Stringing Booking UI', () => {
         const verifyReq = await verifyReqPromise;
         expect(sawCreate).toBeTruthy();
         expect(!!verifyReq || sawVerify).toBeTruthy();
+    });
+
+    test.describe('Form Validation', () => {
+        test('Shows alert for missing fields', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Setup dialog handler to capture alert messages
+            let alertMessage = '';
+            page.on('dialog', async dialog => {
+                alertMessage = dialog.message();
+                await dialog.accept();
+            });
+
+            // Click Pay Now without filling anything
+            const confirm = page.locator('#confirmButton');
+            await confirm.click();
+
+            // Verify alert contains all required fields
+            expect(alertMessage).toContain('Store location');
+            expect(alertMessage).toContain('Your name');
+            expect(alertMessage).toContain('WhatsApp number');
+            expect(alertMessage).toContain('Payment method');
+        });
+
+        test('Validates phone number format', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Fill everything except phone
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Test User');
+            await page.locator('#paymentMethod').selectOption('Cash');
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await row.locator('.racketName').selectOption('Yonex BG 65');
+            await row.locator('.stringTension').fill('24');
+
+            // Setup dialog handler
+            let alertMessage = '';
+            page.on('dialog', async dialog => {
+                alertMessage = dialog.message();
+                await dialog.accept();
+            });
+
+            // Try invalid phone number
+            await page.locator('#phone').fill('123');
+            await page.locator('#confirmButton').click();
+            expect(alertMessage).toContain('Valid 10-digit WhatsApp number');
+
+            // Try valid phone number
+            await page.locator('#phone').fill('9876543210');
+            // Now the form should proceed to payment
+            await page.route('**/api/create-order', route => route.fulfill({
+                status: 200,
+                body: JSON.stringify({ success: true, order: { order_id: 'TEST123' } })
+            }));
+            await page.locator('#confirmButton').click();
+            // Should navigate to order accepted page
+            await expect(page).toHaveURL(/order-accepted\.html/);
+        });
+
+        test('Validates racket details', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Fill basic details
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Test User');
+            await page.locator('#phone').fill('9876543210');
+            await page.locator('#paymentMethod').selectOption('Cash');
+
+            let alertMessage = '';
+            page.on('dialog', async dialog => {
+                alertMessage = dialog.message();
+                await dialog.accept();
+            });
+
+            // Check missing racket name
+            await page.locator('#confirmButton').click();
+            expect(alertMessage).toContain('enter a racket name for racket #1');
+
+            // Add racket name but no string type
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await page.locator('#confirmButton').click();
+            expect(alertMessage).toContain('select a string type for racket #1');
+
+            // Add string type but invalid tension
+            await row.locator('.racketName').selectOption('Yonex BG 65');
+            await row.locator('.stringTension').fill('5');
+            await page.locator('#confirmButton').click();
+            expect(alertMessage).toContain('valid tension (10-35 lbs)');
+
+            // Fix tension - this should allow the form to proceed to payment
+            await row.locator('.stringTension').fill('24');
+            // Setup mock response for order creation
+            await page.route('**/api/create-order', route => route.fulfill({
+                status: 200,
+                body: JSON.stringify({ success: true, order: { order_id: 'TEST123' } })
+            }));
+            await page.locator('#confirmButton').click();
+            // Should navigate to order accepted page
+            await expect(page).toHaveURL(/order-accepted\.html/);
+        });
     });
 });
