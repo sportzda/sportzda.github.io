@@ -405,8 +405,8 @@
                                     <label for="paymentMethod" class="form-label">Payment Method</label>
                                     <select id="paymentMethod" class="form-select" required>
                                         <option value="">-- Select Payment Method --</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="Online">Online Payment</option>
+                                        <option value="online">Online Payment</option>
+                                        <option value="payatoutlet">Pay At Outlet</option>
                                     </select>
                                 </div>
 
@@ -1017,7 +1017,7 @@
                     if (row._priceEl) row._priceEl.textContent = `₹${lineTotal}`;
                 });
 
-                const onlineSelected = paymentMethodSelect.value === 'Online';
+                const onlineSelected = (paymentMethodSelect.value || '').toLowerCase() === 'online';
                 const discount = (onlineSelected && !testMode) ? 10 : 0;
                 const finalTotal = Math.max(0, total);
 
@@ -1181,7 +1181,8 @@
                 //     alert('Please accept the terms & conditions.');
                 //     return;
                 // }
-                if (!['Online', 'Cash'].includes(payload.paymentMethod)) {
+                const normalizedPaymentMethod = payload.paymentMethod?.toLowerCase() || '';
+                if (!['online', 'payatoutlet'].includes(normalizedPaymentMethod)) {
                     alert('Select a payment method.');
                     return;
                 }
@@ -1203,8 +1204,8 @@
                         return;
                     }
 
-                    // CASH flow: redirect to order accepted like before
-                    if (payload.paymentMethod === 'Cash') {
+                    // Pay at outlet flow: redirect to order accepted
+                    if (normalizedPaymentMethod === 'payatoutlet') {
                         const order = createData.order || createData.data || {};
                         const orderId = order.order_id || (createData.data && createData.data.order_id) || '';
                         const amount = (order.amount || createData.data?.amount || createData.amount || 0).toString();
