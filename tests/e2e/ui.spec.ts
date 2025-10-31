@@ -23,6 +23,23 @@ test.describe('Stringing Booking UI', () => {
         await expect(summary).toContainText(/Express/i);
     });
 
+    test('Payment dropdown order and labels', async ({ page }) => {
+        await page.goto('/stringing-booking.html?test=true');
+        const select = page.locator('#paymentMethod');
+        // First real option after placeholder should be Online Payment
+        const optionValues = await select.locator('option').allTextContents();
+        // optionValues[0] is placeholder "-- Select Payment Method --" so check next two
+        expect(optionValues.length).toBeGreaterThanOrEqual(3);
+        expect(optionValues[1].trim()).toBe('Online Payment');
+        expect(optionValues[2].trim()).toBe('Pay At Outlet');
+        // Also ensure underlying values (lowercase) exist
+        const optionAttrs = await select.locator('option').all();
+        const firstVal = await optionAttrs[1].getAttribute('value');
+        const secondVal = await optionAttrs[2].getAttribute('value');
+        expect((firstVal || '').toLowerCase()).toBe('online');
+        expect((secondVal || '').toLowerCase()).toBe('payatoutlet');
+    });
+
     test('Shows validation alerts for incomplete form', async ({ page }) => {
         await page.goto('/stringing-booking.html?test=true');
 
@@ -50,7 +67,7 @@ test.describe('Stringing Booking UI', () => {
             const val = await options[i].getAttribute('value');
             if (val && val.trim()) { await stringSelect.selectOption(val); break; }
         }
-        await page.locator('#paymentMethod').selectOption('Cash');
+        await page.locator('#paymentMethod').selectOption('payatoutlet');
     });
 
     test('Price calculation and Express fee applied', async ({ page }) => {
@@ -76,7 +93,7 @@ test.describe('Stringing Booking UI', () => {
         await expect(summaryTotal).toHaveText(/1140/);
     });
 
-    test('Backend create-order called and redirects for Cash (CORS handled)', async ({ page }) => {
+    test('Backend create-order called and redirects for Pay at outlet (CORS handled)', async ({ page }) => {
         await page.goto('/stringing-booking.html?test=true');
 
         const BACKEND_BASE = await getBackendBase(page);
@@ -107,12 +124,12 @@ test.describe('Stringing Booking UI', () => {
         });
 
         await page.locator('#storeLocation').selectOption({ index: 1 });
-        await page.locator('#customerName').fill('Cash Flow');
+        await page.locator('#customerName').fill('Pay at outlet Flow');
         await page.locator('#phone').fill('9876543210');
         const row = page.locator('.racket-row').first();
         await row.locator('.racketCustomName').fill('Test Racket');
         await row.locator('.racketName').selectOption('Yonex BG 65');
-        await page.locator('#paymentMethod').selectOption('Cash');
+        await page.locator('#paymentMethod').selectOption('payatoutlet');
 
         const confirm = page.locator('#confirmButton');
         await expect(confirm).toBeEnabled();
@@ -178,7 +195,7 @@ test.describe('Stringing Booking UI', () => {
         const row = page.locator('.racket-row').first();
         await row.locator('.racketCustomName').fill('Test Racket');
         await row.locator('.racketName').selectOption('Yonex BG 65');
-        await page.locator('#paymentMethod').selectOption('Online');
+        await page.locator('#paymentMethod').selectOption('online');
 
         const confirm = page.locator('#confirmButton');
         await expect(confirm).toBeEnabled();
@@ -220,7 +237,7 @@ test.describe('Stringing Booking UI', () => {
             // Fill everything except phone
             await page.locator('#storeLocation').selectOption({ index: 1 });
             await page.locator('#customerName').fill('Test User');
-            await page.locator('#paymentMethod').selectOption('Cash');
+            await page.locator('#paymentMethod').selectOption('payatoutlet');
             const row = page.locator('.racket-row').first();
             await row.locator('.racketCustomName').fill('Test Racket');
             await row.locator('.racketName').selectOption('Yonex BG 65');
@@ -257,7 +274,7 @@ test.describe('Stringing Booking UI', () => {
             await page.locator('#storeLocation').selectOption({ index: 1 });
             await page.locator('#customerName').fill('Test User');
             await page.locator('#phone').fill('9876543210');
-            await page.locator('#paymentMethod').selectOption('Cash');
+            await page.locator('#paymentMethod').selectOption('payatoutlet');
 
             let alertMessage = '';
             page.on('dialog', async dialog => {
@@ -291,6 +308,68 @@ test.describe('Stringing Booking UI', () => {
             await page.locator('#confirmButton').click();
             // Should navigate to order accepted page
             await expect(page).toHaveURL(/order-accepted\.html/);
+        });
+
+        test('Handles case-insensitive payment method values', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Setup basic form data
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Case Test User');
+            await page.locator('#phone').fill('9876543210');
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await row.locator('.racketName').selectOption('Yonex BG 65');
+            await row.locator('.stringTension').fill('24');
+
+            // Test different case variations for pay at outlet
+            const paymentMethodTests = [
+                'payatoutlet',
+                'PAYATOUTLET',
+                'PayAtOutlet',
+                'payAtOutlet'
+            ];
+
+            // Mock backend response
+            await page.route('**/api/create-order', route => route.fulfill({
+                status: 200,
+                body: JSON.stringify({ success: true, order: { order_id: 'TEST123' } })
+            }));
+
+            // Try each case variation
+            for (const value of paymentMethodTests) {
+                // Modify the value attribute directly using JavaScript
+                await page.evaluate((val) => {
+                    const option = document.createElement('option');
+                    option.value = val;
+                    option.text = 'Pay at outlet';
+                    const select = document.getElementById('paymentMethod');
+                    if (select) {
+                        select.innerHTML = '';
+                        select.appendChild(option);
+                    }
+                }, value);
+
+                await page.locator('#paymentMethod').selectOption(value);
+                const navPromise = page.waitForURL(/\/order-accepted\.html\?/);
+                await page.locator('#confirmButton').click();
+                await navPromise;
+
+                // Verify navigation to order accepted page
+                await expect(page).toHaveURL(/order-accepted\.html/);
+
+                // Go back to test form for next iteration
+                await page.goto('/stringing-booking.html?test=true');
+
+                // Re-fill the form
+                await page.locator('#storeLocation').selectOption({ index: 1 });
+                await page.locator('#customerName').fill('Case Test User');
+                await page.locator('#phone').fill('9876543210');
+                const testRow = page.locator('.racket-row').first();
+                await testRow.locator('.racketCustomName').fill('Test Racket');
+                await testRow.locator('.racketName').selectOption('Yonex BG 65');
+                await testRow.locator('.stringTension').fill('24');
+            }
         });
     });
 });
