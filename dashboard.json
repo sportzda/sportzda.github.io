@@ -1,0 +1,20 @@
+Connected to MongoDB
+Disconnected from MongoDB
+{
+  "generatedAt": "2025-11-01T05:16:56.176Z",
+  "period": {
+    "start": "2025-10-02T05:16:55.355Z",
+    "end": "2025-11-01T05:16:56.176Z"
+  },
+  "overview": {
+    "totalOrders": 0,
+    "totalRackets": 0,
+    "totalAmount": 0,
+    "avgOrderValue": 0,
+    "expressOrders": 0,
+    "pickupDropOrders": 0
+  },
+  "stringTypes": [],
+  "dailyTrend": [],
+  "storePerformance": []
+}
