@@ -13,7 +13,7 @@ export default defineConfig({
         video: 'retain-on-failure'
     },
     webServer: {
-        command: 'npx http-server -p 5173 -c-1 .',
+        command: 'NODE_NO_WARNINGS=1 npx http-server -p 5173 -c-1 .',
         port: 5173,
         reuseExistingServer: !process.env.CI
     }

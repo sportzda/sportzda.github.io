@@ -410,6 +410,25 @@
                                     </select>
                                 </div>
 
+                                <!-- Discount Coupon -->
+                                <div class="mb-3">
+                                    <label for="discountCoupon" class="form-label text-muted small">Have a discount
+                                        coupon?</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-sm text-uppercase"
+                                            id="discountCoupon" placeholder="Enter coupon code" maxlength="6"
+                                            pattern="^DA[0-9]*$">
+                                        <button class="btn btn-outline-secondary btn-sm" type="button"
+                                            id="applyCoupon">Apply</button>
+                                    </div>
+                                    <div id="couponFeedback" class="invalid-feedback small" style="display: none;">
+                                        Invalid coupon format
+                                    </div>
+                                    <div id="couponSuccess" class="valid-feedback small" style="display: none;">
+                                        Coupon applied successfully!
+                                    </div>
+                                </div>
+
                                 <!-- Summary -->
                                 <div class="card p-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -1030,12 +1049,21 @@
                 });
 
                 const onlineSelected = (paymentMethodSelect.value || '').toLowerCase() === 'online';
-                const discount = (onlineSelected && !testMode) ? 10 : 0;
-                const finalTotal = Math.max(0, total);
+                const onlineDiscount = (onlineSelected && !testMode) ? 10 : 0;
+
+                // Apply coupon discount if any
+                const finalTotal = Math.max(0, total - (activeCouponDiscount || 0));
 
                 summaryCountEl.textContent = count;
                 summaryTotalEl.textContent = finalTotal;
                 summaryServiceEl.textContent = expressCheckbox.checked ? 'Express (within 1 hour)' : 'Normal (within 4 hours)';
+
+                // Update coupon button state based on total
+                if (activeCouponDiscount > 0 && activeCouponDiscount > total) {
+                    showCouponFeedback(false, 'Discount amount cannot be greater than order total.');
+                    activeCouponDiscount = 0;
+                    updateAllTotals();
+                }
 
                 // Button is always enabled - validation happens on click
             }
@@ -1043,6 +1071,89 @@
             expressCheckbox.addEventListener('change', updateAllTotals);
             paymentMethodSelect.addEventListener('change', updateAllTotals);
             // acceptTerms.addEventListener('change', updateAllTotals);
+
+            // Coupon handling
+            const couponInput = document.getElementById('discountCoupon');
+            const applyCouponBtn = document.getElementById('applyCoupon');
+            const couponFeedback = document.getElementById('couponFeedback');
+            const couponSuccess = document.getElementById('couponSuccess');
+            let activeCouponDiscount = 0;
+
+            function validateCoupon(code) {
+                if (!code) return { valid: false, message: 'Please enter a coupon code.' };
+
+                // Check format: DA followed by number
+                const couponRegex = /^DA(\d+)$/;
+                const match = code.match(couponRegex);
+                if (!match) {
+                    return {
+                        valid: false,
+                        message: 'Invalid coupon format. Coupon should start with DA followed by a number (e.g., DA100).'
+                    };
+                }
+
+                // Parse amount and validate
+                const amount = parseInt(match[1], 10);
+                if (isNaN(amount) || amount === 0) {
+                    return { valid: false, message: 'Invalid discount amount.' };
+                }
+
+                // Check if multiple of 50
+                if (amount % 50 !== 0) {
+                    return { valid: false, message: 'Discount amount must be a multiple of 50.' };
+                }
+
+                // Check maximum amount
+                if (amount > 500) {
+                    return { valid: false, message: 'Maximum discount amount is 500.' };
+                }
+
+                return { valid: true, amount, message: `Coupon applied! ₹${amount} discount is applied to your order.` };
+            }
+
+            function showCouponFeedback(isValid, message) {
+                couponFeedback.style.display = isValid ? 'none' : 'block';
+                couponSuccess.style.display = isValid ? 'block' : 'none';
+                if (!isValid) {
+                    couponFeedback.textContent = message || 'Invalid coupon';
+                    couponInput.classList.add('is-invalid');
+                    couponInput.classList.remove('is-valid');
+                } else {
+                    couponSuccess.textContent = message || 'Coupon applied successfully!';
+                    couponInput.classList.add('is-valid');
+                    couponInput.classList.remove('is-invalid');
+                }
+            }
+
+            applyCouponBtn.addEventListener('click', function () {
+                const code = couponInput.value.trim();
+                if (!code) {
+                    showCouponFeedback(false, 'Please enter a coupon code.');
+                    return;
+                }
+
+                const { valid, amount } = validateCoupon(code);
+                if (!valid) {
+                    showCouponFeedback(false);
+                    activeCouponDiscount = 0;
+                } else if (amount <= 0 || amount > 200) {
+                    showCouponFeedback(false, 'Invalid discount amount. Must be between 1 and 200.');
+                    activeCouponDiscount = 0;
+                } else {
+                    activeCouponDiscount = amount;
+                    showCouponFeedback(true, `Coupon applied! ₹${amount} discount will be applied to your order.`);
+                }
+                updateAllTotals();
+            });
+
+            couponInput.addEventListener('input', function () {
+                couponInput.classList.remove('is-invalid', 'is-valid');
+                couponFeedback.style.display = 'none';
+                couponSuccess.style.display = 'none';
+                activeCouponDiscount = 0;
+                updateAllTotals();
+            });
+
             addInitialRow();
 
             function validPhone(phone) {
@@ -1102,6 +1213,15 @@
                     }
                 });
 
+                // Calculate original total before discounts
+                const originalTotal = racketDetails.reduce((sum, item) => {
+                    return sum + (item.cost + (expressCheckbox.checked ? 20 : 0)) * item.qty;
+                }, 0);
+
+                // Get coupon details if applied
+                const appliedCoupon = couponInput.value.trim();
+                const { amount: couponAmount = 0 } = appliedCoupon ? validateCoupon(appliedCoupon) : { amount: 0 };
+
                 return {
                     customerName: nameInput.value.trim(),
                     phone: phoneInput.value.replace(/\D/g, '').trim(),
@@ -1110,7 +1230,16 @@
                     express: expressCheckbox.checked,
                     paymentMethod: paymentMethodSelect.value,
                     pickupDrop: document.getElementById('pickupDrop')?.checked || false,
-                    testMode: testMode
+                    testMode: testMode,
+                    // Add payment calculation details
+                    payment: {
+                        originalAmount: originalTotal,
+                        discount: {
+                            couponCode: appliedCoupon || null,
+                            couponDiscount: couponAmount || 0
+                        },
+                        finalAmount: Math.max(0, originalTotal - (couponAmount || 0))
+                    }
                 };
             }
 

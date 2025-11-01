@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const EXPRESS_SURCHARGE = 20;
     const ONLINE_DISCOUNT = 10;
 
+    // Track current discount
+    let currentDiscount = {
+        code: '',
+        amount: 0
+    };
+
     const racketsContainer = document.getElementById("racketsContainer");
     const addRacketBtn = document.getElementById("addRacketBtn");
     const removeRacketBtn = document.getElementById("removeRacketBtn");
@@ -212,6 +218,69 @@ document.addEventListener("DOMContentLoaded", function () {
         updateSummary();
     });
 
+    // Handle discount coupon
+    const couponInput = document.getElementById('discountCoupon');
+    const applyButton = document.getElementById('applyCoupon');
+    const couponFeedback = document.getElementById('couponFeedback');
+    const couponSuccess = document.getElementById('couponSuccess');
+
+    function validateCoupon(code) {
+        // Must start with DA followed by a number that's multiple of 50
+        const match = code.match(/^DA(\d+)$/);
+        if (!match) return { valid: false, message: 'Invalid coupon format. Coupon should start with DA followed by a number.' };
+
+        const amount = parseInt(match[1], 10);
+        if (isNaN(amount) || amount === 0) {
+            return { valid: false, message: 'Invalid discount amount.' };
+        }
+
+        if (amount % 50 !== 0) {
+            return { valid: false, message: 'Discount amount must be a multiple of 50.' };
+        }
+
+        if (amount > 500) {
+            return { valid: false, message: 'Maximum discount amount is 500.' };
+        }
+
+        return { valid: true, amount };
+    }
+
+    function showCouponError(message) {
+        couponFeedback.textContent = message;
+        couponFeedback.style.display = 'block';
+        couponSuccess.style.display = 'none';
+        currentDiscount = { code: '', amount: 0 };
+    }
+
+    function showCouponSuccess(amount) {
+        couponSuccess.textContent = `Coupon applied! ₹${amount} discount will be applied to your order.`;
+        couponSuccess.style.display = 'block';
+        couponFeedback.style.display = 'none';
+    }
+
+    applyButton.addEventListener('click', () => {
+        const code = couponInput.value.trim().toUpperCase();
+        const result = validateCoupon(code);
+
+        if (result.valid) {
+            currentDiscount = { code, amount: result.amount };
+            showCouponSuccess(result.amount);
+        } else {
+            showCouponError(result.message);
+        }
+
+        updateSummary();
+    });
+
+    couponInput.addEventListener('input', () => {
+        couponFeedback.style.display = 'none';
+        couponSuccess.style.display = 'none';
+        if (!couponInput.value.trim()) {
+            currentDiscount = { code: '', amount: 0 };
+            updateSummary();
+        }
+    });
+
     // update summary when express / payment / pickup changed
     expressService.addEventListener("change", updateSummary);
     paymentMethod.addEventListener("change", updateSummary);
@@ -253,6 +322,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Apply online payment discount once per order
         if (paymentMethod.value === "Online" && total > 0) total -= ONLINE_DISCOUNT;
+
+        // Apply coupon discount if any
+        if (currentDiscount.amount > 0) {
+            total -= currentDiscount.amount;
+        }
 
         if (total < 0) total = 0;
 
@@ -334,6 +408,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const pickupNote = (pickupDrop && pickupDrop.checked)
             ? "Yes (porter; charges borne by customer)"
             : "No";
+        const discountNote = currentDiscount.amount > 0
+            ? `Applied coupon ${currentDiscount.code} (-₹${currentDiscount.amount})`
+            : "No coupon applied";
 
         const msgLines = [
             "🎽 New Stringing Order — DA SPORTZ",
@@ -343,6 +420,7 @@ document.addEventListener("DOMContentLoaded", function () {
             `• Service: ${serviceTime}`,
             `• Pickup & Drop: ${pickupNote}`,
             `• Payment (online discount applies): ${onlineNote}`,
+            `• Discount: ${discountNote}`,
             `• Total: ₹${total}`,
             "• Racket details:"
         ].concat(orderLines);
