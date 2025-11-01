@@ -9,6 +9,193 @@ async function getBackendBase(page: Page): Promise<string> {
 }
 
 test.describe('Stringing Booking UI', () => {
+    test.describe('Discount Coupon Tests', () => {
+        test('validates coupon format requirements', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Fill required fields first
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Test User');
+            await page.locator('#phone').fill('9876543210');
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await row.locator('.racketName').selectOption('Yonex BG 65');
+            await row.locator('.stringTension').fill('24');
+
+            const couponInput = page.locator('#discountCoupon');
+            const applyButton = page.locator('#applyCoupon');
+            const feedback = page.locator('#couponFeedback');
+
+            // Test invalid formats
+            const invalidCoupons = [
+                'ABC123',  // Wrong prefix
+                '123456',  // No prefix
+                'DA',      // No amount
+                'DAabc',   // Non-numeric amount
+                'DA0',     // Zero amount
+                'DA-100',  // Negative amount
+                'DA1001',  // Amount too high
+                'DA44',    // Not multiple of 50
+                'DA75',    // Not multiple of 50
+                'DA125'    // Not multiple of 50
+            ];
+
+            for (const invalid of invalidCoupons) {
+                await couponInput.fill(invalid);
+                await applyButton.click();
+                await expect(feedback).toBeVisible();
+                await expect(feedback).toHaveClass(/invalid-feedback/);
+                await expect(feedback).toContainText(/Invalid coupon/);
+            }
+        });
+
+        test('applies valid discount amounts', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Setup base order
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Discount Test');
+            await page.locator('#phone').fill('9876543210');
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await row.locator('.racketName').selectOption('Yonex BG 65'); // Base price 550
+            await row.locator('.stringTension').fill('24');
+
+            const couponInput = page.locator('#discountCoupon');
+            const applyButton = page.locator('#applyCoupon');
+            const summaryTotal = page.locator('#summaryTotal');
+
+            // Test different discount amounts (only multiples of 50)
+            const testCases = [
+                { coupon: 'DA50', expectedTotal: '500' },    // 550 - 50
+                { coupon: 'DA100', expectedTotal: '450' },   // 550 - 100
+                { coupon: 'DA150', expectedTotal: '400' },   // 550 - 150
+                { coupon: 'DA200', expectedTotal: '350' }    // 550 - 200
+            ];
+
+            for (const { coupon, expectedTotal } of testCases) {
+                await couponInput.fill(coupon);
+                await applyButton.click();
+
+                const successMessage = page.locator('#couponSuccess');
+                await expect(successMessage).toHaveClass(/valid-feedback/);
+                await expect(successMessage).toContainText(/Coupon applied/i);
+                await expect(summaryTotal).toHaveText(expectedTotal);
+
+                // Clear for next test
+                await couponInput.fill('');
+                await couponInput.press('Tab');
+                await expect(summaryTotal).toHaveText('550'); // Verify reset to original
+            }
+        });
+
+        test('combines discount with express service fee', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Setup order with express service
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Express Test');
+            await page.locator('#phone').fill('9876543210');
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await row.locator('.racketName').selectOption('Yonex BG 65'); // Base 550
+            await row.locator('.stringTension').fill('24');
+
+            // Enable express service (+20)
+            await page.locator('#expressService').check();
+            await expect(page.locator('#summaryTotal')).toHaveText('570');
+
+            // Apply discount
+            await page.locator('#discountCoupon').fill('DA100');
+            await page.locator('#applyCoupon').click();
+
+            // Verify final amount (570 - 100 = 470)
+            await expect(page.locator('#summaryTotal')).toHaveText('470');
+        });
+
+        test('applies discount to multiple rackets', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            // Setup base order with two rackets
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Multi Racket');
+            await page.locator('#phone').fill('9876543210');
+
+            // First racket - BG 65 (550)
+            const row1 = page.locator('.racket-row').first();
+            await row1.locator('.racketCustomName').fill('Racket 1');
+            await row1.locator('.racketName').selectOption('Yonex BG 65');
+            await row1.locator('.stringTension').fill('24');
+
+            // Add second racket - BG 80 (700)
+            await page.locator('#addRacketBtn').click();
+            const row2 = page.locator('.racket-row').nth(1);
+            await row2.locator('.racketCustomName').fill('Racket 2');
+            await row2.locator('.racketName').selectOption('Yonex BG 80');
+            await row2.locator('.stringTension').fill('25');
+
+            // Verify initial total (550 + 700 = 1250)
+            await expect(page.locator('#summaryTotal')).toHaveText('1250');
+
+            // Apply discount
+            await page.locator('#discountCoupon').fill('DA200');
+            await page.locator('#applyCoupon').click();
+
+            // Verify final amount (1250 - 200 = 1050)
+            await expect(page.locator('#summaryTotal')).toHaveText('1050');
+        });
+
+        test('verifies discount in backend payload', async ({ page }) => {
+            await page.goto('/stringing-booking.html?test=true');
+
+            const BACKEND_BASE = await getBackendBase(page);
+            let orderPayload: any = null;
+
+            // Intercept create-order request
+            await page.route(`${BACKEND_BASE}/api/create-order`, async route => {
+                const request = route.request();
+                orderPayload = JSON.parse(await request.postData() || '{}');
+                await route.fulfill({
+                    status: 200,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: JSON.stringify({
+                        success: true,
+                        order: { order_id: 'TEST123' }
+                    })
+                });
+            });
+
+            // Setup order with discount
+            await page.locator('#storeLocation').selectOption({ index: 1 });
+            await page.locator('#customerName').fill('Payload Test');
+            await page.locator('#phone').fill('9876543210');
+            const row = page.locator('.racket-row').first();
+            await row.locator('.racketCustomName').fill('Test Racket');
+            await row.locator('.racketName').selectOption('Yonex BG 65');
+            await row.locator('.stringTension').fill('24');
+
+            // Apply discount
+            await page.locator('#discountCoupon').fill('DA100');
+            await page.locator('#applyCoupon').click();
+
+            // Submit order
+            await page.locator('#paymentMethod').selectOption('payatoutlet');
+            await page.locator('#confirmButton').click();
+
+            // Verify payload
+            expect(orderPayload.payment).toBeDefined();
+            expect(orderPayload.payment.originalAmount).toBe(550);
+            expect(orderPayload.payment.discount).toEqual({
+                couponCode: 'DA100',
+                couponDiscount: 100
+            });
+            expect(orderPayload.payment.finalAmount).toBe(450);
+        });
+    });
+
     test('Express toggle updates summary text', async ({ page }) => {
         await page.goto('/stringing-booking.html?test=true');
 
