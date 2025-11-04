@@ -218,7 +218,7 @@ test.describe('Stringing Booking UI', () => {
         // optionValues[0] is placeholder "-- Select Payment Method --" so check next two
         expect(optionValues.length).toBeGreaterThanOrEqual(3);
         expect(optionValues[1].trim()).toBe('Online Payment');
-        expect(optionValues[2].trim()).toBe('Pay At Outlet');
+        expect(optionValues[2].trim()).toBe('Cash');
         // Also ensure underlying values (lowercase) exist
         const optionAttrs = await select.locator('option').all();
         const firstVal = await optionAttrs[1].getAttribute('value');
