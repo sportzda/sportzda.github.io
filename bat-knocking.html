@@ -11,7 +11,7 @@
     </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>String My Racket | DA SPORTZ</title>
+    <title>Cricket Bat Machine Knocking | DA SPORTZ</title>
 
     <!-- Bootstrap and Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -20,7 +20,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        /* === KEEP SITE THEME / COLORS / FONTS (unchanged) === */
+        /* === SITE THEME / COLORS / FONTS === */
         :root {
             --primary-color: #1f1f1f;
             --accent-color: #ff5900;
@@ -186,21 +186,16 @@
             color: var(--accent-color);
         }
 
-        /* small helpers */
         .muted {
             color: #6c6c6c;
             font-size: .95rem;
         }
 
-        .racket-card {
+        .bat-card {
             border-radius: 10px;
             border: 1px solid #eee;
             padding: 12px;
             background: #fff;
-        }
-
-        .remove-racket {
-            font-size: 0.9rem;
         }
 
         @media (max-width: 768px) {
@@ -209,7 +204,7 @@
             }
 
             .section-title {
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
         }
 
@@ -253,20 +248,9 @@
             cursor: pointer;
         }
 
-        .conditions input[type="checkbox"]:not(:checked)+label {
-            color: var(--accent-color);
-        }
-
         .small-muted {
             font-size: 0.9rem;
             color: #6c6c6c;
-        }
-
-        /* Brand groups in select */
-        .brand-group {
-            font-weight: 600;
-            color: var(--accent-color);
-            background-color: #f8f9fa;
         }
 
         /* Test mode indicator */
@@ -286,14 +270,14 @@
 </head>
 
 <body>
-    <!-- Test Mode Indicator (will be shown only in test mode) -->
+    <!-- Test Mode Indicator -->
     <div id="testModeIndicator" class="test-mode-indicator" style="display: none;">
         TEST MODE ENABLED
     </div>
 
     <!-- Offer Bar -->
     <div class="offer-bar text-center py-2">
-        🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
+        🏏 Professional Cricket Bat Machine Knocking Service | Get your bat match-ready! 🏏
     </div>
 
     <!-- Top Bar -->
@@ -326,8 +310,10 @@
                             About</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.html#contact"><i
                                 class="bi bi-envelope-open"></i> Contact</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="stringing-booking.html"><i
+                    <li class="nav-item"><a class="nav-link" href="stringing-booking.html"><i
                                 class="bi bi-activity"></i> String My Racket</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="bat-knocking.html"><i
+                                class="bi bi-hammer"></i> Bat Knocking</a></li>
                 </ul>
             </div>
         </div>
@@ -340,11 +326,12 @@
                 <div class="col-lg-8">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h2 class="section-title mb-1">🏸 String My Racket</h2>
-                            <p class="muted mb-3">📲 Get live updates on your racket stringing — from start to finish!
+                            <h2 class="section-title mb-1">🏏 Cricket Bat Machine Knocking</h2>
+                            <p class="muted mb-3">🏏 Get your bat match-ready with professional machine knocking
+                                service!
                             </p>
 
-                            <form id="stringForm" novalidate>
+                            <form id="batKnockingForm" novalidate>
                                 <!-- Store Select -->
                                 <div class="mb-3">
                                     <label for="storeLocation" class="form-label">Select Store</label>
@@ -375,24 +362,16 @@
 
                                 <hr />
 
-                                <!-- Rackets List (dynamic) -->
-                                <div id="racketsContainer"></div>
+                                <!-- Bats List (dynamic) -->
+                                <div id="batsContainer"></div>
 
                                 <div class="d-flex gap-2 mb-3">
-                                    <button type="button" id="addRacketBtn" class="btn btn-outline-dark btn-sm">
-                                        + Add Another Racket
+                                    <button type="button" id="addBatBtn" class="btn btn-outline-dark btn-sm">
+                                        + Add Another Bat
                                     </button>
-                                    <button type="button" id="removeRacketBtn" class="btn btn-outline-danger btn-sm">
-                                        - Remove Last Racket
+                                    <button type="button" id="removeBatBtn" class="btn btn-outline-danger btn-sm">
+                                        - Remove Last Bat
                                     </button>
-                                </div>
-
-                                <!-- Express Service -->
-                                <div class="form-check mb-3">
-                                    <input class="form-check-input" type="checkbox" id="expressService">
-                                    <label class="form-check-label" for="expressService">
-                                        Express Service (Within 1 hour) — ₹20 extra
-                                    </label>
                                 </div>
 
                                 <!-- Pickup & Drop -->
@@ -436,8 +415,7 @@
                                 <div class="card p-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
-                                            <strong id="summaryCount">0</strong> racket(s) •
-                                            <span id="summaryService">Normal (within 4 hours)</span>
+                                            <strong id="summaryCount">0</strong> bat(s)
                                         </div>
                                         <div>
                                             <strong>Total: ₹<span id="summaryTotal">0</span></strong>
@@ -449,7 +427,7 @@
                                         when:
                                         <ul class="mb-0 mt-1 ps-3" style="font-size: 0.8rem;">
                                             <li>Order is confirmed</li>
-                                            <li>Stringing service starts</li>
+                                            <li>Knocking service starts</li>
                                             <li>Service is completed</li>
                                             <li>Ready for pickup</li>
                                         </ul>
@@ -461,28 +439,40 @@
                                     <h5>Important Service Notes</h5>
 
                                     <ul>
-                                        <li><strong>⚡ Safety:</strong> We handle your racket with utmost care. Weak or
-                                            old rackets may break; <strong>we cannot replace them</strong>.</li>
+                                        <li><strong>🏏 Service Details:</strong> Professional machine knocking service
+                                            to prepare your bat for match play. Service duration: <strong>3-5
+                                                days</strong> depending on the package selected.</li>
 
-                                        <li><strong>⏱ Service Time:</strong> Normal: <strong>~4 hours</strong>. Busy
-                                            periods may take longer. <strong>Real-time updates</strong> will be
-                                            provided.</li>
+                                        <li><strong>⚡ Safety:</strong> We handle your bat with utmost care. However,
+                                            bats with existing cracks or damage may not be suitable for knocking.
+                                            <strong>We cannot be held responsible for pre-existing defects.</strong>
+                                        </li>
 
-                                        <li><strong>💰 Pricing:</strong> Labour: <strong>₹100 per racket</strong>.
-                                            Express service: <strong>+₹20 per racket</strong>. Confirm <strong>tension &
-                                                string choice</strong> before stringing.</li>
+                                        <li><strong>💰 Pricing:</strong>
+                                            <ul>
+                                                <li>10,000 balls: ₹800 (25 minutes)</li>
+                                                <li>15,000 balls: ₹1,100 (40 minutes)</li>
+                                                <li>20,000 balls: ₹1,500 (50 minutes)</li>
+                                                <li>25,000 balls: ₹1,800 (65 minutes)</li>
+                                                <li>30,000 balls: ₹2,000 (75 minutes)</li>
+                                            </ul>
+                                        </li>
 
                                         <li><strong>📦 Pickup & Storage:</strong> Collect within <strong>7 days</strong>
-                                            to avoid storage charges. Pickup/Drop via porter is extra. <strong>We are
-                                                not responsible for damage during transit.</strong></li>
+                                            after completion to avoid storage charges. Pickup/Drop via porter is extra.
+                                            <strong>We are
+                                                not responsible for damage during transit.</strong>
+                                        </li>
+
+                                        <li><strong>🎯 Post-Service:</strong> After knocking, apply linseed oil
+                                            regularly and allow the bat to rest for 24-48 hours before use.</li>
                                     </ul>
                                 </div>
 
                                 <p style="font-size:0.9rem; color:#555;">
-                                    By clicking “Place Order,” you confirm you’ve read and agree to our
+                                    By clicking "Pay Now," you confirm you've read and agree to our
                                     <a href="#service-notes" style="color:#007bff;">service notes</a>.
                                 </p>
-
 
                                 <button id="confirmButton" type="button" class="btn-custom w-100">
                                     Pay Now
@@ -493,308 +483,61 @@
                 </div>
             </div>
 
-            <!-- Collapsible Price Table -->
+            <!-- Collapsible Pricing Table -->
             <div class="text-center mt-5">
                 <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#priceTable">
-                    View All String Options & Pricing
+                    data-bs-target="#pricingTable">
+                    View Knocking Packages & Pricing
                 </button>
             </div>
 
-            <div class="collapse mt-3" id="priceTable">
+            <div class="collapse mt-3" id="pricingTable">
                 <div class="card card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered align-middle">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Brand</th>
-                                    <th>String</th>
-                                    <th>Type</th>
-                                    <th>String Cost</th>
-                                    <th>Labour</th>
-                                    <th>Total</th>
+                                    <th>Package</th>
+                                    <th>Number of Balls</th>
+                                    <th>Service Duration</th>
+                                    <th>Price</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- YONEX -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">YONEX</td>
+                                <tr>
+                                    <td>Basic</td>
+                                    <td>10,000 balls</td>
+                                    <td>25 minutes</td>
+                                    <td><strong>₹800</strong></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td>BG 65</td>
-                                    <td>Durability</td>
-                                    <td>₹450</td>
-                                    <td>₹100</td>
-                                    <td>₹550</td>
+                                    <td>Standard</td>
+                                    <td>15,000 balls</td>
+                                    <td>40 minutes</td>
+                                    <td><strong>₹1,100</strong></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td>BG 65 Titanium</td>
-                                    <td>All-Round</td>
-                                    <td>₹500</td>
-                                    <td>₹100</td>
-                                    <td>₹600</td>
+                                    <td>Premium</td>
+                                    <td>20,000 balls</td>
+                                    <td>50 minutes</td>
+                                    <td><strong>₹1,500</strong></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td>BG 80</td>
-                                    <td>Power</td>
-                                    <td>₹600</td>
-                                    <td>₹100</td>
-                                    <td>₹700</td>
+                                    <td>Elite</td>
+                                    <td>25,000 balls</td>
+                                    <td>65 minutes</td>
+                                    <td><strong>₹1,800</strong></td>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td>BG 80 Power</td>
-                                    <td>Power</td>
-                                    <td>₹800</td>
-                                    <td>₹100</td>
-                                    <td>₹900</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>BG 66 Ultimax</td>
-                                    <td>Repulsion</td>
-                                    <td>₹800</td>
-                                    <td>₹100</td>
-                                    <td>₹900</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Nanogy 95</td>
-                                    <td>Durability</td>
-                                    <td>₹700</td>
-                                    <td>₹100</td>
-                                    <td>₹800</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>AEROBITE</td>
-                                    <td>Control (Hybrid)</td>
-                                    <td>₹800</td>
-                                    <td>₹100</td>
-                                    <td>₹900</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>AeroBite Boost</td>
-                                    <td>Control/Spin</td>
-                                    <td>₹1000</td>
-                                    <td>₹100</td>
-                                    <td>₹1100</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>BG6</td>
-                                    <td>Soft feel, Decent Repulsion, and Durability</td>
-                                    <td>₹350</td>
-                                    <td>₹100</td>
-                                    <td>₹450</td>
-                                </tr>
-
-                                <!-- LI-NING -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">LI-NING</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>No.1</td>
-                                    <td>All-Round</td>
-                                    <td>₹450</td>
-                                    <td>₹100</td>
-                                    <td>₹550</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>No.1 Boost</td>
-                                    <td>All-Round</td>
-                                    <td>₹800</td>
-                                    <td>₹100</td>
-                                    <td>₹900</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>No.7</td>
-                                    <td>Repulsion</td>
-                                    <td>₹400</td>
-                                    <td>₹100</td>
-                                    <td>₹500</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>No.7 Boost</td>
-                                    <td>Repulsion</td>
-                                    <td>₹650</td>
-                                    <td>₹100</td>
-                                    <td>₹750</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>NS95</td>
-                                    <td>Control</td>
-                                    <td>₹750</td>
-                                    <td>₹100</td>
-                                    <td>₹850</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>NS50</td>
-                                    <td>All-Round</td>
-                                    <td>₹550</td>
-                                    <td>₹100</td>
-                                    <td>₹650</td>
-                                </tr>
-
-                                <!-- HUNDRED -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">HUNDRED</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Power</td>
-                                    <td>Power</td>
-                                    <td>₹300</td>
-                                    <td>₹100</td>
-                                    <td>₹400</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Control</td>
-                                    <td>Control</td>
-                                    <td>₹350</td>
-                                    <td>₹100</td>
-                                    <td>₹450</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Pro</td>
-                                    <td>All-Round</td>
-                                    <td>₹380</td>
-                                    <td>₹100</td>
-                                    <td>₹480</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>JP 65</td>
-                                    <td>All-Round</td>
-                                    <td>₹800</td>
-                                    <td>₹100</td>
-                                    <td>₹900</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>JP 65 Magnite</td>
-                                    <td>Durability</td>
-                                    <td>₹650</td>
-                                    <td>₹100</td>
-                                    <td>₹750</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>66X Boost</td>
-                                    <td>Repulsion</td>
-                                    <td>₹570</td>
-                                    <td>₹100</td>
-                                    <td>₹670</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>70X Boost</td>
-                                    <td>Power</td>
-                                    <td>₹500</td>
-                                    <td>₹100</td>
-                                    <td>₹600</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Z63</td>
-                                    <td>Control</td>
-                                    <td>₹600</td>
-                                    <td>₹100</td>
-                                    <td>₹700</td>
-                                </tr>
-
-                                <!-- KIZUNA -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">KIZUNA</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>D66 Lusty</td>
-                                    <td>All-Round</td>
-                                    <td>₹350</td>
-                                    <td>₹100</td>
-                                    <td>₹450</td>
-                                </tr>
-
-                                <!-- HEAD TENNIS -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">HEAD TENNIS</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Master 300</td>
-                                    <td>All-Round</td>
-                                    <td>₹450</td>
-                                    <td>₹100</td>
-                                    <td>₹550</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Head Sonic Pro</td>
-                                    <td>Control, spin, comfort</td>
-                                    <td>₹850</td>
-                                    <td>₹250</td>
-                                    <td>₹1100</td>
-                                </tr>
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">Babolat</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Babolat RPM Blast</td>
-                                    <td>Durable, Spin, control</td>
-                                    <td>₹950</td>
-                                    <td>₹250</td>
-                                    <td>₹1200</td>
-                                </tr>
-                                <!-- GRAVITY -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">GRAVITY</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Gravity-GR 65</td>
-                                    <td>Durable</td>
-                                    <td>₹200</td>
-                                    <td>₹100</td>
-                                    <td>₹300</td>
-                                </tr>
-                                <!-- BYOS (Bring Your Own String) -->
-                                <tr class="table-secondary">
-                                    <td colspan="6" class="fw-bold">BYOS (Bring Your Own String)</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Tennis String</td>
-                                    <td>--</td>
-                                    <td>--</td>
-                                    <td>₹300</td>
-                                    <td>₹300</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>Badminton String</td>
-                                    <td>--</td>
-                                    <td>--</td>
-                                    <td>₹200</td>
-                                    <td>₹200</td>
+                                    <td>Professional</td>
+                                    <td>30,000 balls</td>
+                                    <td>75 minutes</td>
+                                    <td><strong>₹2,000</strong></td>
                                 </tr>
                             </tbody>
                         </table>
-                        <p class="muted small mt-3 mb-0">Normal service: within 4 hours. Express service: within 1 hour
-                            (+₹20).</p>
+                        <p class="muted small mt-3 mb-0">All prices are inclusive of machine knocking service. Pickup &
+                            Drop charges extra if opted.</p>
                     </div>
                 </div>
             </div>
@@ -837,140 +580,116 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
 
-    <!-- Zoho widget + payment handling script (replace existing payment script) -->
+    <!-- Zoho widget + payment handling script -->
     <script src="https://static.zohocdn.com/zpay/zpay-js/v1/zpayments.js"></script>
     <script>
         (function () {
             const BACKEND_BASE = 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
-
-            // ---------- IMPORTANT: put your Zoho widget/API key here ----------
-            // You can also change code to receive this from your server as zpayConfig.otherOptions.api_key
             const ZOHO_WIDGET_API_KEY = '1003.b03980822c145cb80d00b97288514519.783c4164ef793ebfbe77bf1098160aad';
 
             // Check if test mode is enabled via URL parameter
             const urlParams = new URLSearchParams(window.location.search);
             const testMode = urlParams.get('test') === 'true';
 
-            // Show test mode indicator if enabled
             if (testMode) {
                 document.getElementById('testModeIndicator').style.display = 'block';
             }
 
-            /* ---------- Price map (same as before) ---------- */
+            /* ---------- Price map for knocking packages ---------- */
             const PRICE_MAP = {
-                "Yonex BG 65": 550, "Yonex BG 65 Titanium": 600, "Yonex BG 80": 700, "Yonex BG 80 Power": 900,
-                "Yonex BG 66 Ultimax": 900, "Yonex Nanogy 95": 800, "Yonex AEROBITE": 900, "Yonex AeroBite Boost": 1100,
-                "Yonex BG Ultimax": 800,
-                "Yonex BG6": 450,
-                "Li-Ning No.1": 550, "Li-Ning No.7": 500, "Li-Ning NS95": 850, "Li-Ning No.1 Boost": 900,
-                "Li-Ning NS50 (680)": 680, "Li-Ning No.7 Boost": 750, "Li-Ning NS50 (650)": 650,
-                "Hundred Power": 400, "Hundred Control": 450, "Hundred Pro": 480, "Hundred JP 65 Magnite": 750,
-                "Hundred 66X Boost": 670, "Hundred JP 65": 900, "Hundred 70X Boost": 600, "Hundred Z63": 700,
-                "KIZUNA D66 Lusty": 450, "Head Master 300": 300, "Gravity-GR 65": 300, "Babolat RPM Blast": 1100,
-                "Head Sonic Pro": 1200, "Tennis String": 300, "Badminton String": 200
+                "10000": 800,
+                "15000": 1100,
+                "20000": 1500,
+                "25000": 1800,
+                "30000": 2000
             };
 
             // Add test product if in test mode
             if (testMode) {
-                PRICE_MAP["TEST STRING (TEST MODE ONLY)"] = 0.1;
+                PRICE_MAP["100"] = 1;
             }
 
-            /* ---------- DOM refs (unchanged) ---------- */
-            const racketsContainer = document.getElementById('racketsContainer');
-            const addBtn = document.getElementById('addRacketBtn');
-            const removeBtn = document.getElementById('removeRacketBtn');
+            /* ---------- DOM refs ---------- */
+            const batsContainer = document.getElementById('batsContainer');
+            const addBtn = document.getElementById('addBatBtn');
+            const removeBtn = document.getElementById('removeBatBtn');
             const summaryCountEl = document.getElementById('summaryCount');
             const summaryTotalEl = document.getElementById('summaryTotal');
-            const expressCheckbox = document.getElementById('expressService');
             const paymentMethodSelect = document.getElementById('paymentMethod');
-            // const acceptTerms = document.getElementById('acceptTerms');
             const confirmButton = document.getElementById('confirmButton');
             const storeSelect = document.getElementById('storeLocation');
             const nameInput = document.getElementById('customerName');
             const phoneInput = document.getElementById('phone');
-            const summaryServiceEl = document.getElementById('summaryService');
+            const pickupDrop = document.getElementById('pickupDrop');
 
-            /* ---------- small helpers (same as before) ---------- */
-            function createStringSelect(selected = '') {
+            /* ---------- Create package select dropdown ---------- */
+            function createPackageSelect(selected = '') {
                 const select = document.createElement('select');
-                select.className = 'form-select form-select-sm racketName';
+                select.className = 'form-select form-select-sm packageType';
                 select.required = true;
+
                 const placeholder = document.createElement('option');
                 placeholder.value = '';
-                placeholder.textContent = '-- Select String --';
+                placeholder.textContent = '-- Select Package --';
                 select.appendChild(placeholder);
 
-                const brands = {
-                    'YONEX': [
-                        'Yonex BG 65', 'Yonex BG 65 Titanium', 'Yonex BG 80', 'Yonex BG 80 Power',
-                        'Yonex BG 66 Ultimax', 'Yonex BG6', 'Yonex Nanogy 95', 'Yonex AEROBITE', 'Yonex AeroBite Boost'
-                    ],
-                    'LI-NING': [
-                        'Li-Ning No.1', 'Li-Ning No.1 Boost', 'Li-Ning No.7', 'Li-Ning No.7 Boost',
-                        'Li-Ning NS95', 'Li-Ning NS50 (680)'
-                    ],
-                    'HUNDRED': [
-                        'Hundred Power', 'Hundred Control', 'Hundred Pro', 'Hundred JP 65',
-                        'Hundred JP 65 Magnite', 'Hundred 66X Boost', 'Hundred 70X Boost', 'Hundred Z63'
-                    ],
-                    'KIZUNA': ['KIZUNA D66 Lusty'],
-                    'HEAD TENNIS': ['Head Master 300', "Head Sonic Pro"],
-                    'BABOLAT': ['Babolat RPM Blast'],
-                    'GRAVITY': ['Gravity-GR 65'],
-                    'BYOS (Bring Your Own String)': ['Tennis String', 'Badminton String']
-                };
+                const packages = [
+                    { balls: '10000', name: 'Basic (10,000 balls)', price: 800 },
+                    { balls: '15000', name: 'Standard (15,000 balls)', price: 1100 },
+                    { balls: '20000', name: 'Premium (20,000 balls)', price: 1500 },
+                    { balls: '25000', name: 'Elite (25,000 balls)', price: 1800 },
+                    { balls: '30000', name: 'Professional (30,000 balls)', price: 2000 }
+                ];
 
-                // Add test brand if in test mode
                 if (testMode) {
-                    brands['TEST MODE'] = ['TEST STRING (TEST MODE ONLY)'];
+                    packages.unshift({ balls: '100', name: 'TEST PACKAGE (100 balls)', price: 1 });
                 }
 
-                Object.keys(brands).forEach(brandName => {
-                    const optgroup = document.createElement('optgroup');
-                    optgroup.label = brandName;
-                    optgroup.className = 'brand-group';
-                    brands[brandName].forEach(stringName => {
-                        const opt = document.createElement('option');
-                        opt.value = stringName;
-                        opt.textContent = `${stringName.replace(brandName.split(' ')[0] + ' ', '')} — ₹${PRICE_MAP[stringName] || ''}`;
-                        if (stringName === selected) opt.selected = true;
-                        optgroup.appendChild(opt);
-                    });
-                    select.appendChild(optgroup);
+                packages.forEach(pkg => {
+                    const opt = document.createElement('option');
+                    opt.value = pkg.balls;
+                    opt.textContent = `${pkg.name} — ₹${pkg.price}`;
+                    if (pkg.balls === selected) opt.selected = true;
+                    select.appendChild(opt);
                 });
+
                 return select;
             }
 
-            // Updated createRacketRow to handle prefill properly
-            function createRacketRow(prefill = {}) {
+            /* ---------- Create bat row ---------- */
+            function createBatRow(prefill = {}) {
                 const row = document.createElement('div');
-                row.className = 'racket-row racket-card mb-3 d-flex flex-wrap align-items-end gap-2';
+                row.className = 'bat-card mb-3 p-3';
 
-                // Racket Name
+                // Bat Model Name
                 const col0 = document.createElement('div');
-                col0.style.flex = '1 1 220px';
+                col0.className = 'mb-2';
                 const label0 = document.createElement('label');
                 label0.className = 'form-label small mb-1';
-                label0.textContent = 'Racket Name *';
+                label0.textContent = 'Bat Model *';
                 col0.appendChild(label0);
-                const racketNameInput = document.createElement('input');
-                racketNameInput.type = 'text';
-                racketNameInput.className = 'form-control form-control-sm racketCustomName';
-                racketNameInput.placeholder = 'Enter racket name';
-                racketNameInput.required = true;
-                if (prefill.racketName) racketNameInput.value = prefill.racketName;
-                col0.appendChild(racketNameInput);
+                const batModelInput = document.createElement('input');
+                batModelInput.type = 'text';
+                batModelInput.className = 'form-control form-control-sm batModel';
+                batModelInput.placeholder = 'Enter bat model name';
+                batModelInput.required = true;
+                if (prefill.batModel) batModelInput.value = prefill.batModel;
+                col0.appendChild(batModelInput);
                 row.appendChild(col0);
 
-                // String Type
+                // Row for Package and Quantity
+                const flexRow1 = document.createElement('div');
+                flexRow1.className = 'd-flex flex-wrap gap-2 mb-2';
+
+                // Package Type
                 const col1 = document.createElement('div');
                 col1.style.flex = '1 1 220px';
                 const label1 = document.createElement('label');
                 label1.className = 'form-label small mb-1';
-                label1.textContent = 'String Type';
+                label1.textContent = 'Knocking Package';
                 col1.appendChild(label1);
-                col1.appendChild(createStringSelect(prefill.string || ''));
-                row.appendChild(col1);
+                col1.appendChild(createPackageSelect(prefill.package || ''));
+                flexRow1.appendChild(col1);
 
                 // Quantity
                 const col2 = document.createElement('div');
@@ -985,60 +704,104 @@
                 qty.value = prefill.qty || 1;
                 qty.className = 'form-control form-control-sm quantity';
                 col2.appendChild(qty);
-                row.appendChild(col2);
+                flexRow1.appendChild(col2);
 
-                // Tension
-                const col3 = document.createElement('div');
-                col3.style.width = '140px';
-                const label3 = document.createElement('label');
-                label3.className = 'form-label small mb-1';
-                label3.textContent = 'Tension (lbs)';
-                col3.appendChild(label3);
-                const tension = document.createElement('input');
-                tension.type = 'number';
-                tension.min = '10';
-                tension.max = '35';
-                tension.value = prefill.tension || 24;
-                tension.className = 'form-control form-control-sm stringTension';
-                col3.appendChild(tension);
-                row.appendChild(col3);
+                row.appendChild(flexRow1);
+
+                // Extra Services Section
+                const extraServicesDiv = document.createElement('div');
+                extraServicesDiv.className = 'mb-2';
+                const uniqueId = Date.now() + '_' + Math.random();
+                extraServicesDiv.innerHTML = `
+                    <label class="form-label small mb-2">Extra Services (Optional)</label>
+                    <div class="form-check">
+                        <input class="form-check-input threading-top" type="checkbox" id="threading_top_${uniqueId}">
+                        <label class="form-check-label small" for="threading_top_${uniqueId}">
+                            Bat Threading Top — ₹100
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input threading-bottom" type="checkbox" id="threading_bottom_${uniqueId}">
+                        <label class="form-check-label small" for="threading_bottom_${uniqueId}">
+                            Bat Threading Bottom — ₹100
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input threading-both" type="checkbox" id="threading_both_${uniqueId}">
+                        <label class="form-check-label small" for="threading_both_${uniqueId}">
+                            Bat Threading Top & Bottom — ₹150
+                        </label>
+                    </div>
+                    <div class="text-muted small mt-1">
+                        <i class="bi bi-gift"></i> Bat oiling is FREE with all packages!
+                    </div>
+                `;
+                row.appendChild(extraServicesDiv);
 
                 // Line Total
-                const col4 = document.createElement('div');
-                col4.style.minWidth = '130px';
-                const label4 = document.createElement('label');
-                label4.className = 'form-label small mb-1 d-block';
-                label4.textContent = 'Line Total';
+                const totalRow = document.createElement('div');
+                totalRow.className = 'd-flex justify-content-between align-items-center mt-2 pt-2 border-top';
+                const label3 = document.createElement('label');
+                label3.className = 'form-label small mb-0';
+                label3.textContent = 'Line Total';
                 const priceBadge = document.createElement('div');
-                priceBadge.className = 'fw-bold';
+                priceBadge.className = 'fw-bold text-primary';
                 priceBadge.textContent = '₹0';
-                priceBadge.style.fontSize = '0.95rem';
-                col4.appendChild(label4);
-                col4.appendChild(priceBadge);
-                row.appendChild(col4);
+                priceBadge.style.fontSize = '1.1rem';
+                totalRow.appendChild(label3);
+                totalRow.appendChild(priceBadge);
+                row.appendChild(totalRow);
 
                 // Listeners
-                row.querySelector('.racketName').addEventListener('change', updateAllTotals);
+                row.querySelector('.packageType').addEventListener('change', updateAllTotals);
                 row.querySelector('.quantity').addEventListener('input', updateAllTotals);
-                row.querySelector('.stringTension').addEventListener('input', updateAllTotals);
+
+                // Threading checkbox listeners with mutual exclusion logic
+                const topCheckbox = row.querySelector('.threading-top');
+                const bottomCheckbox = row.querySelector('.threading-bottom');
+                const bothCheckbox = row.querySelector('.threading-both');
+
+                topCheckbox.addEventListener('change', function () {
+                    if (this.checked && bothCheckbox.checked) {
+                        bothCheckbox.checked = false;
+                    }
+                    updateAllTotals();
+                });
+
+                bottomCheckbox.addEventListener('change', function () {
+                    if (this.checked && bothCheckbox.checked) {
+                        bothCheckbox.checked = false;
+                    }
+                    updateAllTotals();
+                });
+
+                bothCheckbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        topCheckbox.checked = false;
+                        bottomCheckbox.checked = false;
+                    }
+                    updateAllTotals();
+                });
+
                 row._priceEl = priceBadge;
                 return row;
             }
+
             function addInitialRow() {
-                const r = createRacketRow();
-                racketsContainer.appendChild(r);
+                const r = createBatRow();
+                batsContainer.appendChild(r);
                 updateAllTotals();
             }
 
             addBtn.addEventListener('click', function () {
-                const r = createRacketRow();
-                racketsContainer.appendChild(r);
+                const r = createBatRow();
+                batsContainer.appendChild(r);
                 r.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 updateAllTotals();
             });
 
             removeBtn.addEventListener('click', function () {
-                const rows = racketsContainer.querySelectorAll('.racket-row');
+                const rows = batsContainer.querySelectorAll('.bat-card');
                 if (rows.length > 0) {
                     rows[rows.length - 1].remove();
                     updateAllTotals();
@@ -1046,43 +809,45 @@
             });
 
             function updateAllTotals() {
-                const rows = racketsContainer.querySelectorAll('.racket-row');
-                let total = 0; let count = 0;
+                const rows = batsContainer.querySelectorAll('.bat-card');
+                let total = 0;
+                let count = 0;
+
                 rows.forEach(row => {
-                    const name = (row.querySelector('.racketName')?.value || '').trim();
+                    const packageType = (row.querySelector('.packageType')?.value || '').trim();
                     const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
                     let perItem = 0;
-                    if (name && PRICE_MAP[name] !== undefined) perItem = PRICE_MAP[name];
-                    const expressCharge = expressCheckbox.checked ? 20 : 0;
-                    const lineTotal = (perItem + expressCharge) * qty;
+                    if (packageType && PRICE_MAP[packageType] !== undefined) {
+                        perItem = PRICE_MAP[packageType];
+                    }
+
+                    // Calculate threading service price
+                    let threadingPrice = 0;
+                    const topChecked = row.querySelector('.threading-top')?.checked || false;
+                    const bottomChecked = row.querySelector('.threading-bottom')?.checked || false;
+                    const bothChecked = row.querySelector('.threading-both')?.checked || false;
+
+                    if (bothChecked) {
+                        threadingPrice = 150; // Both option selected
+                    } else {
+                        if (topChecked) threadingPrice += 100;
+                        if (bottomChecked) threadingPrice += 100;
+                    }
+
+                    const lineTotal = (perItem + threadingPrice) * qty;
                     total += lineTotal;
                     count += qty;
                     if (row._priceEl) row._priceEl.textContent = `₹${lineTotal}`;
                 });
-
-                const onlineSelected = (paymentMethodSelect.value || '').toLowerCase() === 'online';
-                const onlineDiscount = (onlineSelected && !testMode) ? 10 : 0;
 
                 // Apply coupon discount if any
                 const finalTotal = Math.max(0, total - (activeCouponDiscount || 0));
 
                 summaryCountEl.textContent = count;
                 summaryTotalEl.textContent = finalTotal;
-                summaryServiceEl.textContent = expressCheckbox.checked ? 'Express (within 1 hour)' : 'Normal (within 4 hours)';
-
-                // Update coupon button state based on total
-                if (activeCouponDiscount > 0 && activeCouponDiscount > total) {
-                    showCouponFeedback(false, 'Discount amount cannot be greater than order total.');
-                    activeCouponDiscount = 0;
-                    updateAllTotals();
-                }
-
-                // Button is always enabled - validation happens on click
             }
 
-            expressCheckbox.addEventListener('change', updateAllTotals);
             paymentMethodSelect.addEventListener('change', updateAllTotals);
-            // acceptTerms.addEventListener('change', updateAllTotals);
 
             // Coupon handling
             const couponInput = document.getElementById('discountCoupon');
@@ -1094,7 +859,6 @@
             function validateCoupon(code) {
                 if (!code) return { valid: false, message: 'Please enter a coupon code.' };
 
-                // Check format: DA followed by number
                 const couponRegex = /^DA(\d+)$/;
                 const match = code.match(couponRegex);
                 if (!match) {
@@ -1104,18 +868,15 @@
                     };
                 }
 
-                // Parse amount and validate
                 const amount = parseInt(match[1], 10);
                 if (isNaN(amount) || amount === 0) {
                     return { valid: false, message: 'Invalid discount amount.' };
                 }
 
-                // Check if multiple of 50
                 if (amount % 50 !== 0) {
                     return { valid: false, message: 'Discount amount must be a multiple of 50.' };
                 }
 
-                // Check maximum amount
                 if (amount > 500) {
                     return { valid: false, message: 'Maximum discount amount is 500.' };
                 }
@@ -1148,8 +909,8 @@
                 if (!valid) {
                     showCouponFeedback(false);
                     activeCouponDiscount = 0;
-                } else if (amount <= 0 || amount > 200) {
-                    showCouponFeedback(false, 'Invalid discount amount. Must be between 1 and 200.');
+                } else if (amount <= 0 || amount > 500) {
+                    showCouponFeedback(false, 'Invalid discount amount. Must be between 1 and 500.');
                     activeCouponDiscount = 0;
                 } else {
                     activeCouponDiscount = amount;
@@ -1173,61 +934,59 @@
                 return digits.length === 10;
             }
 
-            // function buildPayload() {
-            //     const rows = racketsContainer.querySelectorAll('.racket-row');
-            //     const racketDetails = [];
-            //     rows.forEach(row => {
-            //         const id = row.querySelector('.racketName')?.value || '';
-            //         const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
-            //         const tension = row.querySelector('.stringTension')?.value || '';
-            //         const cost = PRICE_MAP[id] || 0;
-            //         if (id) {
-            //             racketDetails.push({
-            //                 id,
-            //                 qty,
-            //                 tension,
-            //                 cost
-            //             });
-            //         }
-            //     });
-
-            //     return {
-            //         customerName: nameInput.value.trim(),
-            //         phone: phoneInput.value.replace(/\D/g, '').trim(),
-            //         store: storeSelect.value,
-            //         racketDetails,
-            //         express: expressCheckbox.checked,
-            //         paymentMethod: paymentMethodSelect.value,
-            //         pickupDrop: document.getElementById('pickupDrop')?.checked || false,
-            //         testMode: testMode // Include test mode flag in payload
-            //     };
-            // }
             function buildPayload() {
-                const rows = racketsContainer.querySelectorAll('.racket-row');
-                const racketDetails = [];
+                const rows = batsContainer.querySelectorAll('.bat-card');
+                const batDetails = [];
 
                 rows.forEach(row => {
-                    const racketName = row.querySelector('.racketCustomName')?.value?.trim() || '';
-                    const stringType = row.querySelector('.racketName')?.value || '';
+                    const batModel = row.querySelector('.batModel')?.value?.trim() || '';
+                    const packageType = row.querySelector('.packageType')?.value || '';
                     const qty = Math.max(1, parseInt(row.querySelector('.quantity')?.value || '1', 10) || 1);
-                    const tension = row.querySelector('.stringTension')?.value || '';
-                    const cost = PRICE_MAP[stringType] || 0;
+                    const packageCost = PRICE_MAP[packageType] || 0;
 
-                    if (racketName && stringType) {
-                        racketDetails.push({
-                            racketName: racketName,  // Actual racket name from input
-                            string: stringType,       // String type from dropdown
+                    // Get threading service selections
+                    const topChecked = row.querySelector('.threading-top')?.checked || false;
+                    const bottomChecked = row.querySelector('.threading-bottom')?.checked || false;
+                    const bothChecked = row.querySelector('.threading-both')?.checked || false;
+
+                    let threadingCost = 0;
+                    let threadingType = 'none';
+
+                    if (bothChecked) {
+                        threadingCost = 150;
+                        threadingType = 'both';
+                    } else if (topChecked && bottomChecked) {
+                        threadingCost = 200;
+                        threadingType = 'top+bottom';
+                    } else if (topChecked) {
+                        threadingCost = 100;
+                        threadingType = 'top';
+                    } else if (bottomChecked) {
+                        threadingCost = 100;
+                        threadingType = 'bottom';
+                    }
+
+                    const totalCost = packageCost + threadingCost;
+
+                    if (batModel && packageType) {
+                        batDetails.push({
+                            batModel: batModel,
+                            package: packageType,
+                            threading: threadingType,
                             qty,
-                            tension,
-                            cost,
-                            id: `RQ_${crypto.randomUUID()}`
+                            cost: totalCost,
+                            breakdown: {
+                                packageCost: packageCost,
+                                threadingCost: threadingCost
+                            },
+                            id: `BAT_${crypto.randomUUID()}`
                         });
                     }
                 });
 
                 // Calculate original total before discounts
-                const originalTotal = racketDetails.reduce((sum, item) => {
-                    return sum + (item.cost + (expressCheckbox.checked ? 20 : 0)) * item.qty;
+                const originalTotal = batDetails.reduce((sum, item) => {
+                    return sum + (item.cost * item.qty);
                 }, 0);
 
                 // Get coupon details if applied
@@ -1238,12 +997,11 @@
                     customerName: nameInput.value.trim(),
                     phone: phoneInput.value.replace(/\D/g, '').trim(),
                     store: storeSelect.value,
-                    racketDetails,
-                    express: expressCheckbox.checked,
+                    batDetails,
                     paymentMethod: paymentMethodSelect.value,
-                    pickupDrop: document.getElementById('pickupDrop')?.checked || false,
+                    pickupDrop: pickupDrop?.checked || false,
                     testMode: testMode,
-                    // Add payment calculation details
+                    serviceType: 'bat-knocking',
                     payment: {
                         originalAmount: originalTotal,
                         discount: {
@@ -1260,7 +1018,6 @@
                 confirmButton.innerHTML = loading ? `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${text || 'Processing...'}` : 'Pay Now';
             }
 
-            /* ---------- Validation helper function to check mandatory fields ---------- */
             function checkMandatoryFields() {
                 const missingFields = [];
 
@@ -1274,7 +1031,7 @@
                     missingFields.push('Your name (Please enter your full name)');
                 }
 
-                // Phone number validation
+                // Check phone number
                 const phoneValue = phoneInput.value.trim();
                 if (!phoneValue) {
                     missingFields.push('WhatsApp number (Please enter your 10-digit phone number)');
@@ -1282,26 +1039,25 @@
                     missingFields.push('Valid WhatsApp number (Must be exactly 10 digits)');
                 }
 
-                // Check if at least one racket is added
-                const rows = racketsContainer.querySelectorAll('.racket-row');
+                // Check if at least one bat is added
+                const rows = batsContainer.querySelectorAll('.bat-card');
                 if (rows.length === 0) {
-                    missingFields.push('At least one racket (Click "+ Add Another Racket" to add a racket)');
+                    missingFields.push('At least one bat (Click "+ Add Another Bat" to add a bat)');
                 } else {
-                    // Check each racket row for completeness
-                    let hasValidRacket = false;
+                    // Check each bat row for completeness
+                    let hasValidBat = false;
                     for (let i = 0; i < rows.length; i++) {
                         const row = rows[i];
-                        const racketName = row.querySelector('.racketCustomName')?.value?.trim();
-                        const stringType = row.querySelector('.racketName')?.value;
-                        const tension = row.querySelector('.stringTension')?.value;
+                        const batModel = row.querySelector('.batModel')?.value?.trim();
+                        const packageType = row.querySelector('.packageType')?.value;
 
-                        if (racketName && stringType && tension) {
-                            hasValidRacket = true;
+                        if (batModel && packageType) {
+                            hasValidBat = true;
                         }
                     }
 
-                    if (!hasValidRacket) {
-                        missingFields.push('Complete racket details (Each racket needs name, string type, and tension)');
+                    if (!hasValidBat) {
+                        missingFields.push('Complete bat details (Each bat needs a model name and package selection)');
                     }
                 }
 
@@ -1313,7 +1069,6 @@
                 return missingFields;
             }
 
-            /* ---------- MAIN: create order -> start Zoho widget -> verify payment ---------- */
             async function onPayNowClicked(e) {
                 e.preventDefault();
 
@@ -1324,38 +1079,30 @@
                     return;
                 }
 
-                // Detailed validation for each racket
-                const rows = racketsContainer.querySelectorAll('.racket-row');
+                // Detailed validation for each bat
+                const rows = batsContainer.querySelectorAll('.bat-card');
                 for (let i = 0; i < rows.length; i++) {
                     const row = rows[i];
-                    const racketName = row.querySelector('.racketCustomName')?.value?.trim();
-                    const stringType = row.querySelector('.racketName')?.value;
-                    const tension = row.querySelector('.stringTension')?.value;
+                    const batModel = row.querySelector('.batModel')?.value?.trim();
+                    const packageType = row.querySelector('.packageType')?.value;
 
-                    if (!racketName) {
-                        alert(`❌ Racket #${i + 1}: Please enter the racket model name.\n\nExample: "Yonex Astrox 99" or "Li-Ning Turbo X"`);
-                        // Focus on the racket name input
-                        row.querySelector('.racketCustomName')?.focus();
+                    if (!batModel) {
+                        alert(`❌ Bat #${i + 1}: Please enter the bat model name.\n\nExample: "MRF Genius Grand Edition" or "SS TON English Willow"`);
+                        // Focus on the bat model input
+                        row.querySelector('.batModel')?.focus();
                         return;
                     }
 
-                    if (!stringType) {
-                        alert(`❌ Racket #${i + 1}: Please select a string type.\n\nChoose from available brands:\n• Yonex (BG 65, Aerobite, etc.)\n• Li-Ning (No.1, No.7, etc.)\n• Hundred (Power, Control, Pro)`);
-                        // Focus on the string type select
-                        row.querySelector('.racketName')?.focus();
-                        return;
-                    }
-
-                    if (!tension || tension < 10 || tension > 35) {
-                        alert(`❌ Racket #${i + 1}: Please enter a valid string tension.\n\nTension must be between 10-35 lbs.\n\nRecommended:\n• Beginners: 20-22 lbs\n• Intermediate: 23-25 lbs\n• Advanced: 26-28 lbs`);
-                        // Focus on the tension input
-                        row.querySelector('.stringTension')?.focus();
+                    if (!packageType) {
+                        alert(`❌ Bat #${i + 1}: Please select a knocking package.\n\nChoose from:\n• Basic (10,000 balls - ₹800)\n• Standard (15,000 balls - ₹1,100)\n• Premium (20,000 balls - ₹1,500)\n• Elite (25,000 balls - ₹1,800)\n• Professional (30,000 balls - ₹2,000)`);
+                        // Focus on the package select
+                        row.querySelector('.packageType')?.focus();
                         return;
                     }
                 }
 
                 // Validate payload data
-                const payload = buildPayload(); // your existing function
+                const payload = buildPayload();
 
                 if (!payload.store) {
                     alert('❌ Store location is required.\n\nPlease select a store location from the dropdown.');
@@ -1381,15 +1128,10 @@
                     return;
                 }
 
-                if (!payload.racketDetails || payload.racketDetails.length === 0) {
-                    alert('❌ No racket details found.\n\nPlease add at least one racket with complete information (model name, string type, and tension).');
+                if (!payload.batDetails || payload.batDetails.length === 0) {
+                    alert('❌ No bat details found.\n\nPlease add at least one bat with complete information (model name and package selection).');
                     return;
                 }
-
-                // if (!acceptTerms.checked) {
-                //     alert('Please accept the terms & conditions.');
-                //     return;
-                // }
 
                 const normalizedPaymentMethod = payload.paymentMethod?.toLowerCase() || '';
                 if (!['online', 'payatoutlet'].includes(normalizedPaymentMethod)) {
@@ -1401,7 +1143,7 @@
                 // Check if total amount is valid
                 const totalAmount = payload.payment.finalAmount;
                 if (!totalAmount || totalAmount <= 0) {
-                    alert('❌ Invalid order total.\n\nPlease ensure you have selected at least one racket with string type.');
+                    alert('❌ Invalid order total.\n\nPlease ensure you have selected at least one bat with a knocking package.');
                     return;
                 }
 
@@ -1413,7 +1155,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                    console.log(`createResp: ${JSON.stringify(createResp)}`);
+
                     const createData = await createResp.json().catch(() => ({}));
                     if (!createData || !createData.success) {
                         setButtonLoading(false);
@@ -1432,7 +1174,7 @@
                         return;
                     }
 
-                    // ONLINE flow (Zoho Payment Session + zpayments widget)
+                    // ONLINE flow (Zoho Payment Session)
                     const resp = (createData.data || createData);
                     const paymentsSessionId = resp.payments_session_id || resp.paymentsSessionId || resp.payments_session || resp.payments_session_id;
                     const amount = resp.amount || resp.amount_due || summaryTotalEl.textContent || '';
@@ -1444,7 +1186,6 @@
                         return;
                     }
 
-                    // Get zpayConfig returned by server if present (account_id + domain). If not, set manually.
                     const zpayConfig = resp.zpayConfig || { account_id: '60044148024', domain: 'IN' };
                     const apiKey = resp.zpayConfig?.api_key || ZOHO_WIDGET_API_KEY;
                     if (!zpayConfig.account_id || !apiKey) {
@@ -1454,7 +1195,6 @@
                         return;
                     }
 
-                    // instantiate widget
                     const instance = new window.ZPayments({
                         account_id: String(zpayConfig.account_id),
                         domain: String(zpayConfig.domain || 'IN'),
@@ -1463,15 +1203,14 @@
                         }
                     });
 
-                    // prepare widget options (docs example)
                     const widgetOptions = {
-                        amount: (Number(amount) || 0).toString(),       // e.g. "550"
+                        amount: (Number(amount) || 0).toString(),
                         currency_code: 'INR',
                         payments_session_id: String(paymentsSessionId),
                         currency_symbol: '₹',
                         business: 'DA SPORTZ',
-                        description: 'Racket Stringing',
-                        invoice_number: zpayConfig.invoice_number || '',       // optional
+                        description: 'Bat Knocking Service',
+                        invoice_number: zpayConfig.invoice_number || '',
                         reference_number: zpayConfig.reference_number || '',
                         address: {
                             name: payload.customerName,
@@ -1485,9 +1224,7 @@
                     let widgetResponse;
                     try {
                         widgetResponse = await instance.requestPaymentMethod(widgetOptions);
-                        // widgetResponse should include payment_id (or nested object) per docs
                     } catch (widgetErr) {
-                        // user closed widget or error happened
                         if (widgetErr && widgetErr.code === 'widget_closed') {
                             console.warn('Widget closed by user');
                             alert('Payment cancelled.');
@@ -1503,7 +1240,6 @@
                         try { await instance.close(); } catch (_) { }
                     }
 
-                    // get payment id (widget returns it in response)
                     const paymentId = widgetResponse?.payment_id || widgetResponse?.payment?.payment_id || widgetResponse?.paymentId || widgetResponse?.paymentId_;
                     if (!paymentId) {
                         console.error('No payment_id returned from widget', widgetResponse);
@@ -1511,7 +1247,6 @@
                         return;
                     }
 
-                    // verify payment with backend
                     setButtonLoading(true, 'Verifying payment...');
                     const verifyResp = await fetch(`${BACKEND_BASE}/api/verify-payment`, {
                         method: 'POST',
@@ -1521,15 +1256,13 @@
 
                     const verifyData = await verifyResp.json().catch(() => ({}));
                     if (verifyData && verifyData.success) {
-                        // success -> redirect
                         const orderId = resp.order_id || referenceId;
-                        const params = new URLSearchParams(
-                            {
-                                pid: paymentId,
-                                amount: amount.toString(),
-                                name: payload.customerName,
-                                oid: orderId
-                            });
+                        const params = new URLSearchParams({
+                            pid: paymentId,
+                            amount: amount.toString(),
+                            name: payload.customerName,
+                            oid: orderId
+                        });
                         window.location.href = `/payment-success.html?${params.toString()}`;
                         return;
                     } else {
@@ -1549,8 +1282,6 @@
             confirmButton.addEventListener('click', onPayNowClicked);
         })();
     </script>
-
-
 
 </body>
 
