@@ -239,8 +239,7 @@ test.describe('Stringing Booking UI', () => {
         // Click Pay Now without filling anything
         await page.locator('#confirmButton').click();
 
-        // Verify alert shows missing fields
-        expect(alertMessage).toContain('Store location');
+        // Verify alert shows missing fields (store has default value)
         expect(alertMessage).toContain('Your name');
         expect(alertMessage).toContain('WhatsApp number');
         expect(alertMessage).toContain('Payment method');
@@ -411,8 +410,7 @@ test.describe('Stringing Booking UI', () => {
             const confirm = page.locator('#confirmButton');
             await confirm.click();
 
-            // Verify alert contains all required fields
-            expect(alertMessage).toContain('Store location');
+            // Verify alert contains all required fields (store has default value)
             expect(alertMessage).toContain('Your name');
             expect(alertMessage).toContain('WhatsApp number');
             expect(alertMessage).toContain('Payment method');
@@ -440,7 +438,8 @@ test.describe('Stringing Booking UI', () => {
             // Try invalid phone number
             await page.locator('#phone').fill('123');
             await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('Valid 10-digit WhatsApp number');
+            expect(alertMessage).toContain('Valid WhatsApp number');
+            expect(alertMessage).toContain('Must be exactly 10 digits');
 
             // Try valid phone number
             await page.locator('#phone').fill('9876543210');
@@ -471,19 +470,22 @@ test.describe('Stringing Booking UI', () => {
 
             // Check missing racket name
             await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('enter a racket name for racket #1');
+            expect(alertMessage).toContain('Complete racket details');
+            expect(alertMessage).toContain('name, string type, and tension');
 
             // Add racket name but no string type
             const row = page.locator('.racket-row').first();
             await row.locator('.racketCustomName').fill('Test Racket');
             await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('select a string type for racket #1');
+            expect(alertMessage).toContain('Complete racket details');
 
             // Add string type but invalid tension
             await row.locator('.racketName').selectOption('Yonex BG 65');
             await row.locator('.stringTension').fill('5');
             await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('valid tension (10-35 lbs)');
+            expect(alertMessage).toContain('Racket #1');
+            expect(alertMessage).toContain('valid string tension');
+            expect(alertMessage).toContain('10-35 lbs');
 
             // Fix tension - this should allow the form to proceed to payment
             await row.locator('.stringTension').fill('24');
