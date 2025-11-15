@@ -1,0 +1,325 @@
+{
+  "daily": [
+    {
+      "period": "Mon",
+      "products": [
+        { "name": "Yonex BG65", "sales": 1200, "units": 7 },
+        { "name": "Li-Ning No.1", "sales": 900, "units": 5 },
+        { "name": "Yonex BG80", "sales": 700, "units": 4 },
+        { "name": "Victor VBS-68", "sales": 450, "units": 3 }
+      ]
+    },
+    {
+      "period": "Tue",
+      "products": [
+        { "name": "Yonex BG65", "sales": 1350, "units": 8 },
+        { "name": "Li-Ning No.1", "sales": 1080, "units": 6 },
+        { "name": "Yonex BG80", "sales": 875, "units": 5 },
+        { "name": "Victor VBS-68", "sales": 600, "units": 4 }
+      ]
+    },
+    {
+      "period": "Wed",
+      "products": [
+        { "name": "Yonex BG65", "sales": 1050, "units": 6 },
+        { "name": "Li-Ning No.1", "sales": 720, "units": 4 },
+        { "name": "Yonex BG80", "sales": 700, "units": 4 },
+        { "name": "Victor VBS-68", "sales": 300, "units": 2 }
+      ]
+    },
+    {
+      "period": "Thu",
+      "products": [
+        { "name": "Yonex BG65", "sales": 1500, "units": 9 },
+        { "name": "Li-Ning No.1", "sales": 1260, "units": 7 },
+        { "name": "Yonex BG80", "sales": 1050, "units": 6 },
+        { "name": "Victor VBS-68", "sales": 750, "units": 5 }
+      ]
+    },
+    {
+      "period": "Fri",
+      "products": [
+        { "name": "Yonex BG65", "sales": 1650, "units": 10 },
+        { "name": "Li-Ning No.1", "sales": 1440, "units": 8 },
+        { "name": "Yonex BG80", "sales": 1225, "units": 7 },
+        { "name": "Victor VBS-68", "sales": 900, "units": 6 }
+      ]
+    },
+    {
+      "period": "Sat",
+      "products": [
+        { "name": "Yonex BG65", "sales": 2100, "units": 12 },
+        { "name": "Li-Ning No.1", "sales": 1800, "units": 10 },
+        { "name": "Yonex BG80", "sales": 1400, "units": 8 },
+        { "name": "Victor VBS-68", "sales": 1050, "units": 7 }
+      ]
+    },
+    {
+      "period": "Sun",
+      "products": [
+        { "name": "Yonex BG65", "sales": 1800, "units": 11 },
+        { "name": "Li-Ning No.1", "sales": 1620, "units": 9 },
+        { "name": "Yonex BG80", "sales": 1225, "units": 7 },
+        { "name": "Victor VBS-68", "sales": 750, "units": 5 }
+      ]
+    }
+  ],
+  "weekly": [
+    {
+      "period": "Wk1",
+      "products": [
+        { "name": "Yonex BG65", "sales": 5400, "units": 32 },
+        { "name": "Li-Ning No.1", "sales": 4300, "units": 26 },
+        { "name": "Yonex BG80", "sales": 3000, "units": 18 },
+        { "name": "Victor VBS-68", "sales": 1500, "units": 9 }
+      ]
+    },
+    {
+      "period": "Wk2",
+      "products": [
+        { "name": "Yonex BG65", "sales": 5800, "units": 35 },
+        { "name": "Li-Ning No.1", "sales": 4600, "units": 28 },
+        { "name": "Yonex BG80", "sales": 3200, "units": 20 },
+        { "name": "Victor VBS-68", "sales": 1800, "units": 11 }
+      ]
+    },
+    {
+      "period": "Wk3",
+      "products": [
+        { "name": "Yonex BG65", "sales": 6200, "units": 38 },
+        { "name": "Li-Ning No.1", "sales": 5000, "units": 30 },
+        { "name": "Yonex BG80", "sales": 3500, "units": 22 },
+        { "name": "Victor VBS-68", "sales": 2100, "units": 13 }
+      ]
+    },
+    {
+      "period": "Wk4",
+      "products": [
+        { "name": "Yonex BG65", "sales": 5600, "units": 34 },
+        { "name": "Li-Ning No.1", "sales": 4400, "units": 27 },
+        { "name": "Yonex BG80", "sales": 3100, "units": 19 },
+        { "name": "Victor VBS-68", "sales": 1700, "units": 10 }
+      ]
+    },
+    {
+      "period": "Wk5",
+      "products": [
+        { "name": "Yonex BG65", "sales": 6000, "units": 36 },
+        { "name": "Li-Ning No.1", "sales": 4800, "units": 29 },
+        { "name": "Yonex BG80", "sales": 3400, "units": 21 },
+        { "name": "Victor VBS-68", "sales": 1900, "units": 12 }
+      ]
+    },
+    {
+      "period": "Wk6",
+      "products": [
+        { "name": "Yonex BG65", "sales": 5900, "units": 35 },
+        { "name": "Li-Ning No.1", "sales": 4700, "units": 28 },
+        { "name": "Yonex BG80", "sales": 3300, "units": 20 },
+        { "name": "Victor VBS-68", "sales": 1850, "units": 11 }
+      ]
+    },
+    {
+      "period": "Wk7",
+      "products": [
+        { "name": "Yonex BG65", "sales": 6400, "units": 39 },
+        { "name": "Li-Ning No.1", "sales": 5200, "units": 31 },
+        { "name": "Yonex BG80", "sales": 3700, "units": 23 },
+        { "name": "Victor VBS-68", "sales": 2200, "units": 14 }
+      ]
+    },
+    {
+      "period": "Wk8",
+      "products": [
+        { "name": "Yonex BG65", "sales": 5700, "units": 34 },
+        { "name": "Li-Ning No.1", "sales": 4500, "units": 27 },
+        { "name": "Yonex BG80", "sales": 3250, "units": 20 },
+        { "name": "Victor VBS-68", "sales": 1750, "units": 11 }
+      ]
+    },
+    {
+      "period": "Wk9",
+      "products": [
+        { "name": "Yonex BG65", "sales": 6100, "units": 37 },
+        { "name": "Li-Ning No.1", "sales": 4900, "units": 29 },
+        { "name": "Yonex BG80", "sales": 3450, "units": 21 },
+        { "name": "Victor VBS-68", "sales": 1950, "units": 12 }
+      ]
+    },
+    {
+      "period": "Wk10",
+      "products": [
+        { "name": "Yonex BG65", "sales": 6300, "units": 38 },
+        { "name": "Li-Ning No.1", "sales": 5100, "units": 30 },
+        { "name": "Yonex BG80", "sales": 3600, "units": 22 },
+        { "name": "Victor VBS-68", "sales": 2050, "units": 13 }
+      ]
+    },
+    {
+      "period": "Wk11",
+      "products": [
+        { "name": "Yonex BG65", "sales": 5500, "units": 33 },
+        { "name": "Li-Ning No.1", "sales": 4350, "units": 26 },
+        { "name": "Yonex BG80", "sales": 3050, "units": 19 },
+        { "name": "Victor VBS-68", "sales": 1650, "units": 10 }
+      ]
+    }
+  ],
+  "monthly": [
+    {
+      "period": "Jan",
+      "products": [
+        { "name": "Yonex BG65", "sales": 24200, "units": 145 },
+        { "name": "Li-Ning No.1", "sales": 19600, "units": 118 },
+        { "name": "Yonex BG80", "sales": 13800, "units": 85 },
+        { "name": "Victor VBS-68", "sales": 7800, "units": 48 }
+      ]
+    },
+    {
+      "period": "Feb",
+      "products": [
+        { "name": "Yonex BG65", "sales": 22800, "units": 138 },
+        { "name": "Li-Ning No.1", "sales": 18400, "units": 112 },
+        { "name": "Yonex BG80", "sales": 13000, "units": 80 },
+        { "name": "Victor VBS-68", "sales": 7400, "units": 46 }
+      ]
+    },
+    {
+      "period": "Mar",
+      "products": [
+        { "name": "Yonex BG65", "sales": 26000, "units": 156 },
+        { "name": "Li-Ning No.1", "sales": 21000, "units": 127 },
+        { "name": "Yonex BG80", "sales": 14800, "units": 91 },
+        { "name": "Victor VBS-68", "sales": 8400, "units": 52 }
+      ]
+    },
+    {
+      "period": "Apr",
+      "products": [
+        { "name": "Yonex BG65", "sales": 25200, "units": 151 },
+        { "name": "Li-Ning No.1", "sales": 20400, "units": 123 },
+        { "name": "Yonex BG80", "sales": 14400, "units": 88 },
+        { "name": "Victor VBS-68", "sales": 8200, "units": 51 }
+      ]
+    },
+    {
+      "period": "May",
+      "products": [
+        { "name": "Yonex BG65", "sales": 27500, "units": 165 },
+        { "name": "Li-Ning No.1", "sales": 22200, "units": 134 },
+        { "name": "Yonex BG80", "sales": 15700, "units": 96 },
+        { "name": "Victor VBS-68", "sales": 8900, "units": 55 }
+      ]
+    },
+    {
+      "period": "Jun",
+      "products": [
+        { "name": "Yonex BG65", "sales": 28800, "units": 173 },
+        { "name": "Li-Ning No.1", "sales": 23400, "units": 141 },
+        { "name": "Yonex BG80", "sales": 16500, "units": 101 },
+        { "name": "Victor VBS-68", "sales": 9400, "units": 58 }
+      ]
+    },
+    {
+      "period": "Jul",
+      "products": [
+        { "name": "Yonex BG65", "sales": 29600, "units": 178 },
+        { "name": "Li-Ning No.1", "sales": 24000, "units": 145 },
+        { "name": "Yonex BG80", "sales": 17000, "units": 104 },
+        { "name": "Victor VBS-68", "sales": 9700, "units": 60 }
+      ]
+    },
+    {
+      "period": "Aug",
+      "products": [
+        { "name": "Yonex BG65", "sales": 30400, "units": 183 },
+        { "name": "Li-Ning No.1", "sales": 24600, "units": 148 },
+        { "name": "Yonex BG80", "sales": 17400, "units": 107 },
+        { "name": "Victor VBS-68", "sales": 9900, "units": 61 }
+      ]
+    },
+    {
+      "period": "Sep",
+      "products": [
+        { "name": "Yonex BG65", "sales": 27800, "units": 167 },
+        { "name": "Li-Ning No.1", "sales": 22600, "units": 136 },
+        { "name": "Yonex BG80", "sales": 16000, "units": 98 },
+        { "name": "Victor VBS-68", "sales": 9100, "units": 56 }
+      ]
+    },
+    {
+      "period": "Oct",
+      "products": [
+        { "name": "Yonex BG65", "sales": 26400, "units": 159 },
+        { "name": "Li-Ning No.1", "sales": 21400, "units": 129 },
+        { "name": "Yonex BG80", "sales": 15100, "units": 93 },
+        { "name": "Victor VBS-68", "sales": 8600, "units": 53 }
+      ]
+    },
+    {
+      "period": "Nov",
+      "products": [
+        { "name": "Yonex BG65", "sales": 25000, "units": 150 },
+        { "name": "Li-Ning No.1", "sales": 20200, "units": 122 },
+        { "name": "Yonex BG80", "sales": 14300, "units": 88 },
+        { "name": "Victor VBS-68", "sales": 8100, "units": 50 }
+      ]
+    },
+    {
+      "period": "Dec",
+      "products": [
+        { "name": "Yonex BG65", "sales": 31200, "units": 188 },
+        { "name": "Li-Ning No.1", "sales": 25200, "units": 152 },
+        { "name": "Yonex BG80", "sales": 17800, "units": 109 },
+        { "name": "Victor VBS-68", "sales": 10100, "units": 62 }
+      ]
+    }
+  ],
+  "yearly": [
+    {
+      "period": "2021",
+      "products": [
+        { "name": "Yonex BG65", "sales": 280000, "units": 1680 },
+        { "name": "Li-Ning No.1", "sales": 226000, "units": 1365 },
+        { "name": "Yonex BG80", "sales": 160000, "units": 985 },
+        { "name": "Victor VBS-68", "sales": 91000, "units": 562 }
+      ]
+    },
+    {
+      "period": "2022",
+      "products": [
+        { "name": "Yonex BG65", "sales": 298000, "units": 1790 },
+        { "name": "Li-Ning No.1", "sales": 241000, "units": 1455 },
+        { "name": "Yonex BG80", "sales": 170000, "units": 1048 },
+        { "name": "Victor VBS-68", "sales": 97000, "units": 599 }
+      ]
+    },
+    {
+      "period": "2023",
+      "products": [
+        { "name": "Yonex BG65", "sales": 315000, "units": 1892 },
+        { "name": "Li-Ning No.1", "sales": 255000, "units": 1539 },
+        { "name": "Yonex BG80", "sales": 180000, "units": 1109 },
+        { "name": "Victor VBS-68", "sales": 102000, "units": 630 }
+      ]
+    },
+    {
+      "period": "2024",
+      "products": [
+        { "name": "Yonex BG65", "sales": 330000, "units": 1983 },
+        { "name": "Li-Ning No.1", "sales": 267000, "units": 1612 },
+        { "name": "Yonex BG80", "sales": 189000, "units": 1164 },
+        { "name": "Victor VBS-68", "sales": 107000, "units": 661 }
+      ]
+    },
+    {
+      "period": "2025",
+      "products": [
+        { "name": "Yonex BG65", "sales": 348000, "units": 2091 },
+        { "name": "Li-Ning No.1", "sales": 281000, "units": 1697 },
+        { "name": "Yonex BG80", "sales": 198000, "units": 1220 },
+        { "name": "Victor VBS-68", "sales": 113000, "units": 698 }
+      ]
+    }
+  ]
+}
