@@ -910,7 +910,7 @@ test.describe('Bat Knocking UI Tests', () => {
                 await expect(notes).toBeVisible();
                 await expect(notes).toContainText('Important Service Notes');
                 await expect(notes).toContainText('Professional machine knocking');
-                await expect(notes).toContainText('3-5 days');
+                await expect(notes).toContainText('25 minutes to 3 hours');
             });
 
             test('Pricing table is collapsible', async ({ page }) => {

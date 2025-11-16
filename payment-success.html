@@ -374,8 +374,9 @@
                             <div class="whatsapp-notice">
                                 <i class="bi bi-whatsapp me-2"></i>
                                 <strong>Real-time Updates</strong><br>
-                                <span class="small">You'll receive live status updates on WhatsApp as we string your
-                                    racket(s)!</span>
+                                <span class="small" id="whatsappText">You'll receive live status updates on WhatsApp as
+                                    we process your
+                                    order!</span>
                             </div>
 
                             <!-- What's Next -->
@@ -383,11 +384,9 @@
                                 <h6 class="fw-bold mb-2">
                                     <i class="bi bi-clock me-2" style="color: var(--accent-color);"></i>What's Next?
                                 </h6>
-                                <ul class="list-unstyled small text-start mb-0">
-                                    <li class="mb-1">📱 You'll get WhatsApp updates on your racket stringing progress
-                                    </li>
-                                    <li class="mb-1">⏰ Normal service: Ready within 4 hours</li>
-                                    <li class="mb-1">⚡ Express service: Ready within 1 hour</li>
+                                <ul class="list-unstyled small text-start mb-0" id="nextStepsList">
+                                    <li class="mb-1">📱 You'll get WhatsApp updates on your order progress</li>
+                                    <li class="mb-1">⏰ Ready within 4 hours (normal) or 1 hour (express)</li>
                                     <li class="mb-1">🏪 Collect from your selected store location</li>
                                 </ul>
                             </div>
@@ -397,7 +396,8 @@
                                 <a href="index.html" class="btn-custom text-center">
                                     <i class="bi bi-house me-2"></i>Back to Home
                                 </a>
-                                <a href="stringing-booking.html" class="btn btn-outline-dark text-center">
+                                <a href="stringing-booking.html" class="btn btn-outline-dark text-center"
+                                    id="orderAgainBtn">
                                     <i class="bi bi-plus-circle me-2"></i>String Another Racket
                                 </a>
                             </div>
@@ -467,6 +467,7 @@
             const orderId = urlParams.get('oid') || '-';
             const customerName = urlParams.get('name') || '-';
             let amount = urlParams.get('amount') || '-';
+            const serviceType = urlParams.get('service') || 'stringing'; // Default to stringing
 
             // Update the UI elements
             document.getElementById('paymentId').textContent = paymentId;
@@ -474,12 +475,50 @@
             document.getElementById('customerName').textContent = customerName;
             document.getElementById('amountPaid').textContent = amount;
 
+            // Customize content based on service type
+            const isBatKnocking = serviceType === 'bat-knocking';
+
+            // Update WhatsApp notice
+            const whatsappText = document.getElementById('whatsappText');
+            if (isBatKnocking) {
+                whatsappText.textContent = "You'll receive live status updates on WhatsApp as we knock your bat(s)!";
+            } else {
+                whatsappText.textContent = "You'll receive live status updates on WhatsApp as we string your racket(s)!";
+            }
+
+            // Update What's Next list
+            const nextStepsList = document.getElementById('nextStepsList');
+            if (isBatKnocking) {
+                nextStepsList.innerHTML = `
+                    <li class="mb-1">📱 You'll get WhatsApp updates on your bat knocking progress</li>
+                    <li class="mb-1">🏏 Ready within 25 minutes to 3 hours</li>
+                    <li class="mb-1">🏪 Collect from your selected store location</li>
+                `;
+            } else {
+                nextStepsList.innerHTML = `
+                    <li class="mb-1">📱 You'll get WhatsApp updates on your racket stringing progress</li>
+                    <li class="mb-1">⏰ Ready within 4 hours (normal) or 1 hour (express)</li>
+                    <li class="mb-1">🏪 Collect from your selected store location</li>
+                `;
+            }
+
+            // Update "Order Again" button
+            const orderAgainBtn = document.getElementById('orderAgainBtn');
+            if (isBatKnocking) {
+                orderAgainBtn.href = 'bat-knocking.html';
+                orderAgainBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Knock Another Bat';
+            } else {
+                orderAgainBtn.href = 'stringing-booking.html';
+                orderAgainBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>String Another Racket';
+            }
+
             // Log all parameters for debugging (remove in production)
             console.log('Payment Success Parameters:', {
                 paymentId,
                 orderId,
                 customerName,
                 amount: amount,
+                serviceType: serviceType,
                 originalAmount: urlParams.get('amount'),
                 allParams: Object.fromEntries(urlParams)
             });

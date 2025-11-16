@@ -454,8 +454,9 @@
 
                                     <ul>
                                         <li><strong>🏏 Service Details:</strong> Professional machine knocking service
-                                            to prepare your bat for match play. Service duration: <strong>3-5
-                                                days</strong> depending on the package selected.</li>
+                                            to prepare your bat for match play. Service duration:
+                                            <strong>25 minutes to 3 hours</strong> depending on the package selected.
+                                        </li>
 
                                         <li><strong>⚡ Safety:</strong> We handle your bat with utmost care. However,
                                             bats with existing cracks or damage may not be suitable for knocking.
@@ -1275,7 +1276,8 @@
                             pid: paymentId,
                             amount: amount.toString(),
                             name: payload.customerName,
-                            oid: orderId
+                            oid: orderId,
+                            service: 'bat-knocking'
                         });
                         window.location.href = `/payment-success.html?${params.toString()}`;
                         return;

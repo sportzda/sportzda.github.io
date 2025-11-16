@@ -1528,7 +1528,8 @@
                                 pid: paymentId,
                                 amount: amount.toString(),
                                 name: payload.customerName,
-                                oid: orderId
+                                oid: orderId,
+                                service: 'stringing'
                             });
                         window.location.href = `/payment-success.html?${params.toString()}`;
                         return;
