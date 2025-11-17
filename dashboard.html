@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Analytics Dashboard — DA SPORTZ</title>
+
+    <!-- Fonts & Bootstrap -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0f1723;
+            --accent: #ff5900;
+            --accent-2: #00d4aa;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --nav-hover: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: #f5f7fb;
+            color: var(--primary);
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: #fff;
+            font-size: .95rem;
+        }
+
+        .top-bar a {
+            color: #fff;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.6rem;
+        }
+
+        .nav-link {
+            color: var(--muted);
+        }
+
+        .dropdown-menu {
+            --bs-dropdown-link-hover-bg: #ff59001a;
+            --bs-dropdown-link-active-bg: #ff5900;
+            --bs-dropdown-link-active-color: #fff;
+        }
+
+        .nav-link:focus,
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .dropdown-toggle::after {
+            border-top-color: var(--accent-color);
+            border-right-color: transparent;
+            border-bottom: 0;
+            border-left-color: transparent;
+        }
+
+        .dropdown-toggle.show::after {
+            border-top-color: var(--accent-color);
+        }
+
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        nav.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #25d366;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(10, 10, 10, 0.15);
+            z-index: 1200;
+        }
+
+        #root {
+            min-height: 60vh;
+        }
+
+        /* Login Modal Styles */
+        #loginModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        #loginModal.show {
+            display: flex;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-login {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-login:hover {
+            background: #f0f0f0;
+            color: var(--primary-color);
+        }
+
+        .login-required-msg {
+            display: none;
+            text-align: center;
+        }
+
+        .login-required-msg.show {
+            display: block;
+        }
+
+        .login-form-wrapper {
+            display: block;
+        }
+
+        .login-form-wrapper.hide {
+            display: none;
+        }
+
+        .login-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-box .subtitle {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-error {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        .dashboard-content {
+            display: none;
+        }
+
+        .dashboard-content.show {
+            display: block;
+        }
+
+        .logout-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #e04800;
+        }
+
+        /* Logout Confirmation Modal */
+        #logoutConfirmModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        #logoutConfirmModal.show {
+            display: flex;
+        }
+
+        .logout-confirm-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .logout-confirm-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .logout-confirm-box p {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .logout-confirm-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .logout-confirm-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout-confirm {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-logout-confirm:hover {
+            background: #e04800;
+        }
+
+        .btn-logout-cancel {
+            background: #e9ecef;
+            color: var(--primary-color);
+        }
+
+        .btn-logout-cancel:hover {
+            background: #d3d6d9;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
+        🎉 Free stringing on 2+ rackets! | Visit us in-store today! 🏸
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
+                    Google Business</a>
+                <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                    class="text-white"><i class="bi bi-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="index.html#services" id="servicesDropdown"
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-tools"></i> Services
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <li><a class="dropdown-item" href="index.html#jersey-sublimation">Jersey Sublimation</a>
+                            </li>
+                            <li><a class="dropdown-item" href="stringing-booking.html">Racket Stringing</a></li>
+                            <li><a class="dropdown-item" href="bat-knocking.html">Machine Cricket Bat Knocking</a></li>
+                            <li><a class="dropdown-item" href="index.html#custom-trophies">Custom Trophies</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" id="analyticsMenuItem">
+                        <a class="nav-link active" href="dashboard.html"><i class="bi bi-graph-up"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about"><i class="bi bi-info-circle"></i>
+                            About</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact"><i
+                                class="bi bi-envelope-open"></i>
+                            Contact</a></li>
+                    <li class="nav-item" id="loginMenuItem" style="display: none;">
+                        <a class="nav-link" href="#" id="loginBtn"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item dropdown" id="userProfileMenuItem">
+                        <a class="nav-link dropdown-toggle" href="#" id="userProfileDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> <span id="navUsername">Admin</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
+                            <li><a class="dropdown-item" href="#" id="profileBtn"><i class="bi bi-person"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div id="root">
+        <!-- Login Modal -->
+        <div id="loginModal" class="show">
+            <div class="login-box">
+                <button id="closeLoginBtn" class="close-login" title="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+                
+                <div class="login-form-wrapper">
+                    <h2 class="text-center"><i class="bi bi-shield-lock"></i> Login</h2>
+                    <p class="subtitle text-center">Access Analytics Dashboard</p>
+                    
+                    <div id="loginError" class="login-error">
+                        <i class="bi bi-exclamation-triangle"></i> Invalid username or password
+                    </div>
+
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn w-100" style="background: var(--accent-color); color: white;">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
+                    </form>
+                </div>
+
+                <div class="login-required-msg">
+                    <div class="mb-4">
+                        <i class="bi bi-lock" style="font-size: 3rem; color: var(--accent-color);"></i>
+                    </div>
+                    <h3 class="mb-3">Login Required</h3>
+                    <p class="text-muted mb-4">You need to login to access the Analytics Dashboard</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button id="backToLoginBtn" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Login
+                        </button>
+                        <a href="index.html" class="btn" style="background: var(--accent-color); color: white;">
+                            <i class="bi bi-house"></i> Go to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content (hidden until authenticated) -->
+        <div class="dashboard-content">
+            <div class="container py-5">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h1 class="h2 fw-semibold mb-0">🏸 Sales Dashboard</h1>
+                </div>
+
+                <div class="d-flex justify-content-end mb-3 gap-2">
+                    <select id="granularitySelect" class="form-select" style="width: auto;">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly" selected>Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                    <select id="sortBySelect" class="form-select" style="width: auto;">
+                        <option value="sales" selected>Revenue</option>
+                        <option value="units">Units Sold</option>
+                        <option value="revenuePerUnit">Revenue / Unit</option>
+                    </select>
+                    <button id="sortDirBtn" class="btn btn-outline-secondary">↓</button>
+                </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border shadow-sm p-4">
+                        <p class="text-muted mb-1 small">Total Sales</p>
+                        <h2 class="h3 fw-bold mb-0" id="totalSales">₹0</h2>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border shadow-sm p-4">
+                        <p class="text-muted mb-1 small">Units Sold</p>
+                        <h2 class="h3 fw-bold mb-0" id="totalUnits">0</h2>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border shadow-sm p-4">
+                        <p class="text-muted mb-1 small">Avg Revenue/Unit</p>
+                        <h2 class="h3 fw-bold mb-0" id="avgRevenue">₹0</h2>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border shadow-sm p-4">
+                        <p class="text-muted mb-1 small">Top Product</p>
+                        <h2 class="h3 fw-bold mb-0" id="topProduct">-</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-4">
+                <div class="col-12 col-lg-8">
+                    <div class="card border shadow-sm p-4">
+                        <h3 class="h5 fw-semibold mb-3">Revenue & Units Trend</h3>
+                        <div style="height: 320px;">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card border shadow-sm p-4">
+                        <h3 class="h5 fw-semibold mb-3">Top Strings by Revenue</h3>
+                        <div style="height: 320px;">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card border shadow-sm p-4">
+                        <h3 class="h5 fw-semibold mb-3">Revenue Share by Product</h3>
+                        <div style="height: 340px;">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Dashboard Content -->
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp floating -->
+    <a href="https://wa.me/918800505769?text=Hi!%20I'm%20interested%20in%20your%20services" target="_blank"
+        class="whatsapp-float" title="WhatsApp">
+        <i class="bi bi-whatsapp fs-4"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Dashboard Script -->
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Authentication
+            const HARDCODED_USERNAME = 'admin';
+            const HARDCODED_PASSWORD = 'admin';
+            let isAuthenticated = false;
+            let scrollPosition = 0;
+
+        // Save and restore scroll position
+        function lockScroll() {
+            scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            document.body.style.top = `-${scrollPosition}px`;
+            document.body.classList.add('modal-open');
+        }
+
+        function unlockScroll() {
+            document.body.classList.remove('modal-open');
+            document.body.style.top = '';
+            window.scrollTo(0, scrollPosition);
+        }
+
+        // Check if user is already logged in (session storage)
+        function checkAuth() {
+            const authToken = sessionStorage.getItem('dashboardAuth');
+            if (authToken === 'true') {
+                isAuthenticated = true;
+                return true;
+            }
+            return false;
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('loginError');
+
+            if (username === HARDCODED_USERNAME && password === HARDCODED_PASSWORD) {
+                // Successful login
+                sessionStorage.setItem('dashboardAuth', 'authenticated');
+                sessionStorage.setItem('dashboardUser', username);
+                isAuthenticated = true;
+                errorEl.classList.remove('show');
+                showDashboard();
+            } else {
+                // Failed login
+                errorEl.classList.add('show');
+                document.getElementById('password').value = '';
+            }
+        });
+
+        // Close login button handler
+        document.getElementById('closeLoginBtn').addEventListener('click', function() {
+            const loginFormWrapper = document.querySelector('.login-form-wrapper');
+            const loginRequiredMsg = document.querySelector('.login-required-msg');
+            
+            // Check if we're on the login form or the "login required" message
+            if (!loginFormWrapper.classList.contains('hide')) {
+                // On login form - show "login required" message
+                loginFormWrapper.classList.add('hide');
+                loginRequiredMsg.classList.add('show');
+            } else {
+                // On "login required" message - go to home page
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Back to login button handler
+        document.getElementById('backToLoginBtn').addEventListener('click', function() {
+            document.querySelector('.login-form-wrapper').classList.remove('hide');
+            document.querySelector('.login-required-msg').classList.remove('show');
+        });
+
+        // Dashboard functionality variables
+        let mockData = null;
+        let currentGranularity = 'monthly';
+        let sortBy = 'sales';
+        let sortDir = 'desc';
+        let charts = {};
+
+        function showDashboard() {
+            document.getElementById('loginModal').classList.remove('show');
+            unlockScroll();
+            document.querySelector('.dashboard-content').classList.add('show');
+            const username = sessionStorage.getItem('dashboardUser') || 'Admin';
+            
+            // Update navigation username
+            const navUsername = document.getElementById('navUsername');
+            if (navUsername) {
+                navUsername.textContent = username;
+            }
+            
+            // Load dashboard data if not already loaded
+            if (!mockData) {
+                loadDashboardData();
+            }
+        }
+
+        function hideDashboard() {
+            document.getElementById('loginModal').classList.add('show');
+            lockScroll();
+            document.querySelector('.dashboard-content').classList.remove('show');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        // Check authentication on page load
+        if (!checkAuth()) {
+            // Redirect to home page - user needs to login from main menu
+            alert('Please login from the main menu to access Analytics Dashboard.');
+            window.location.href = 'index.html';
+        } else {
+            // User is authenticated, show dashboard
+            showDashboard();
+        }
+
+        // Navigation menu handlers
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profileBtn = document.getElementById('profileBtn');
+        const logoutConfirmModal = document.getElementById('logoutConfirmModal');
+        const btnConfirmLogout = document.getElementById('btnConfirmLogout');
+        const btnCancelLogout = document.getElementById('btnCancelLogout');
+        
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                logoutConfirmModal.classList.add('show');
+            });
+        }
+
+        if (btnConfirmLogout) {
+            btnConfirmLogout.addEventListener('click', () => {
+                sessionStorage.removeItem('dashboardAuth');
+                sessionStorage.removeItem('dashboardUser');
+                window.location.href = 'index.html';
+            });
+        }
+
+        if (btnCancelLogout) {
+            btnCancelLogout.addEventListener('click', () => {
+                logoutConfirmModal.classList.remove('show');
+            });
+        }
+
+        // Close modal on outside click
+        if (logoutConfirmModal) {
+            logoutConfirmModal.addEventListener('click', (e) => {
+                if (e.target === logoutConfirmModal) {
+                    logoutConfirmModal.classList.remove('show');
+                }
+            });
+        }
+
+        if (profileBtn) {
+            profileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Profile feature coming soon!');
+            });
+        }
+
+        // Load mock data
+        function loadDashboardData() {
+            fetch('./mockData.json')
+                .then(res => res.json())
+                .then(data => {
+                    mockData = data;
+                    initDashboard();
+                })
+                .catch(err => {
+                    console.error('Error loading mock data:', err);
+                    alert('Error loading dashboard data');
+                });
+        }
+
+        function initDashboard() {
+            renderDashboard();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('granularitySelect').addEventListener('change', (e) => {
+                currentGranularity = e.target.value;
+                updateCharts();
+            });
+
+            document.getElementById('sortBySelect').addEventListener('change', (e) => {
+                sortBy = e.target.value;
+                updateCharts();
+            });
+
+            document.getElementById('sortDirBtn').addEventListener('click', () => {
+                sortDir = sortDir === 'desc' ? 'asc' : 'desc';
+                document.getElementById('sortDirBtn').textContent = sortDir === 'desc' ? '↓' : '↑';
+                updateCharts();
+            });
+        }
+
+        function getTrendData() {
+            const arr = mockData[currentGranularity] || [];
+            return arr.map(p => {
+                const revenue = p.products.reduce((s, x) => s + x.sales, 0);
+                const units = p.products.reduce((s, x) => s + x.units, 0);
+                return { period: p.period, revenue, units };
+            });
+        }
+
+        function getProductTotals() {
+            const map = new Map();
+            (mockData[currentGranularity] || []).forEach(period => {
+                period.products.forEach(prod => {
+                    const prev = map.get(prod.name) || { name: prod.name, sales: 0, units: 0 };
+                    prev.sales += prod.sales;
+                    prev.units += prod.units;
+                    map.set(prod.name, prev);
+                });
+            });
+            const arr = Array.from(map.values()).map(x => ({
+                ...x,
+                revenuePerUnit: +(x.sales / x.units).toFixed(2)
+            }));
+            const key = sortBy === 'sales' ? 'sales' : sortBy === 'units' ? 'units' : 'revenuePerUnit';
+            arr.sort((a, b) => sortDir === 'asc' ? a[key] - b[key] : b[key] - a[key]);
+            return arr;
+        }
+
+        function renderDashboard() {
+            const productTotals = getProductTotals();
+            const totalSales = productTotals.reduce((s, p) => s + p.sales, 0);
+            const totalUnits = productTotals.reduce((s, p) => s + p.units, 0);
+            const avgRevenuePerUnit = totalUnits ? (totalSales / totalUnits).toFixed(2) : '0.00';
+            const topProduct = productTotals[0]?.name || '-';
+
+            document.getElementById('totalSales').textContent = `₹${totalSales}`;
+            document.getElementById('totalUnits').textContent = totalUnits;
+            document.getElementById('avgRevenue').textContent = `₹${avgRevenuePerUnit}`;
+            document.getElementById('topProduct').textContent = topProduct;
+
+            createCharts();
+        }
+
+        function createCharts() {
+            const trendData = getTrendData();
+            const productTotals = getProductTotals();
+
+            // Line Chart - Revenue & Units Trend
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            if (charts.line) charts.line.destroy();
+            charts.line = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: trendData.map(d => d.period),
+                    datasets: [
+                        {
+                            label: 'Revenue (₹)',
+                            data: trendData.map(d => d.revenue),
+                            borderColor: '#1E90FF',
+                            backgroundColor: 'rgba(30, 144, 255, 0.1)',
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Units Sold',
+                            data: trendData.map(d => d.units),
+                            borderColor: '#FFA500',
+                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { type: 'linear', position: 'left' },
+                        y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // Bar Chart - Top Strings
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            if (charts.bar) charts.bar.destroy();
+            charts.bar = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: productTotals.map(p => p.name),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: productTotals.map(p => p.sales),
+                        backgroundColor: '#1E90FF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y'
+                }
+            });
+
+            // Pie Chart - Revenue Share
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            if (charts.pie) charts.pie.destroy();
+            charts.pie = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: productTotals.map(p => p.name),
+                    datasets: [{
+                        data: productTotals.map(p => p.sales),
+                        backgroundColor: ['#1E90FF', '#FFA500', '#00C49F', '#FFBB28', '#AA66CC']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function updateCharts() {
+            renderDashboard();
+        }
+        
+        }); // End DOMContentLoaded
+    </script>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutConfirmModal">
+        <div class="logout-confirm-box">
+            <h3><i class="bi bi-exclamation-circle text-warning"></i> Confirm Logout</h3>
+            <p>Are you sure you want to logout? You will need to login again to access the Analytics Dashboard.</p>
+            <div class="logout-confirm-buttons">
+                <button id="btnCancelLogout" class="btn-logout-cancel">Cancel</button>
+                <button id="btnConfirmLogout" class="btn-logout-confirm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
