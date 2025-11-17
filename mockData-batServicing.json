@@ -1,0 +1,294 @@
+{
+  "daily": [
+    {
+      "period": "Mon",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 1000, "units": 2 },
+        { "name": "Standard (15k balls)", "sales": 2200, "units": 2 },
+        { "name": "Premium (20k balls)", "sales": 1500, "units": 1 }
+      ]
+    },
+    {
+      "period": "Tue",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 2400, "units": 3 },
+        { "name": "Standard (15k balls)", "sales": 1100, "units": 1 },
+        { "name": "Elite (25k balls)", "sales": 1800, "units": 1 }
+      ]
+    },
+    {
+      "period": "Wed",
+      "products": [
+        { "name": "Premium (20k balls)", "sales": 3000, "units": 2 },
+        { "name": "Professional (30k balls)", "sales": 2000, "units": 1 }
+      ]
+    },
+    {
+      "period": "Thu",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 800, "units": 1 },
+        { "name": "Standard (15k balls)", "sales": 3300, "units": 3 },
+        { "name": "Premium (20k balls)", "sales": 1500, "units": 1 }
+      ]
+    },
+    {
+      "period": "Fri",
+      "products": [
+        { "name": "Elite (25k balls)", "sales": 3600, "units": 2 },
+        { "name": "Professional (30k balls)", "sales": 2000, "units": 1 }
+      ]
+    },
+    {
+      "period": "Sat",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 3200, "units": 4 },
+        { "name": "Standard (15k balls)", "sales": 2200, "units": 2 },
+        { "name": "Premium (20k balls)", "sales": 3000, "units": 2 }
+      ]
+    },
+    {
+      "period": "Sun",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 2200, "units": 2 },
+        { "name": "Elite (25k balls)", "sales": 1800, "units": 1 },
+        { "name": "Professional (30k balls)", "sales": 4000, "units": 2 }
+      ]
+    }
+  ],
+  "weekly": [
+    {
+      "period": "Wk1",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 4800, "units": 6 },
+        { "name": "Standard (15k balls)", "sales": 6600, "units": 6 },
+        { "name": "Premium (20k balls)", "sales": 4500, "units": 3 },
+        { "name": "Elite (25k balls)", "sales": 3600, "units": 2 }
+      ]
+    },
+    {
+      "period": "Wk2",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 5500, "units": 5 },
+        { "name": "Premium (20k balls)", "sales": 6000, "units": 4 },
+        { "name": "Professional (30k balls)", "sales": 4000, "units": 2 }
+      ]
+    },
+    {
+      "period": "Wk3",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 5600, "units": 7 },
+        { "name": "Elite (25k balls)", "sales": 5400, "units": 3 }
+      ]
+    },
+    {
+      "period": "Wk4",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 4400, "units": 4 },
+        { "name": "Premium (20k balls)", "sales": 4500, "units": 3 },
+        { "name": "Professional (30k balls)", "sales": 2000, "units": 1 }
+      ]
+    },
+    {
+      "period": "Wk5",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 4000, "units": 5 },
+        { "name": "Elite (25k balls)", "sales": 7200, "units": 4 }
+      ]
+    },
+    {
+      "period": "Wk6",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 3300, "units": 3 },
+        { "name": "Premium (20k balls)", "sales": 6000, "units": 4 }
+      ]
+    },
+    {
+      "period": "Wk7",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 3200, "units": 4 },
+        { "name": "Professional (30k balls)", "sales": 6000, "units": 3 }
+      ]
+    },
+    {
+      "period": "Wk8",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 5500, "units": 5 },
+        { "name": "Elite (25k balls)", "sales": 3600, "units": 2 }
+      ]
+    },
+    {
+      "period": "Wk9",
+      "products": [
+        { "name": "Premium (20k balls)", "sales": 7500, "units": 5 },
+        { "name": "Professional (30k balls)", "sales": 4000, "units": 2 }
+      ]
+    },
+    {
+      "period": "Wk10",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 4800, "units": 6 },
+        { "name": "Elite (25k balls)", "sales": 5400, "units": 3 }
+      ]
+    },
+    {
+      "period": "Wk11",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 4400, "units": 4 },
+        { "name": "Premium (20k balls)", "sales": 3000, "units": 2 }
+      ]
+    }
+  ],
+  "monthly": [
+    {
+      "period": "Jan",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 16000, "units": 20 },
+        { "name": "Standard (15k balls)", "sales": 22000, "units": 20 },
+        { "name": "Premium (20k balls)", "sales": 18000, "units": 12 },
+        { "name": "Elite (25k balls)", "sales": 14400, "units": 8 },
+        { "name": "Professional (30k balls)", "sales": 10000, "units": 5 }
+      ]
+    },
+    {
+      "period": "Feb",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 12000, "units": 15 },
+        { "name": "Standard (15k balls)", "sales": 19800, "units": 18 },
+        { "name": "Premium (20k balls)", "sales": 21000, "units": 14 },
+        { "name": "Elite (25k balls)", "sales": 10800, "units": 6 }
+      ]
+    },
+    {
+      "period": "Mar",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 24200, "units": 22 },
+        { "name": "Premium (20k balls)", "sales": 24000, "units": 16 },
+        { "name": "Professional (30k balls)", "sales": 12000, "units": 6 }
+      ]
+    },
+    {
+      "period": "Apr",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 14400, "units": 18 },
+        { "name": "Standard (15k balls)", "sales": 20900, "units": 19 },
+        { "name": "Elite (25k balls)", "sales": 16200, "units": 9 }
+      ]
+    },
+    {
+      "period": "May",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 18400, "units": 23 },
+        { "name": "Premium (20k balls)", "sales": 27000, "units": 18 },
+        { "name": "Professional (30k balls)", "sales": 14000, "units": 7 }
+      ]
+    },
+    {
+      "period": "Jun",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 26400, "units": 24 },
+        { "name": "Elite (25k balls)", "sales": 19800, "units": 11 },
+        { "name": "Professional (30k balls)", "sales": 16000, "units": 8 }
+      ]
+    },
+    {
+      "period": "Jul",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 20000, "units": 25 },
+        { "name": "Standard (15k balls)", "sales": 27500, "units": 25 },
+        { "name": "Premium (20k balls)", "sales": 30000, "units": 20 }
+      ]
+    },
+    {
+      "period": "Aug",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 28600, "units": 26 },
+        { "name": "Elite (25k balls)", "sales": 21600, "units": 12 },
+        { "name": "Professional (30k balls)", "sales": 18000, "units": 9 }
+      ]
+    },
+    {
+      "period": "Sep",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 17600, "units": 22 },
+        { "name": "Premium (20k balls)", "sales": 25500, "units": 17 }
+      ]
+    },
+    {
+      "period": "Oct",
+      "products": [
+        { "name": "Standard (15k balls)", "sales": 23100, "units": 21 },
+        { "name": "Premium (20k balls)", "sales": 22500, "units": 15 },
+        { "name": "Elite (25k balls)", "sales": 14400, "units": 8 }
+      ]
+    },
+    {
+      "period": "Nov",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 16000, "units": 20 },
+        { "name": "Standard (15k balls)", "sales": 22000, "units": 20 },
+        { "name": "Professional (30k balls)", "sales": 12000, "units": 6 }
+      ]
+    },
+    {
+      "period": "Dec",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 20000, "units": 25 },
+        { "name": "Standard (15k balls)", "sales": 28600, "units": 26 },
+        { "name": "Premium (20k balls)", "sales": 33000, "units": 22 },
+        { "name": "Elite (25k balls)", "sales": 18000, "units": 10 }
+      ]
+    }
+  ],
+  "yearly": [
+    {
+      "period": "2021",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 168000, "units": 210 },
+        { "name": "Standard (15k balls)", "sales": 242000, "units": 220 },
+        { "name": "Premium (20k balls)", "sales": 252000, "units": 168 },
+        { "name": "Elite (25k balls)", "sales": 162000, "units": 90 },
+        { "name": "Professional (30k balls)", "sales": 120000, "units": 60 }
+      ]
+    },
+    {
+      "period": "2022",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 176000, "units": 220 },
+        { "name": "Standard (15k balls)", "sales": 253000, "units": 230 },
+        { "name": "Premium (20k balls)", "sales": 270000, "units": 180 },
+        { "name": "Elite (25k balls)", "sales": 180000, "units": 100 },
+        { "name": "Professional (30k balls)", "sales": 140000, "units": 70 }
+      ]
+    },
+    {
+      "period": "2023",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 192000, "units": 240 },
+        { "name": "Standard (15k balls)", "sales": 275000, "units": 250 },
+        { "name": "Premium (20k balls)", "sales": 297000, "units": 198 },
+        { "name": "Elite (25k balls)", "sales": 198000, "units": 110 },
+        { "name": "Professional (30k balls)", "sales": 160000, "units": 80 }
+      ]
+    },
+    {
+      "period": "2024",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 200000, "units": 250 },
+        { "name": "Standard (15k balls)", "sales": 286000, "units": 260 },
+        { "name": "Premium (20k balls)", "sales": 315000, "units": 210 },
+        { "name": "Elite (25k balls)", "sales": 216000, "units": 120 },
+        { "name": "Professional (30k balls)", "sales": 180000, "units": 90 }
+      ]
+    },
+    {
+      "period": "2025",
+      "products": [
+        { "name": "Basic (10k balls)", "sales": 216000, "units": 270 },
+        { "name": "Standard (15k balls)", "sales": 308000, "units": 280 },
+        { "name": "Premium (20k balls)", "sales": 345000, "units": 230 },
+        { "name": "Elite (25k balls)", "sales": 234000, "units": 130 },
+        { "name": "Professional (30k balls)", "sales": 200000, "units": 100 }
+      ]
+    }
+  ]
+}
