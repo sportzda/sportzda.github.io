@@ -603,7 +603,7 @@
                             <option value="revenuePerUnit">Revenue / Unit</option>
                         </select>
                     </div>
-                    <button id="sortDirBtn" class="btn btn-outline-secondary" title="Refresh data">
+                    <button id="refreshBtn" class="btn btn-outline-secondary" title="Refresh data">
                         <i class="bi bi-arrow-clockwise"></i>
                     </button>
                 </div>
@@ -952,7 +952,7 @@
                 updateCharts();
             });
 
-            document.getElementById('sortDirBtn').addEventListener('click', () => {
+            document.getElementById('refreshBtn').addEventListener('click', () => {
                 // Reload data from JSON file
                 loadDashboardData(currentService);
             });
