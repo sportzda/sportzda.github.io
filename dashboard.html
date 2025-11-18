@@ -251,6 +251,324 @@
             margin: 0;
         }
 
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .stat-trend.positive {
+            color: #10b981;
+            background: #d1fae5;
+        }
+
+        .stat-trend.negative {
+            color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .stat-trend.neutral {
+            color: #6b7280;
+            background: #f3f4f6;
+        }
+
+        .stat-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .stat-sparkline {
+            width: 100%;
+            height: 30px;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .stat-comparison {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.25rem;
+        }
+
+        .stat-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .stat-badge.high {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .stat-badge.low {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f4f6;
+            border-top-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .chart-loading {
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: white;
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left-color: #10b981; }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.info { border-left-color: #3b82f6; }
+        .toast.warning { border-left-color: #f59e0b; }
+
+        .toast-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon { color: #10b981; }
+        .toast.error .toast-icon { color: #ef4444; }
+        .toast.info .toast-icon { color: #3b82f6; }
+        .toast.warning .toast-icon { color: #f59e0b; }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: var(--primary-color);
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-export {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-export:hover {
+            background: #f9fafb;
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* Session Timeout Warning */
+        .session-warning {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fef3c7;
+            color: #92400e;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            border: 2px solid #fbbf24;
+        }
+
+        .session-warning.show {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .session-warning button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            background: #92400e;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .session-warning button:hover {
+            background: #78350f;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
+            }
+
+            .chart-loading {
+                min-height: 250px;
+            }
+
+            .export-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-export {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .toast-container {
+                left: 10px;
+                right: 10px;
+                max-width: calc(100% - 20px);
+            }
+
+            .toast {
+                min-width: auto;
+            }
+        }
+
         /* Login Modal Styles */
         #loginModal {
             display: none;
@@ -523,6 +841,25 @@
 
     <!-- Dashboard Container -->
     <div id="root">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p style="color: var(--muted); font-weight: 500;">Loading dashboard data...</p>
+        </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- Session Timeout Warning -->
+        <div class="session-warning" id="sessionWarning">
+            <i class="bi bi-exclamation-triangle" style="font-size: 1.5rem;"></i>
+            <div style="flex: 1;">
+                <strong>Session Expiring Soon!</strong>
+                <p style="margin: 0; font-size: 0.875rem;">You will be logged out in <span id="timeoutCountdown">2</span> minutes.</p>
+            </div>
+            <button id="extendSessionBtn">Stay Logged In</button>
+        </div>
+
         <!-- Login Modal -->
         <div id="loginModal" class="show">
             <div class="login-box">
@@ -576,6 +913,14 @@
             <div class="container py-5">
                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                     <h1 class="h2 fw-semibold mb-0"><span id="dashboardIcon">🏸</span> <span id="dashboardTitle">Sales Dashboard</span></h1>
+                    <div class="export-buttons">
+                        <button class="btn-export" id="exportCsvBtn" title="Export data as CSV">
+                            <i class="bi bi-filetype-csv"></i> Export CSV
+                        </button>
+                        <button class="btn-export" id="exportPdfBtn" title="Export charts as PDF">
+                            <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                        </button>
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-end mb-3 gap-3 flex-wrap align-items-center">
@@ -617,6 +962,11 @@
                         </div>
                         <p class="stat-label">Total Sales</p>
                         <h2 class="stat-value" id="totalSales">₹0</h2>
+                        <div class="stat-trend neutral" id="salesTrend">
+                            <i class="bi bi-dash"></i> <span>No change</span>
+                        </div>
+                        <div class="stat-comparison" id="salesComparison">vs previous period</div>
+                        <canvas class="stat-sparkline" id="salesSparkline"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-lg-3">
@@ -626,6 +976,11 @@
                         </div>
                         <p class="stat-label">Units Sold</p>
                         <h2 class="stat-value" id="totalUnits">0</h2>
+                        <div class="stat-trend neutral" id="unitsTrend">
+                            <i class="bi bi-dash"></i> <span>No change</span>
+                        </div>
+                        <div class="stat-comparison" id="unitsComparison">vs previous period</div>
+                        <canvas class="stat-sparkline" id="unitsSparkline"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-lg-3">
@@ -635,6 +990,11 @@
                         </div>
                         <p class="stat-label">Avg Revenue/Unit</p>
                         <h2 class="stat-value" id="avgRevenue">₹0</h2>
+                        <div class="stat-trend neutral" id="avgTrend">
+                            <i class="bi bi-dash"></i> <span>No change</span>
+                        </div>
+                        <div class="stat-comparison" id="avgComparison">vs previous period</div>
+                        <canvas class="stat-sparkline" id="avgSparkline"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6 col-lg-3">
@@ -644,6 +1004,10 @@
                         </div>
                         <p class="stat-label">Top Product</p>
                         <h2 class="stat-value" id="topProduct">-</h2>
+                        <div class="stat-details">
+                            <span id="topProductUnits">0 units</span>
+                            <span class="stat-badge" id="topProductBadge">N/A</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -727,11 +1091,214 @@
     <script>
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Authentication
-            const HARDCODED_USERNAME = 'admin';
-            const HARDCODED_PASSWORD = 'admin';
+            // ==================== CONFIGURATION ====================
+            const CONFIG = {
+                AUTH: {
+                    username: 'admin',
+                    password: 'admin'
+                },
+                SESSION: {
+                    timeout: 30 * 60 * 1000, // 30 minutes
+                    warningTime: 28 * 60 * 1000 // 28 minutes
+                },
+                CACHE: {
+                    expiry: 5 * 60 * 1000 // 5 minutes
+                }
+            };
+
+            // ==================== STATE ====================
             let isAuthenticated = false;
             let scrollPosition = 0;
+            let mockData = null;
+            let previousData = null; // For trend calculation
+            let currentGranularity = 'monthly';
+            let currentService = 'racketStringing';
+            let sortBy = 'sales';
+            let sortDir = 'desc';
+            let charts = {};
+            let sessionTimer = null;
+            let warningTimer = null;
+            let lastActivityTime = Date.now();
+
+            // Service data file mapping
+            const serviceDataFiles = {
+                racketStringing: './mockData.json',
+                batServicing: './mockData-batServicing.json'
+            };
+
+            const serviceTitles = {
+                racketStringing: { icon: '🏸', title: 'Racket Stringing Dashboard' },
+                batServicing: { icon: '🏏', title: 'Cricket Bat Servicing Dashboard' }
+            };
+
+            // ==================== UTILITY FUNCTIONS ====================
+
+            // -------------------- Toast Notifications --------------------
+            function showToast(type, title, message, duration = 4000) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                const icons = {
+                    success: 'bi-check-circle-fill',
+                    error: 'bi-x-circle-fill',
+                    info: 'bi-info-circle-fill',
+                    warning: 'bi-exclamation-triangle-fill'
+                };
+                
+                toast.innerHTML = `
+                    <i class="toast-icon bi ${icons[type]}"></i>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                `;
+                
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideIn 0.3s ease reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+
+            // -------------------- Loading States --------------------
+            function showLoading() {
+                document.getElementById('loadingOverlay').classList.add('show');
+            }
+
+            function hideLoading() {
+                document.getElementById('loadingOverlay').classList.remove('show');
+            }
+
+            // -------------------- Number Animation --------------------
+            function animateNumber(element, start, end, duration = 1000, prefix = '', suffix = '') {
+                // Clear any existing animation
+                if (element._animationTimer) {
+                    clearInterval(element._animationTimer);
+                }
+                
+                const range = end - start;
+                const increment = range / (duration / 16);
+                let current = start;
+                
+                element._animationTimer = setInterval(() => {
+                    current += increment;
+                    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                        current = end;
+                        clearInterval(element._animationTimer);
+                        delete element._animationTimer;
+                    }
+                    element.textContent = prefix + Math.round(current).toLocaleString('en-IN') + suffix;
+                }, 16);
+            }
+
+            // -------------------- Data Caching --------------------
+            function getCachedData(key) {
+                const cached = localStorage.getItem(key);
+                if (!cached) return null;
+                
+                const { data, timestamp } = JSON.parse(cached);
+                const now = Date.now();
+                
+                if (now - timestamp > CONFIG.CACHE.expiry) {
+                    localStorage.removeItem(key);
+                    return null;
+                }
+                
+                return data;
+            }
+
+            function setCachedData(key, data) {
+                const cacheObject = {
+                    data,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(key, JSON.stringify(cacheObject));
+            }
+
+            // ==================== SESSION MANAGEMENT ====================
+            function resetSessionTimer() {
+                lastActivityTime = Date.now();
+                
+                if (sessionTimer) clearTimeout(sessionTimer);
+                if (warningTimer) clearTimeout(warningTimer);
+                
+                document.getElementById('sessionWarning').classList.remove('show');
+                
+                // Set warning timer (28 minutes)
+                warningTimer = setTimeout(() => {
+                    document.getElementById('sessionWarning').classList.add('show');
+                    let countdown = 2;
+                    document.getElementById('timeoutCountdown').textContent = countdown;
+                    
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                        } else {
+                            document.getElementById('timeoutCountdown').textContent = countdown;
+                        }
+                    }, 60000);
+                }, CONFIG.SESSION.warningTime);
+                
+                // Set logout timer (30 minutes)
+                sessionTimer = setTimeout(() => {
+                    showToast('warning', 'Session Expired', 'You have been logged out due to inactivity.');
+                    setTimeout(() => {
+                        sessionStorage.removeItem('dashboardAuth');
+                        sessionStorage.removeItem('dashboardUser');
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }, CONFIG.SESSION.timeout);
+            }
+
+            function trackActivity() {
+                ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+                    document.addEventListener(event, () => {
+                        if (isAuthenticated) {
+                            resetSessionTimer();
+                        }
+                    }, { passive: true });
+                });
+            }
+
+            // ==================== KEYBOARD SHORTCUTS ====================
+            function setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    // Don't trigger shortcuts when typing in inputs
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    
+                    switch(e.key.toLowerCase()) {
+                        case 'r':
+                            if (!e.ctrlKey && !e.metaKey) {
+                                e.preventDefault();
+                                loadDashboardData(currentService);
+                                showToast('info', 'Refreshing', 'Loading latest data...');
+                            }
+                            break;
+                        case 'e':
+                            if (!e.ctrlKey && !e.metaKey) {
+                                e.preventDefault();
+                                exportToCsv();
+                            }
+                            break;
+                        case 'escape':
+                            const modal = document.getElementById('logoutConfirmModal');
+                            if (modal.classList.contains('show')) {
+                                modal.classList.remove('show');
+                            }
+                            break;
+                    }
+                });
+            }
+
+            // ==================== AUTHENTICATION ====================
+            const HARDCODED_USERNAME = CONFIG.AUTH.username;
+            const HARDCODED_PASSWORD = CONFIG.AUTH.password;
 
         // Save and restore scroll position
         function lockScroll() {
@@ -766,11 +1333,14 @@
 
             if (username === HARDCODED_USERNAME && password === HARDCODED_PASSWORD) {
                 // Successful login
-                sessionStorage.setItem('dashboardAuth', 'authenticated');
+                sessionStorage.setItem('dashboardAuth', 'true');
                 sessionStorage.setItem('dashboardUser', username);
+                sessionStorage.setItem('loginTime', Date.now().toString());
                 isAuthenticated = true;
                 errorEl.classList.remove('show');
+                showToast('success', 'Login Successful', `Welcome back, ${username}!`);
                 showDashboard();
+                resetSessionTimer();
             } else {
                 // Failed login
                 errorEl.classList.add('show');
@@ -799,25 +1369,6 @@
             document.querySelector('.login-form-wrapper').classList.remove('hide');
             document.querySelector('.login-required-msg').classList.remove('show');
         });
-
-        // Dashboard functionality variables
-        let mockData = null;
-        let currentGranularity = 'monthly';
-        let currentService = 'racketStringing';
-        let sortBy = 'sales';
-        let sortDir = 'desc';
-        let charts = {};
-
-        // Service data file mapping
-        const serviceDataFiles = {
-            racketStringing: './mockData.json',
-            batServicing: './mockData-batServicing.json'
-        };
-
-        const serviceTitles = {
-            racketStringing: { icon: '🏸', title: 'Racket Stringing Dashboard' },
-            batServicing: { icon: '🏏', title: 'Cricket Bat Servicing Dashboard' }
-        };
 
         function showDashboard() {
             document.getElementById('loginModal').classList.remove('show');
@@ -852,8 +1403,13 @@
             alert('Please login from the main menu to access Analytics Dashboard.');
             window.location.href = 'index.html';
         } else {
-            // User is authenticated, show dashboard
+            // User is authenticated, initialize everything first
+            trackActivity();
+            setupKeyboardShortcuts();
+            
+            // Then show dashboard and start session
             showDashboard();
+            resetSessionTimer();
         }
 
         // Navigation menu handlers
@@ -896,24 +1452,70 @@
         if (profileBtn) {
             profileBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                alert('Profile feature coming soon!');
+                showToast('info', 'Profile', 'Profile feature coming soon!');
             });
         }
 
-        // Load mock data
-        function loadDashboardData(service = 'racketStringing') {
-            const dataFile = serviceDataFiles[service];
-            fetch(dataFile)
-                .then(res => res.json())
-                .then(data => {
-                    mockData = data;
+        // ==================== DATA MANAGEMENT ====================
+
+        // Load mock data with caching and error handling
+        function loadDashboardData(service = 'racketStringing', forceRefresh = false) {
+            const cacheKey = `dashboard_${service}`;
+            
+            // Try to get cached data first
+            if (!forceRefresh) {
+                const cached = getCachedData(cacheKey);
+                if (cached) {
+                    previousData = mockData;
+                    mockData = cached;
                     currentService = service;
                     updateDashboardTitle();
                     initDashboard();
+                    showToast('info', 'Data Loaded', 'Using cached data');
+                    return;
+                }
+            }
+            
+            const dataFile = serviceDataFiles[service];
+            showLoading();
+            
+            fetch(dataFile)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    previousData = mockData;
+                    mockData = data;
+                    currentService = service;
+                    
+                    // Cache the data
+                    setCachedData(cacheKey, data);
+                    
+                    updateDashboardTitle();
+                    initDashboard();
+                    
+                    if (forceRefresh) {
+                        showToast('success', 'Data Refreshed', 'Dashboard updated with latest data');
+                    }
                 })
                 .catch(err => {
+                    hideLoading();
                     console.error('Error loading mock data:', err);
-                    alert('Error loading dashboard data');
+                    showToast('error', 'Error Loading Data', 'Failed to load dashboard data. Please try again.');
+                    
+                    // Try to use cached data as fallback
+                    const cached = getCachedData(cacheKey);
+                    if (cached && !mockData) {
+                        mockData = cached;
+                        currentService = service;
+                        updateDashboardTitle();
+                        initDashboard();
+                        showToast('warning', 'Using Cached Data', 'Showing previously cached data');
+                    }
                 });
         }
 
@@ -931,11 +1533,47 @@
             }
         }
 
+        // ==================== DASHBOARD RENDERING ====================
+
         function initDashboard() {
             renderDashboard();
-            setupEventListeners();
+            if (!window.listenersSetup) {
+                setupEventListeners();
+                window.listenersSetup = true;
+            }
         }
 
+        // ==================== EXPORT FUNCTIONALITY ====================
+
+        // Export Functions
+        function exportToCsv() {
+            const productTotals = getProductTotals();
+            let csv = 'Product,Revenue (₹),Units Sold,Revenue per Unit (₹)\n';
+            
+            productTotals.forEach(product => {
+                csv += `"${product.name}",${product.sales},${product.units},${product.revenuePerUnit}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dashboard-${currentService}-${currentGranularity}-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('success', 'Export Complete', 'CSV file downloaded successfully');
+        }
+
+        function exportToPdf() {
+            showToast('info', 'Export PDF', 'PDF export feature is coming soon!');
+            // In a real implementation, you would use a library like jsPDF
+            // to generate a PDF with charts and data
+        }
+
+        // ==================== EVENT LISTENERS ====================
         function setupEventListeners() {
             document.getElementById('serviceSelect').addEventListener('change', (e) => {
                 currentService = e.target.value;
@@ -953,10 +1591,23 @@
             });
 
             document.getElementById('sortDirBtn').addEventListener('click', () => {
-                // Reload data from JSON file
-                loadDashboardData(currentService);
+                // Reload data from JSON file with force refresh
+                loadDashboardData(currentService, true);
+            });
+
+            // Export buttons
+            document.getElementById('exportCsvBtn').addEventListener('click', exportToCsv);
+            document.getElementById('exportPdfBtn').addEventListener('click', exportToPdf);
+
+            // Session warning
+            document.getElementById('extendSessionBtn').addEventListener('click', () => {
+                document.getElementById('sessionWarning').classList.remove('show');
+                resetSessionTimer();
+                showToast('success', 'Session Extended', 'Your session has been extended');
             });
         }
+
+        // ==================== DATA PROCESSING ====================
 
         function getTrendData() {
             const arr = mockData[currentGranularity] || [];
@@ -983,6 +1634,7 @@
             }));
             const key = sortBy === 'sales' ? 'sales' : sortBy === 'units' ? 'units' : 'revenuePerUnit';
             arr.sort((a, b) => sortDir === 'asc' ? a[key] - b[key] : b[key] - a[key]);
+            
             return arr;
         }
 
@@ -991,16 +1643,209 @@
             const totalSales = productTotals.reduce((s, p) => s + p.sales, 0);
             const totalUnits = productTotals.reduce((s, p) => s + p.units, 0);
             const avgRevenuePerUnit = totalUnits ? (totalSales / totalUnits).toFixed(2) : '0.00';
-            const topProduct = productTotals[0]?.name || '-';
+            const topProduct = productTotals[0] || { name: '-', units: 0, sales: 0 };
 
-            document.getElementById('totalSales').textContent = `₹${totalSales}`;
-            document.getElementById('totalUnits').textContent = totalUnits;
-            document.getElementById('avgRevenue').textContent = `₹${avgRevenuePerUnit}`;
-            document.getElementById('topProduct').textContent = topProduct;
+            // Animated counters
+            const salesEl = document.getElementById('totalSales');
+            const unitsEl = document.getElementById('totalUnits');
+            const avgEl = document.getElementById('avgRevenue');
+            const topEl = document.getElementById('topProduct');
+            
+            const currentSales = parseInt(salesEl.textContent.replace(/[₹,]/g, '')) || 0;
+            const currentUnits = parseInt(unitsEl.textContent.replace(/,/g, '')) || 0;
+            const currentAvg = parseFloat(avgEl.textContent.replace(/[₹,]/g, '')) || 0;
+            
+            animateNumber(salesEl, currentSales, totalSales, 1000, '₹', '');
+            animateNumber(unitsEl, currentUnits, totalUnits, 1000, '', '');
+            animateNumber(avgEl, currentAvg, parseFloat(avgRevenuePerUnit), 1000, '₹', '');
+            
+            topEl.textContent = topProduct.name;
+
+            // Update top product details
+            document.getElementById('topProductUnits').textContent = `${topProduct.units || 0} units`;
+            const topProductShare = totalSales > 0 ? ((topProduct.sales / totalSales) * 100).toFixed(1) : 0;
+            const topProductBadge = document.getElementById('topProductBadge');
+            topProductBadge.textContent = `${topProductShare}% share`;
+            topProductBadge.className = 'stat-badge ' + (topProductShare > 40 ? 'high' : topProductShare > 20 ? '' : 'low');
+
+            // Calculate and display enhanced trends with sparklines
+            const trendData = getTrendData();
+            
+            // Calculate trends by comparing current period vs previous period in the dataset
+            const { currentPeriod, previousPeriod } = getPeriodComparison();
+            
+            if (previousPeriod) {
+                updateEnhancedTrend('sales', 'salesTrend', 'salesComparison', currentPeriod.sales, previousPeriod.sales);
+                updateEnhancedTrend('units', 'unitsTrend', 'unitsComparison', currentPeriod.units, previousPeriod.units);
+                updateEnhancedTrend('avg', 'avgTrend', 'avgComparison', currentPeriod.avg, previousPeriod.avg);
+            }
+
+            // Create sparklines
+            createSparkline('salesSparkline', trendData.map(d => d.revenue), '#667eea');
+            createSparkline('unitsSparkline', trendData.map(d => d.units), '#f5576c');
+            createSparkline('avgSparkline', trendData.map(d => d.revenue / d.units || 0), '#00f2fe');
 
             createCharts();
         }
 
+        // Get current and previous period data for comparison
+        function getPeriodComparison() {
+            const data = mockData[currentGranularity] || [];
+            if (data.length < 2) {
+                return { currentPeriod: null, previousPeriod: null };
+            }
+            
+            // Get the last two periods
+            const lastPeriod = data[data.length - 1];
+            const secondLastPeriod = data[data.length - 2];
+            
+            const calcTotals = (period) => {
+                const sales = period.products.reduce((s, p) => s + p.sales, 0);
+                const units = period.products.reduce((s, p) => s + p.units, 0);
+                const avg = units > 0 ? sales / units : 0;
+                return { sales, units, avg };
+            };
+            
+            return {
+                currentPeriod: calcTotals(lastPeriod),
+                previousPeriod: calcTotals(secondLastPeriod)
+            };
+        }
+
+        // ==================== SPARKLINE CHARTS ====================
+        function createSparkline(canvasId, data, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            // Set canvas dimensions properly
+            const parent = canvas.parentElement;
+            const width = parent.offsetWidth;
+            canvas.width = width;
+            canvas.height = 30;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destroy existing chart if any
+            if (charts[canvasId]) {
+                charts[canvasId].destroy();
+            }
+            
+            // Filter out invalid data
+            const validData = data.filter(d => d !== null && d !== undefined && !isNaN(d));
+            if (validData.length === 0) return;
+            
+            charts[canvasId] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: validData.map((_, i) => i),
+                    datasets: [{
+                        data: validData,
+                        borderColor: color,
+                        backgroundColor: color + '20',
+                        borderWidth: 1.5,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 750
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    },
+                    scales: {
+                        x: { 
+                            display: false,
+                            grid: { display: false }
+                        },
+                        y: { 
+                            display: false,
+                            grid: { display: false },
+                            beginAtZero: false
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 1.5
+                        }
+                    },
+                    interaction: { mode: null },
+                    layout: {
+                        padding: 0
+                    }
+                }
+            });
+        }
+
+        // ==================== ENHANCED TREND INDICATORS ====================
+        function updateEnhancedTrend(type, trendId, comparisonId, current, previous) {
+            const trendEl = document.getElementById(trendId);
+            const comparisonEl = document.getElementById(comparisonId);
+            
+            if (!trendEl || previous === 0) {
+                trendEl.innerHTML = '<i class="bi bi-dash"></i> <span>No data</span>';
+                trendEl.className = 'stat-trend neutral';
+                if (comparisonEl) comparisonEl.textContent = 'No previous data';
+                return;
+            }
+
+            const change = ((current - previous) / previous * 100).toFixed(1);
+            const absoluteChange = current - previous;
+            const isPositive = change > 0;
+            const isNegative = change < 0;
+            
+            // Get period name based on granularity
+            const periodNames = {
+                daily: 'day',
+                weekly: 'week',
+                monthly: 'month',
+                yearly: 'year'
+            };
+            const periodName = periodNames[currentGranularity] || 'period';
+            
+            let icon, text, className, comparisonText;
+            
+            if (isPositive) {
+                icon = 'bi-arrow-up';
+                text = `+${change}%`;
+                className = 'stat-trend positive';
+                if (type === 'sales') {
+                    comparisonText = `₹${Math.abs(absoluteChange).toFixed(0)} more than previous ${periodName}`;
+                } else if (type === 'units') {
+                    comparisonText = `${Math.abs(absoluteChange)} more units than previous ${periodName}`;
+                } else {
+                    comparisonText = `₹${Math.abs(absoluteChange).toFixed(2)} higher than previous ${periodName}`;
+                }
+            } else if (isNegative) {
+                icon = 'bi-arrow-down';
+                text = `${change}%`;
+                className = 'stat-trend negative';
+                if (type === 'sales') {
+                    comparisonText = `₹${Math.abs(absoluteChange).toFixed(0)} less than previous ${periodName}`;
+                } else if (type === 'units') {
+                    comparisonText = `${Math.abs(absoluteChange)} fewer units than previous ${periodName}`;
+                } else {
+                    comparisonText = `₹${Math.abs(absoluteChange).toFixed(2)} lower than previous ${periodName}`;
+                }
+            } else {
+                icon = 'bi-dash';
+                text = 'No change';
+                className = 'stat-trend neutral';
+                comparisonText = `Same as previous ${periodName}`;
+            }
+            
+            trendEl.innerHTML = `<i class="bi ${icon}"></i> <span>${text}</span>`;
+            trendEl.className = className;
+            if (comparisonEl) comparisonEl.textContent = comparisonText;
+        }
+
+        // ==================== CHART CREATION ====================
         function createCharts() {
             const trendData = getTrendData();
             const productTotals = getProductTotals();
