@@ -11,11 +11,79 @@
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DA SPORTZ — Premium Sports Services</title>
+    <title>DA SPORTZ — Premium Sports Services | Cricket Bat Knocking & Racket Stringing</title>
 
-    <!-- SEO -->
+    <!-- SEO Meta Tags -->
     <meta name="description"
-        content="DA SPORTZ — Jersey sublimation, racket stringing, Machine Cricket Bat Knocking & trophies. Professional quality, fast turnaround." />
+        content="DA SPORTZ — Professional sports services in India. Cricket bat machine knocking (10k-30k balls), badminton racket stringing, jersey sublimation & trophies. Expert quality, fast turnaround, competitive pricing." />
+    <meta name="keywords" content="cricket bat knocking, bat knocking service, machine bat knocking, racket stringing, badminton stringing, yonex stringing, jersey sublimation, sports trophies, DA SPORTZ, cricket equipment, badminton equipment, sports services India" />
+    <meta name="author" content="DA SPORTZ" />
+    <link rel="canonical" href="https://dasportz.com/" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="DA SPORTZ — Premium Sports Services">
+    <meta property="og:description"
+        content="Jersey sublimation, racket stringing, Machine Cricket Bat Knocking & trophies. Professional quality, fast turnaround.">
+    <meta property="og:image" content="https://dasportz.com/favicon.png">
+    <meta property="og:url" content="https://dasportz.com/">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DA SPORTZ — Premium Sports Services">
+    <meta name="twitter:description"
+        content="Jersey sublimation, racket stringing, Machine Cricket Bat Knocking & trophies. Professional quality, fast turnaround.">
+    <meta name="twitter:image" content="https://dasportz.com/favicon.png">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "DA SPORTZ",
+      "description": "Professional sports services including cricket bat machine knocking, badminton racket stringing, jersey sublimation, and trophies.",
+      "url": "https://dasportz.com",
+      "logo": "https://dasportz.com/android-chrome-512x512.png",
+      "image": "https://dasportz.com/android-chrome-512x512.png",
+      "priceRange": "₹₹",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Sports Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Cricket Bat Machine Knocking",
+              "description": "Professional cricket bat knocking service with packages from 10,000 to 30,000 balls"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Badminton Racket Stringing",
+              "description": "Expert badminton racket stringing with premium strings from Yonex, Li-Ning, and more"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Jersey Sublimation",
+              "description": "Custom sports jersey sublimation printing services"
+            }
+          }
+        ]
+      }
+    }
+    </script>
 
     <!-- Fonts & Bootstrap -->
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
@@ -703,9 +771,13 @@
                             <i class="bi bi-person-circle"></i> <span id="navUsername">Admin</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfileDropdown">
-                            <li><a class="dropdown-item" href="#" id="profileBtn"><i class="bi bi-person"></i> Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            <li><a class="dropdown-item" href="#" id="profileBtn"><i class="bi bi-person"></i>
+                                    Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i>
+                                    Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -1286,10 +1358,10 @@
             <button id="closeLoginBtn" class="close-login" title="Close">
                 <i class="bi bi-x-lg"></i>
             </button>
-            
+
             <h2 class="text-center"><i class="bi bi-shield-lock"></i> Login</h2>
             <p class="subtitle text-center">Access Analytics Dashboard</p>
-            
+
             <div id="loginError" class="login-error">
                 <i class="bi bi-exclamation-triangle"></i> Invalid username or password
             </div>
@@ -1350,7 +1422,7 @@
 
         // Scroll locking functions
         let scrollPosition = 0;
-        
+
         function lockScroll() {
             scrollPosition = window.pageYOffset;
             document.body.style.overflow = 'hidden';
@@ -1373,7 +1445,7 @@
         function checkAuth() {
             const isAuthenticated = sessionStorage.getItem('dashboardAuth') === 'true';
             const username = sessionStorage.getItem('dashboardUser') || 'Admin';
-            
+
             if (isAuthenticated) {
                 loginMenuItem.style.display = 'none';
                 userProfileMenuItem.style.display = 'block';
