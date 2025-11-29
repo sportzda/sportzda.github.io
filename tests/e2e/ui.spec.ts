@@ -239,10 +239,10 @@ test.describe('Stringing Booking UI', () => {
         // Click Pay Now without filling anything
         await page.locator('#confirmButton').click();
 
-        // Verify alert shows missing fields (store has default value)
+        // Verify alert shows missing fields (store and payment method have default values)
         expect(alertMessage).toContain('Your name');
         expect(alertMessage).toContain('WhatsApp number');
-        expect(alertMessage).toContain('Payment method');
+        // Payment method now has default value (online), so it won't be in missing fields
 
         const firstRow = page.locator('.racket-row').first();
         await expect(firstRow).toBeVisible();
@@ -410,18 +410,19 @@ test.describe('Stringing Booking UI', () => {
             const confirm = page.locator('#confirmButton');
             await confirm.click();
 
-            // Verify alert contains all required fields (store has default value)
+            // Verify alert contains all required fields (store and payment method have default values)
             expect(alertMessage).toContain('Your name');
             expect(alertMessage).toContain('WhatsApp number');
-            expect(alertMessage).toContain('Payment method');
+            // Payment method now has default value (online), so it won't be in missing fields
         });
 
         test('Validates phone number format', async ({ page }) => {
             await page.goto('/stringing-booking.html?test=true');
 
-            // Fill everything except phone
+            // Fill everything except phone (payment method already defaults to online)
             await page.locator('#storeLocation').selectOption({ index: 1 });
             await page.locator('#customerName').fill('Test User');
+            // Using cash to simplify test flow (avoid online payment widget)
             await page.locator('#paymentMethod').selectOption('payatoutlet');
             const row = page.locator('.racket-row').first();
             await row.locator('.racketCustomName').fill('Test Racket');
