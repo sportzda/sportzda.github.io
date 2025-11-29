@@ -22,19 +22,19 @@ test.describe('Bat Knocking UI Tests', () => {
             // Click Pay Now without filling anything
             await page.locator('#confirmButton').click();
 
-            // Verify alert shows missing fields (store has default value, so won't appear)
+            // Verify alert shows missing fields (store and payment method have default values, so won't appear)
             expect(alertMessage).toContain('Your name');
             expect(alertMessage).toContain('WhatsApp number');
-            expect(alertMessage).toContain('Payment method');
+            // Payment method now has default value (online), so it won't be in missing fields
         });
 
         test('Validates phone number format', async ({ page }) => {
             await page.goto('/bat-knocking.html?test=true');
 
-            // Fill everything except phone
+            // Fill everything except phone, but change payment to cash to avoid online payment flow
             await page.locator('#storeLocation').selectOption({ index: 1 });
             await page.locator('#customerName').fill('Test User');
-            await page.locator('#paymentMethod').selectOption('payatoutlet');
+            await page.locator('#paymentMethod').selectOption('payatoutlet'); // Use cash for simpler test
             const row = page.locator('.bat-card').first();
             await row.locator('.batModel').fill('MRF Genius');
             await row.locator('.packageType').selectOption('10000');
@@ -129,11 +129,11 @@ test.describe('Bat Knocking UI Tests', () => {
             await page.locator('#confirmButton').click();
             expect(alertMessage).toContain('Complete bat details');
 
-            // Fill package, test missing payment method
+            // Fill package, payment method already has default (online)
             await row.locator('.packageType').selectOption('10000');
             alertMessage = '';
-            await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('Payment method');
+            // Should now pass validation since payment method defaults to online
+            // Test would proceed to online payment flow
         });
 
         test.describe('Bat Management', () => {
@@ -589,6 +589,19 @@ test.describe('Bat Knocking UI Tests', () => {
                 const secondVal = await optionAttrs[2].getAttribute('value');
                 expect((firstVal || '').toLowerCase()).toBe('online');
                 expect((secondVal || '').toLowerCase()).toBe('payatoutlet');
+            });
+
+            test('Online Payment is selected by default', async ({ page }) => {
+                await page.goto('/bat-knocking.html?test=true');
+                const select = page.locator('#paymentMethod');
+
+                // Check that online is the default selected value
+                const selectedValue = await select.inputValue();
+                expect(selectedValue).toBe('online');
+
+                // Check that the online option has the selected attribute
+                const onlineOption = select.locator('option[value="online"]');
+                await expect(onlineOption).toHaveAttribute('selected', '');
             });
 
             test('Pay at outlet flow creates order and redirects', async ({ page }) => {
