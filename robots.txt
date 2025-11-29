@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://dasportz.com/sitemap.xml
+
+# Disallow admin/backend pages (if any)
+Disallow: /test/
+Disallow: /test-results/
+Disallow: /*.spec.ts
