@@ -16,7 +16,8 @@
     <!-- SEO Meta Tags -->
     <meta name="description"
         content="DA SPORTZ — Professional sports services in India. Cricket bat machine knocking (10k-30k balls), badminton racket stringing, jersey sublimation & trophies. Expert quality, fast turnaround, competitive pricing." />
-    <meta name="keywords" content="cricket bat knocking, bat knocking service, machine bat knocking, racket stringing, badminton stringing, yonex stringing, jersey sublimation, sports trophies, DA SPORTZ, cricket equipment, badminton equipment, sports services India" />
+    <meta name="keywords"
+        content="cricket bat knocking, bat knocking service, machine bat knocking, racket stringing, badminton stringing, yonex stringing, jersey sublimation, sports trophies, DA SPORTZ, cricket equipment, badminton equipment, sports services India" />
     <meta name="author" content="DA SPORTZ" />
     <link rel="canonical" href="https://dasportz.com/" />
 
@@ -758,6 +759,10 @@
                     <li class="nav-item" id="analyticsMenuItem" style="display: none;">
                         <a class="nav-link" href="dashboard.html"><i class="bi bi-graph-up"></i> Analytics</a>
                     </li>
+                    <li class="nav-item" id="staffDashboardMenuItem" style="display: none;">
+                        <a class="nav-link" href="staff-dashboard.html"><i class="bi bi-speedometer2"></i> Staff
+                            Dashboard</a>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="#about"><i class="bi bi-info-circle"></i> About</a>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="#contact"><i class="bi bi-envelope-open"></i>
@@ -1450,11 +1455,15 @@
                 loginMenuItem.style.display = 'none';
                 userProfileMenuItem.style.display = 'block';
                 analyticsMenuItem.style.display = 'block';
+                const staffDashboardMenuItem = document.getElementById('staffDashboardMenuItem');
+                if (staffDashboardMenuItem) staffDashboardMenuItem.style.display = 'block';
                 navUsername.textContent = username;
             } else {
                 loginMenuItem.style.display = 'block';
                 userProfileMenuItem.style.display = 'none';
                 analyticsMenuItem.style.display = 'none';
+                const staffDashboardMenuItem = document.getElementById('staffDashboardMenuItem');
+                if (staffDashboardMenuItem) staffDashboardMenuItem.style.display = 'none';
             }
         }
 

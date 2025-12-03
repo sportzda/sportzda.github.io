@@ -183,6 +183,476 @@
             width: 100%;
         }
 
+        /* Order Details Modal */
+        #orderDetailsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #orderDetailsModal.show {
+            display: flex;
+        }
+
+        .order-details-box {
+            background: white;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-details-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .order-details-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-details {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-details:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .order-details-content {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--muted);
+            flex: 0 0 40%;
+        }
+
+        .detail-value {
+            flex: 1;
+            text-align: right;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .item-card {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .item-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+
+        .item-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .item-status.status-received {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .item-status.status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .item-status.status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .item-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .item-detail {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .item-detail strong {
+            color: var(--primary);
+        }
+
+        .payment-highlight {
+            background: linear-gradient(135deg, var(--accent) 0%, #ff7a3d 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .payment-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .payment-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .order-details-box {
+                max-width: 100%;
+                margin: 10px;
+            }
+
+            .order-details-content {
+                padding: 1.5rem;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .detail-label,
+            .detail-value {
+                text-align: left;
+            }
+
+            .payment-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Order Details Modal */
+        #orderDetailsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #orderDetailsModal.show {
+            display: flex;
+        }
+
+        .order-details-box {
+            background: white;
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .order-details-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .order-details-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-details {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-details:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .order-details-content {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--muted);
+            flex: 0 0 40%;
+        }
+
+        .detail-value {
+            flex: 1;
+            text-align: right;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .item-card {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .item-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+
+        .item-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .item-status.status-received {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .item-status.status-in-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .item-status.status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .item-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .item-detail {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .item-detail strong {
+            color: var(--primary);
+        }
+
+        .payment-highlight {
+            background: linear-gradient(135deg, var(--accent) 0%, #ff7a3d 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .payment-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .payment-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .order-details-box {
+                max-width: 100%;
+                margin: 10px;
+            }
+
+            .order-details-content {
+                padding: 1.5rem;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .detail-label,
+            .detail-value {
+                text-align: left;
+            }
+
+            .payment-info {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
         .login-box {
             background: white;
             padding: 2.5rem;
@@ -510,6 +980,40 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner-large {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-spinner-large .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3rem;
+        }
+
+        .btn-refresh-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
@@ -586,6 +1090,21 @@
         </div>
     </div>
 
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal">
+        <div class="order-details-box">
+            <div class="order-details-header">
+                <h3 id="orderDetailsTitle">Order Details</h3>
+                <button class="close-details" id="closeDetailsBtn">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="order-details-content" id="orderDetailsContent">
+                <!-- Content will be dynamically populated -->
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard Content (hidden until authenticated) -->
     <div class="dashboard-content">
         <!-- Dashboard Header -->
@@ -596,9 +1115,17 @@
                         <h1 class="h2 mb-2"><i class="bi bi-speedometer2"></i> Staff Dashboard</h1>
                         <p class="mb-0 opacity-75">Manage orders and track service status</p>
                     </div>
-                    <div class="text-end">
-                        <div class="text-white-50 small">Last Updated</div>
-                        <div class="fw-bold" id="lastUpdated">Loading...</div>
+                    <div class="text-end d-flex align-items-center gap-3">
+                        <div>
+                            <div class="text-white-50 small">Last Updated</div>
+                            <div class="fw-bold" id="lastUpdated">Loading...</div>
+                        </div>
+                        <button id="refreshBtn" class="btn btn-light btn-sm" onclick="handleRefresh()" title="Refresh data">
+                            <i class="bi bi-arrow-clockwise" id="refreshIcon"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="handleLogout()" title="Logout">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -759,6 +1286,7 @@
 
                 if (authToken) {
                     // Verify token with backend
+                    showLoader('Verifying session...');
                     try {
                         const response = await fetch(`${API_BASE_URL}/api/staff/verify`, {
                             headers: {
@@ -768,6 +1296,7 @@
 
                         if (response.ok) {
                             isAuthenticated = true;
+                            hideLoader();
                             showDashboard(username);
                             return true;
                         } else {
@@ -777,6 +1306,8 @@
                         }
                     } catch (err) {
                         console.error('Token verification failed:', err);
+                    } finally {
+                        hideLoader();
                     }
                 }
 
@@ -872,11 +1403,19 @@
             // Service menu buttons
             const serviceButtons = document.querySelectorAll('.service-menu-btn');
             serviceButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', async () => {
+                    if (isLoading) return;
+                    
                     serviceButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentService = btn.dataset.service;
-                    loadDashboardData();
+                    
+                    showLoader('Loading orders...');
+                    try {
+                        await loadDashboardData();
+                    } finally {
+                        hideLoader();
+                    }
                 });
             });
 
@@ -903,6 +1442,34 @@
 
             // Cache for all orders
             let allOrdersCache = [];
+            let isLoading = false; // Global loading state
+
+            // Reusable loading overlay functions
+            function showLoader(message = 'Loading...') {
+                if (isLoading) return;
+                isLoading = true;
+                
+                const overlay = document.createElement('div');
+                overlay.id = 'globalLoadingOverlay';
+                overlay.className = 'loading-overlay';
+                overlay.innerHTML = `
+                    <div class="loading-spinner-large">
+                        <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-3 text-light">${message}</p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            }
+
+            function hideLoader() {
+                isLoading = false;
+                const overlay = document.getElementById('globalLoadingOverlay');
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }
 
             // Load dashboard data - fetch all orders once
             async function loadDashboardData() {
@@ -915,6 +1482,10 @@
 
             // Fetch all orders from API (called once per service)
             async function fetchAllOrders() {
+                const wasLoading = isLoading;
+                if (!wasLoading) {
+                    showLoader('Fetching orders...');
+                }
                 try {
                     const params = new URLSearchParams({
                         serviceType: currentService,
@@ -932,6 +1503,15 @@
                         const data = await response.json();
                         allOrdersCache = data.orders || [];
                         console.log(`Fetched ${allOrdersCache.length} orders for ${currentService}`);
+                        
+                        // Debug: Check how many orders have the required details
+                        if (currentService === 'racket-stringing') {
+                            const withRackets = allOrdersCache.filter(o => o.racketDetails && o.racketDetails.length > 0).length;
+                            console.log(`Orders with racketDetails: ${withRackets}/${allOrdersCache.length}`);
+                        } else if (currentService === 'bat-knocking') {
+                            const withBats = allOrdersCache.filter(o => o.batDetails && o.batDetails.length > 0).length;
+                            console.log(`Orders with batDetails: ${withBats}/${allOrdersCache.length}`);
+                        }
                     } else if (response.status === 401) {
                         alert('Your session has expired. Please login again.');
                         sessionStorage.removeItem('staffAuthToken');
@@ -943,6 +1523,10 @@
                 } catch (err) {
                     console.error('Failed to fetch orders:', err);
                     allOrdersCache = [];
+                } finally {
+                    if (!wasLoading) {
+                        hideLoader();
+                    }
                 }
             }
 
@@ -951,6 +1535,14 @@
                 populateTabFromCache('received', 0);
                 populateTabFromCache('in-progress', 1);
                 populateTabFromCache('completed', 2);
+                
+                // Debug: Log the total counts
+                console.log('Tab counts summary:', {
+                    total: allOrdersCache.length,
+                    received: filterOrdersByItemStatus(allOrdersCache, 0, currentService).length,
+                    inProgress: filterOrdersByItemStatus(allOrdersCache, 1, currentService).length,
+                    completed: filterOrdersByItemStatus(allOrdersCache, 2, currentService).length
+                });
             }
 
             // Populate a single tab by filtering cached orders by racket/bat status
@@ -980,6 +1572,7 @@
             // Filter orders by individual racket/bat status
             function filterOrdersByItemStatus(orders, statusValue, service) {
                 const filtered = [];
+                let skippedCount = 0;
 
                 for (const order of orders) {
                     if (service === 'racket-stringing' && order.racketDetails) {
@@ -1010,7 +1603,14 @@
                                 batDetails: matchingBats
                             });
                         }
+                    } else {
+                        // Order doesn't have the required details for this service
+                        skippedCount++;
                     }
+                }
+
+                if (skippedCount > 0) {
+                    console.warn(`${skippedCount} orders skipped: missing ${service === 'racket-stringing' ? 'racketDetails' : 'batDetails'}`);
                 }
 
                 return filtered;
@@ -1034,19 +1634,19 @@
                 const date = new Date(dateString);
                 // Check if date is valid
                 if (isNaN(date.getTime())) return 'N/A';
-                
+
                 // Format date as "2 Dec"
                 const day = date.getDate();
                 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 const month = monthNames[date.getMonth()];
-                
+
                 // Format time in 12-hour format with AM/PM
                 let hours = date.getHours();
                 const minutes = String(date.getMinutes()).padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
                 hours = hours ? hours : 12; // 0 should be 12
-                
+
                 return `${day} ${month}, ${hours}:${minutes} ${ampm}`;
             }
 
@@ -1065,6 +1665,7 @@
                     if (service === 'racket-stringing' && order.racketDetails) {
                         order.racketDetails.forEach(racket => {
                             items.push({
+                                racketName: racket.racketName || null,
                                 name: racket.string,
                                 tension: `${racket.tension} lbs`,
                                 qty: racket.qty || 1
@@ -1072,11 +1673,16 @@
                         });
                     } else if (service === 'bat-knocking' && order.batDetails) {
                         order.batDetails.forEach(bat => {
-                            items.push({
+                            const threading = bat.threading || bat.threadingType;
+                            const item = {
                                 name: bat.batModel || 'Cricket Bat',
-                                package: `${bat.ballPackage || bat.package} balls`,
-                                threading: bat.threading || bat.threadingType || 'none'
-                            });
+                                package: `${bat.ballPackage || bat.package} balls`
+                            };
+                            // Only add threading if it exists and is not 'none'
+                            if (threading && threading.toLowerCase() !== 'none') {
+                                item.threading = threading;
+                            }
+                            items.push(item);
                         });
                     }
 
@@ -1087,7 +1693,7 @@
                         date: formatDateTime(order.createdAt || order.date),
                         items: items,
                         total: order.payment?.finalAmount || order.totalAmount || 0,
-                        paymentStatus: order.paymentStatus === 'paid' ? 'Paid' : 'Pending',
+                        paymentStatus: order.paymentMethod?.toLowerCase() === 'cash' ? 'Paid' : (order.paymentStatus === 'paid' ? 'Paid' : order.paymentStatus === 'initiated' ? 'Initiated' : 'Pending'),
                         paymentMethod: formatPaymentMethod(order.paymentMethod || 'N/A'),
                         store: order.store
                     };
@@ -1252,8 +1858,8 @@
                             ${order.items.map(item => `
                                 <div class="item-chip">
                                     ${currentService === 'racket-stringing'
-                        ? `${item.name} - ${item.tension} (${item.qty}x)`
-                        : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
+                        ? `${item.racketName ? item.racketName + ' - ' : ''}${item.name} - ${item.tension} (${item.qty}x)`
+                        : `${item.name} - ${item.package}${item.threading ? ` + ${item.threading} threading` : ''}`
                     }
                                 </div>
                             `).join('')}
@@ -1303,21 +1909,277 @@
                 }
             }
 
-            // Global functions for button actions (will be replaced with API calls)
-            window.updateOrderStatus = function (orderId, currentStatus) {
-                const nextStatus = currentStatus === 'received' ? 'in-progress' : 'completed';
-                const message = currentStatus === 'received'
-                    ? 'Move this order to In Progress?'
-                    : 'Mark this order as Completed?';
+            // Handle refresh button click
+            window.handleRefresh = async function () {
+                if (isLoading) return;
 
-                if (confirm(message)) {
-                    alert(`Order ${orderId} status updated to ${nextStatus}.\n\nThis will be connected to the backend API.`);
-                    loadDashboardData();
+                showLoader('Refreshing orders...');
+                try {
+                    await loadDashboardData();
+                } finally {
+                    hideLoader();
+                }
+            };
+
+            // Global functions for button actions
+            window.updateOrderStatus = async function (orderId, currentStatus) {
+                if (isLoading) return; // Prevent multiple clicks
+
+                const nextStatusValue = currentStatus === 'received' ? 1 : 2;
+                const actionText = currentStatus === 'received'
+                    ? (currentService === 'racket-stringing' ? 'start stringing' : 'start knocking')
+                    : 'mark as complete';
+
+                const message = `Are you sure you want to ${actionText} for this order?`;
+
+                if (!confirm(message)) {
+                    return;
+                }
+
+                showLoader('Updating status...');
+
+                try {
+                    // Get the racket/bat ID from the cached order data
+                    const order = allOrdersCache.find(o => o.orderId === orderId);
+                    if (!order) {
+                        alert('Order not found. Please refresh the page.');
+                        return;
+                    }
+
+                    // Get the first racket/bat from the order (for the specific service type)
+                    let itemId;
+                    if (currentService === 'racket-stringing' && order.racketDetails) {
+                        // Find the first racket with matching status
+                        const statusMap = { 'received': 0, 'in-progress': 1 };
+                        const currentStatusValue = statusMap[currentStatus];
+                        const racket = order.racketDetails.find(r => (r.status !== undefined && r.status !== null ? Number(r.status) : 0) === currentStatusValue);
+                        if (racket) {
+                            itemId = racket.id;
+                        }
+                    } else if (currentService === 'bat-knocking' && order.batDetails) {
+                        // Find the first bat with matching status
+                        const statusMap = { 'received': 0, 'in-progress': 1 };
+                        const currentStatusValue = statusMap[currentStatus];
+                        const bat = order.batDetails.find(b => (b.status !== undefined && b.status !== null ? Number(b.status) : 0) === currentStatusValue);
+                        if (bat) {
+                            itemId = bat.id;
+                        }
+                    }
+
+                    if (!itemId) {
+                        alert('Could not find item to update. Please refresh the page.');
+                        return;
+                    }
+
+                    // Determine the correct endpoint
+                    const endpoint = currentService === 'racket-stringing'
+                        ? `/api/orders/${orderId}/status-by-racket/${itemId}`
+                        : `/api/orders/${orderId}/status-by-bat/${itemId}`;
+
+                    // Make authenticated API call
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({ status: nextStatusValue })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Status updated successfully:', data);
+
+                        // Hide loader before reloading to allow fetchAllOrders to show its own loader
+                        hideLoader();
+
+                        // Reload dashboard data to reflect the change
+                        await loadDashboardData();
+
+                        // Show success message
+                        alert(`Status updated successfully! WhatsApp notification sent to customer.`);
+                    } else if (response.status === 401) {
+                        hideLoader();
+                        alert('Your session has expired. Please login again.');
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        window.location.reload();
+                    } else {
+                        hideLoader();
+                        const error = await response.json();
+                        console.error('Status update failed:', error);
+                        alert(`Failed to update status: ${error.message || error.error || 'Unknown error'}`);
+                    }
+                } catch (err) {
+                    console.error('Error updating status:', err);
+                    alert('Failed to update status. Please check your connection and try again.');
+                    hideLoader();
                 }
             };
 
             window.viewOrderDetails = function (orderId) {
-                alert(`View details for order ${orderId}.\n\nDetailed order view will be implemented next.`);
+                const order = allOrdersCache.find(o => o.orderId === orderId);
+                if (!order) {
+                    alert('Order not found. Please refresh the page.');
+                    return;
+                }
+
+                showOrderDetailsModal(order);
+            };
+
+            function showOrderDetailsModal(order) {
+                const modal = document.getElementById('orderDetailsModal');
+                const content = document.getElementById('orderDetailsContent');
+                const title = document.getElementById('orderDetailsTitle');
+
+                title.textContent = `Order #${order.orderId}`;
+
+                // Build items section based on service type
+                let itemsHtml = '';
+                const statusLabels = ['Received', 'In Progress', 'Completed'];
+                const statusClasses = ['status-received', 'status-in-progress', 'status-completed'];
+
+                if (currentService === 'racket-stringing' && order.racketDetails) {
+                    itemsHtml = order.racketDetails.map((racket, index) => {
+                        const status = racket.status !== undefined && racket.status !== null ? Number(racket.status) : 0;
+                        return `
+                            <div class="item-card">
+                                <div class="item-header">
+                                    <div class="item-name">
+                                        <i class="bi bi-hourglass-split"></i> ${racket.racketName ? racket.racketName + ': ' : 'Racket ' + (index + 1) + ': '}${racket.string || 'N/A'}
+                                    </div>
+                                    <span class="item-status ${statusClasses[status]}">
+                                        ${statusLabels[status]}
+                                    </span>
+                                </div>
+                                <div class="item-details">
+                                    <div class="item-detail"><strong>Tension:</strong> ${racket.tension || 'N/A'} lbs</div>
+                                    <div class="item-detail"><strong>Quantity:</strong> ${racket.qty || 1}</div>
+                                    ${racket.id ? `<div class="item-detail"><strong>ID:</strong> ${racket.id}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else if (currentService === 'bat-knocking' && order.batDetails) {
+                    itemsHtml = order.batDetails.map((bat, index) => {
+                        const status = bat.status !== undefined && bat.status !== null ? Number(bat.status) : 0;
+                        const threading = bat.threading || bat.threadingType;
+                        const hasThreading = threading && threading.toLowerCase() !== 'none';
+                        return `
+                            <div class="item-card">
+                                <div class="item-header">
+                                    <div class="item-name">
+                                        <i class="bi bi-hammer"></i> Bat ${index + 1}: ${bat.batModel || 'Cricket Bat'}
+                                    </div>
+                                    <span class="item-status ${statusClasses[status]}">
+                                        ${statusLabels[status]}
+                                    </span>
+                                </div>
+                                <div class="item-details">
+                                    <div class="item-detail"><strong>Package:</strong> ${bat.ballPackage || bat.package || 'N/A'} balls</div>
+                                    ${hasThreading ? `<div class="item-detail"><strong>Threading:</strong> ${threading}</div>` : ''}
+                                    ${bat.id ? `<div class="item-detail"><strong>ID:</strong> ${bat.id}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                }
+
+                const finalAmount = order.payment?.finalAmount || order.totalAmount || 0;
+                const paymentMethod = formatPaymentMethod(order.paymentMethod || 'N/A');
+                const paymentStatus = order.paymentMethod?.toLowerCase() === 'cash' ? 'Paid' : (order.paymentStatus === 'paid' ? 'Paid' : order.paymentStatus === 'initiated' ? 'Initiated' : 'Pending');
+
+                content.innerHTML = `
+                    <div class="detail-section">
+                        <h4><i class="bi bi-person-circle"></i> Customer Information</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Name</span>
+                            <span class="detail-value">${order.customerName || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Phone</span>
+                            <span class="detail-value">
+                                <a href="tel:${order.phone}" style="color: var(--accent); text-decoration: none;">
+                                    <i class="bi bi-telephone"></i> ${order.phone || 'N/A'}
+                                </a>
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">${order.email || 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4><i class="bi bi-info-circle"></i> Order Information</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Order ID</span>
+                            <span class="detail-value" style="font-family: monospace; font-weight: 700;">${order.orderId}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Service Type</span>
+                            <span class="detail-value">${currentService === 'racket-stringing' ? 'Racket Stringing' : 'Bat Knocking'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Store</span>
+                            <span class="detail-value">${order.store || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Order Date</span>
+                            <span class="detail-value">${formatDateTime(order.createdAt || order.date)}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4><i class="bi bi-box-seam"></i> Items</h4>
+                        ${itemsHtml || '<p class="text-muted">No items found</p>'}
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="payment-highlight">
+                            <div class="payment-amount">₹${finalAmount}</div>
+                            <div class="payment-info">
+                                <div class="payment-badge">
+                                    <i class="bi ${paymentStatus === 'Paid' ? 'bi-check-circle' : 'bi-clock'}"></i>
+                                    ${paymentStatus}
+                                </div>
+                                <div class="payment-badge">
+                                    <i class="bi ${paymentMethod === 'Cash' || paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
+                                    ${paymentMethod}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                modal.classList.add('show');
+                lockScroll();
+            }
+
+            function hideOrderDetailsModal() {
+                const modal = document.getElementById('orderDetailsModal');
+                modal.classList.remove('show');
+                unlockScroll();
+            }
+
+            // Close details modal button
+            document.getElementById('closeDetailsBtn').addEventListener('click', hideOrderDetailsModal);
+
+            // Close modal when clicking outside
+            document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
+                if (e.target.id === 'orderDetailsModal') {
+                    hideOrderDetailsModal();
+                }
+            });
+
+            // Handle logout
+            window.handleLogout = function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    sessionStorage.removeItem('staffAuthToken');
+                    sessionStorage.removeItem('staffUser');
+                    window.location.reload();
+                }
             };
 
             // Auto-refresh every 5 minutes (300000ms) - disabled by default, uncomment to enable

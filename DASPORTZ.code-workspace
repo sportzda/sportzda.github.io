@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../backend-process-payments"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "dasportz.github.io"
+	}
+}
