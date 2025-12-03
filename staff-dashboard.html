@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Staff Dashboard — DA SPORTZ</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Fonts & Bootstrap -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0f1723;
+            --accent: #ff5900;
+            --accent-2: #00d4aa;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --nav-hover: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Barlow', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: #f5f7fb;
+            color: var(--primary);
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: #fff;
+            font-size: .95rem;
+        }
+
+        .top-bar a {
+            color: #fff;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.6rem;
+        }
+
+        .nav-link {
+            color: var(--muted);
+        }
+
+        .dropdown-menu {
+            --bs-dropdown-link-hover-bg: #ff59001a;
+            --bs-dropdown-link-active-bg: #ff5900;
+            --bs-dropdown-link-active-color: #fff;
+        }
+
+        .nav-link:focus,
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        nav.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+        }
+
+        footer a {
+            color: var(--accent-color);
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #25d366;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(10, 10, 10, 0.15);
+            z-index: 1200;
+        }
+
+        /* Login Modal Styles */
+        #loginModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        #loginModal.show {
+            display: flex;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-login {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--muted);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .close-login:hover {
+            background: #f0f0f0;
+            color: var(--primary-color);
+        }
+
+        .login-box h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-box .subtitle {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-error {
+            background: #fee;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
+        .dashboard-content {
+            display: none;
+        }
+
+        .dashboard-content.show {
+            display: block;
+        }
+
+        /* Dashboard Specific Styles */
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a3f5f 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-menu {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .service-menu-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e1e1e1;
+            background: white;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-menu-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .service-menu-btn.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .status-tabs {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .status-tabs .nav-tabs {
+            border-bottom: none;
+            padding: 1rem 1rem 0 1rem;
+        }
+
+        .status-tabs .nav-tabs .nav-link {
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--muted);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .status-tabs .nav-tabs .nav-link:hover {
+            color: var(--accent-color);
+            border-bottom-color: rgba(255, 89, 0, 0.3);
+        }
+
+        .status-tabs .nav-tabs .nav-link.active {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+            background: transparent;
+        }
+
+        .status-tabs .tab-content {
+            padding: 1.5rem;
+        }
+
+        .order-card {
+            background: white;
+            border: 1px solid #e1e1e1;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .order-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(255, 89, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .order-date {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .customer-info {
+            margin-bottom: 0.75rem;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .customer-phone {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .order-items {
+            margin-bottom: 0.75rem;
+        }
+
+        .item-chip {
+            display: inline-block;
+            background: #f8f9fa;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            border: 1px solid #e1e1e1;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .order-total {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.received {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-badge.in-progress {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-badge.completed {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner-border {
+            color: var(--accent-color);
+        }
+
+        .action-buttons {
+            margin-top: 1rem;
+        }
+
+        .btn-action {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-update-status {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-update-status:hover {
+            background: #e04800;
+        }
+
+        .btn-view-details {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid #e1e1e1;
+        }
+
+        .btn-view-details:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .service-menu-btn {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .order-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
+        🔒 Staff Dashboard - Authorized Personnel Only
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <span id="staffUsername" class="badge bg-light text-dark"><i class="bi bi-person-circle"></i>
+                    Staff</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal">
+        <div class="login-box">
+            <button id="closeLoginBtn" class="close-login" title="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <h2 class="text-center"><i class="bi bi-shield-lock"></i> Staff Login</h2>
+            <p class="subtitle text-center">Access Staff Dashboard</p>
+
+            <div id="loginError" class="login-error">
+                <i class="bi bi-exclamation-triangle"></i> Invalid username or password
+            </div>
+
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn w-100" style="background: var(--accent-color); color: white;">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Content (hidden until authenticated) -->
+    <div class="dashboard-content">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h1 class="h2 mb-2"><i class="bi bi-speedometer2"></i> Staff Dashboard</h1>
+                        <p class="mb-0 opacity-75">Manage orders and track service status</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="text-white-50 small">Last Updated</div>
+                        <div class="fw-bold" id="lastUpdated">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container pb-5">
+            <!-- Service Selection Menu -->
+            <div class="service-menu">
+                <h5 class="mb-3"><i class="bi bi-list-ul"></i> Select Service</h5>
+                <div class="d-flex flex-wrap">
+                    <button class="service-menu-btn active" data-service="racket-stringing">
+                        <i class="bi bi-bullseye"></i> Racket Stringing
+                    </button>
+                    <button class="service-menu-btn" data-service="bat-knocking">
+                        <i class="bi bi-hammer"></i> Bat Knocking
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Tabs -->
+            <div class="status-tabs">
+                <ul class="nav nav-tabs" id="statusTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="received-tab" data-bs-toggle="tab"
+                            data-bs-target="#received" type="button" role="tab">
+                            <i class="bi bi-inbox"></i> Received
+                            <span class="badge bg-primary rounded-pill ms-2" id="receivedCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#in-progress"
+                            type="button" role="tab">
+                            <i class="bi bi-gear"></i> In Progress
+                            <span class="badge bg-warning rounded-pill ms-2" id="inProgressCount">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed"
+                            type="button" role="tab">
+                            <i class="bi bi-check-circle"></i> Completed
+                            <span class="badge bg-success rounded-pill ms-2" id="completedCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="statusTabContent">
+                    <!-- Received Tab -->
+                    <div class="tab-pane fade show active" id="received" role="tabpanel">
+                        <div id="receivedContent" class="loading-spinner">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- In Progress Tab -->
+                    <div class="tab-pane fade" id="in-progress" role="tabpanel">
+                        <div id="inProgressContent" class="loading-spinner">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completed Tab -->
+                    <div class="tab-pane fade" id="completed" role="tabpanel">
+                        <div id="completedContent" class="loading-spinner">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Dashboard Application
+        document.addEventListener('DOMContentLoaded', function () {
+            // Configuration - Auto-detect environment
+            const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000'
+                : 'https://x96e55e0tc.execute-api.ap-south-1.amazonaws.com/prod'; // Update with your AWS Lambda API Gateway URL
+            let authToken = null;
+            let isAuthenticated = false;
+            let currentService = 'racket-stringing';
+            let currentStatus = 'received';
+
+            // DOM elements
+            const loginModal = document.getElementById('loginModal');
+            const loginForm = document.getElementById('loginForm');
+            const loginError = document.getElementById('loginError');
+            const closeLoginBtn = document.getElementById('closeLoginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const dashboardContent = document.querySelector('.dashboard-content');
+            const staffUsername = document.getElementById('staffUsername');
+
+            // Scroll lock functions
+            let scrollPosition = 0;
+
+            function lockScroll() {
+                scrollPosition = window.pageYOffset;
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${scrollPosition}px`;
+                document.body.style.width = '100%';
+                document.body.classList.add('modal-open');
+            }
+
+            function unlockScroll() {
+                document.body.style.removeProperty('overflow');
+                document.body.style.removeProperty('position');
+                document.body.style.removeProperty('top');
+                document.body.style.removeProperty('width');
+                document.body.classList.remove('modal-open');
+                window.scrollTo(0, scrollPosition);
+            }
+
+            // Check authentication on page load
+            async function checkAuth() {
+                authToken = sessionStorage.getItem('staffAuthToken');
+                const username = sessionStorage.getItem('staffUser');
+
+                if (authToken) {
+                    // Verify token with backend
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/api/staff/verify`, {
+                            headers: {
+                                'Authorization': `Bearer ${authToken}`
+                            }
+                        });
+
+                        if (response.ok) {
+                            isAuthenticated = true;
+                            showDashboard(username);
+                            return true;
+                        } else {
+                            // Token invalid or expired, clear and show login
+                            sessionStorage.removeItem('staffAuthToken');
+                            sessionStorage.removeItem('staffUser');
+                        }
+                    } catch (err) {
+                        console.error('Token verification failed:', err);
+                    }
+                }
+
+                showLoginModal();
+                return false;
+            }
+
+            // Show login modal
+            function showLoginModal() {
+                loginModal.classList.add('show');
+                lockScroll();
+            }
+
+            // Hide login modal
+            function hideLoginModal() {
+                loginModal.classList.remove('show');
+                unlockScroll();
+            }
+
+            // Show dashboard
+            function showDashboard(username) {
+                hideLoginModal();
+                dashboardContent.classList.add('show');
+                // Safely set username to prevent XSS - create elements separately
+                staffUsername.innerHTML = '<i class="bi bi-person-circle"></i> ';
+                const usernameText = document.createTextNode(username || 'Staff');
+                staffUsername.appendChild(usernameText);
+                updateLastUpdated();
+                loadDashboardData();
+            }
+
+            // Login form submission
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                // Disable submit button during login
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Logging in...';
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/staff/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Store token and user info
+                        authToken = data.token;
+                        sessionStorage.setItem('staffAuthToken', data.token);
+                        sessionStorage.setItem('staffUser', username);
+                        isAuthenticated = true;
+                        loginError.classList.remove('show');
+                        showDashboard(username);
+                    } else {
+                        // Show error message
+                        loginError.textContent = data.message || 'Invalid username or password';
+                        loginError.classList.add('show');
+                        document.getElementById('password').value = '';
+                    }
+                } catch (err) {
+                    console.error('Login error:', err);
+                    loginError.textContent = 'Login failed. Please check your connection and try again.';
+                    loginError.classList.add('show');
+                } finally {
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Login';
+                }
+            });
+
+            // Close login button
+            closeLoginBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            // Logout button
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (confirm('Are you sure you want to logout?')) {
+                    sessionStorage.removeItem('staffAuthToken');
+                    sessionStorage.removeItem('staffUser');
+                    authToken = null;
+                    isAuthenticated = false;
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // Service menu buttons
+            const serviceButtons = document.querySelectorAll('.service-menu-btn');
+            serviceButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    serviceButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentService = btn.dataset.service;
+                    loadDashboardData();
+                });
+            });
+
+            // Tab click handlers
+            const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.dataset.bsTarget.replace('#', '');
+                    currentStatus = targetId;
+                    loadTabData(targetId);
+                });
+            });
+
+            // Update last updated timestamp
+            function updateLastUpdated() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                document.getElementById('lastUpdated').textContent = timeString;
+            }
+
+            // Cache for all orders
+            let allOrdersCache = [];
+            let isLoading = false; // Global loading state
+
+            // Load dashboard data - fetch all orders once
+            async function loadDashboardData() {
+                if (isLoading) return; // Prevent multiple simultaneous loads
+
+                updateLastUpdated();
+                // Fetch all orders for current service
+                await fetchAllOrders();
+                // Populate all tabs from cache
+                populateAllTabsFromCache();
+            }
+
+            // Fetch all orders from API (called once per service)
+            async function fetchAllOrders() {
+                try {
+                    const params = new URLSearchParams({
+                        serviceType: currentService,
+                        limit: 100,
+                        sort: 'desc'
+                    });
+
+                    const response = await fetch(`${API_BASE_URL}/api/orders?${params.toString()}`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        allOrdersCache = data.orders || [];
+                        console.log(`Fetched ${allOrdersCache.length} orders for ${currentService}`);
+                    } else if (response.status === 401) {
+                        alert('Your session has expired. Please login again.');
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        window.location.reload();
+                    } else {
+                        throw new Error(`API returned status ${response.status}`);
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch orders:', err);
+                    allOrdersCache = [];
+                }
+            }
+
+            // Populate all tabs from cached orders
+            function populateAllTabsFromCache() {
+                populateTabFromCache('received', 0);
+                populateTabFromCache('in-progress', 1);
+                populateTabFromCache('completed', 2);
+            }
+
+            // Populate a single tab by filtering cached orders by racket/bat status
+            function populateTabFromCache(tabName, statusValue) {
+                const contentIdMap = {
+                    'received': 'receivedContent',
+                    'in-progress': 'inProgressContent',
+                    'completed': 'completedContent'
+                };
+
+                const contentId = contentIdMap[tabName];
+                const contentEl = document.getElementById(contentId);
+
+                if (!contentEl) {
+                    console.error(`Content element not found for status: ${tabName}`);
+                    return;
+                }
+
+                // Filter orders by item status (racket or bat)
+                const filteredOrders = filterOrdersByItemStatus(allOrdersCache, statusValue, currentService);
+                const displayOrders = transformOrdersForDisplay(filteredOrders, currentService);
+
+                renderOrders(contentEl, displayOrders, tabName);
+                updateSingleBadgeCount(tabName, displayOrders.length);
+            }
+
+            // Filter orders by individual racket/bat status
+            function filterOrdersByItemStatus(orders, statusValue, service) {
+                const filtered = [];
+
+                for (const order of orders) {
+                    if (service === 'racket-stringing' && order.racketDetails) {
+                        // Filter rackets with matching status (default to 0 if status is missing)
+                        const matchingRackets = order.racketDetails.filter(r => {
+                            const itemStatus = r.status !== undefined && r.status !== null ? Number(r.status) : 0;
+                            return itemStatus === statusValue;
+                        });
+
+                        if (matchingRackets.length > 0) {
+                            // Create a copy of order with only matching rackets
+                            filtered.push({
+                                ...order,
+                                racketDetails: matchingRackets
+                            });
+                        }
+                    } else if (service === 'bat-knocking' && order.batDetails) {
+                        // Filter bats with matching status (default to 0 if status is missing)
+                        const matchingBats = order.batDetails.filter(b => {
+                            const itemStatus = b.status !== undefined && b.status !== null ? Number(b.status) : 0;
+                            return itemStatus === statusValue;
+                        });
+
+                        if (matchingBats.length > 0) {
+                            // Create a copy of order with only matching bats
+                            filtered.push({
+                                ...order,
+                                batDetails: matchingBats
+                            });
+                        }
+                    }
+                }
+
+                return filtered;
+            }
+
+            // Load tab data from API
+            async function loadTabData(status) {
+                const statusMap = {
+                    'received': 0,
+                    'in-progress': 1,
+                    'completed': 2
+                };
+
+                const statusValue = statusMap[status];
+                populateTabFromCache(status, statusValue);
+            }
+
+            // Format date to include time
+            function formatDateTime(dateString) {
+                if (!dateString) return 'N/A';
+                const date = new Date(dateString);
+                // Check if date is valid
+                if (isNaN(date.getTime())) return 'N/A';
+
+                // Format date as "2 Dec"
+                const day = date.getDate();
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const month = monthNames[date.getMonth()];
+
+                // Format time in 12-hour format with AM/PM
+                let hours = date.getHours();
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // 0 should be 12
+
+                return `${day} ${month}, ${hours}:${minutes} ${ampm}`;
+            }
+
+            // Format payment method for display
+            function formatPaymentMethod(method) {
+                if (!method || method === 'N/A') return 'N/A';
+                if (method.toLowerCase() === 'online') return 'Zoho';
+                return method;
+            }
+
+            // Transform API orders to display format
+            function transformOrdersForDisplay(orders, service) {
+                return orders.map(order => {
+                    const items = [];
+
+                    if (service === 'racket-stringing' && order.racketDetails) {
+                        order.racketDetails.forEach(racket => {
+                            items.push({
+                                name: racket.string,
+                                tension: `${racket.tension} lbs`,
+                                qty: racket.qty || 1
+                            });
+                        });
+                    } else if (service === 'bat-knocking' && order.batDetails) {
+                        order.batDetails.forEach(bat => {
+                            items.push({
+                                name: bat.batModel || 'Cricket Bat',
+                                package: `${bat.ballPackage || bat.package} balls`,
+                                threading: bat.threading || bat.threadingType || 'none'
+                            });
+                        });
+                    }
+
+                    return {
+                        orderId: order.orderId,
+                        customerName: order.customerName,
+                        phone: order.phone,
+                        date: formatDateTime(order.createdAt || order.date),
+                        items: items,
+                        total: order.payment?.finalAmount || order.totalAmount || 0,
+                        paymentStatus: order.paymentStatus === 'paid' ? 'Paid' : 'Pending',
+                        paymentMethod: formatPaymentMethod(order.paymentMethod || 'N/A'),
+                        store: order.store
+                    };
+                });
+            }
+
+            // Get mock data (fallback - for testing without backend)
+            function getMockData(service, status) {
+                // Mock data for demonstration
+                const racketOrders = {
+                    received: [
+                        {
+                            orderId: 'DA_1234567890',
+                            customerName: 'Rahul Sharma',
+                            phone: '9876543210',
+                            date: '02-12-2025 10:30',
+                            items: [
+                                { name: 'Yonex BG 65', tension: '26 lbs', qty: 1 },
+                                { name: 'Yonex BG 80', tension: '28 lbs', qty: 1 }
+                            ],
+                            total: 1250,
+                            paymentStatus: 'Paid',
+                            paymentMethod: 'BharatPe',
+                            store: 'Gaur City 1'
+                        },
+                        {
+                            orderId: 'DA_1234567891',
+                            customerName: 'Priya Patel',
+                            phone: '9876543211',
+                            date: '02-12-2025 11:15',
+                            items: [
+                                { name: 'Li-Ning NS95', tension: '27 lbs', qty: 1 }
+                            ],
+                            total: 850,
+                            paymentStatus: 'Pending',
+                            paymentMethod: 'Cash',
+                            store: 'Noida'
+                        }
+                    ],
+                    'in-progress': [
+                        {
+                            orderId: 'DA_1234567892',
+                            customerName: 'Amit Kumar',
+                            phone: '9876543212',
+                            date: '01-12-2025 14:20',
+                            items: [
+                                { name: 'Yonex Aerobite', tension: '25 lbs', qty: 2 }
+                            ],
+                            total: 1800,
+                            paymentStatus: 'Paid',
+                            paymentMethod: 'Zoho',
+                            store: 'Gaur City 1'
+                        }
+                    ],
+                    completed: [
+                        {
+                            orderId: 'DA_1234567893',
+                            customerName: 'Sneha Singh',
+                            phone: '9876543213',
+                            date: '30-11-2025 09:45',
+                            items: [
+                                { name: 'Hundred Pro', tension: '24 lbs', qty: 1 }
+                            ],
+                            total: 480,
+                            paymentStatus: 'Paid',
+                            paymentMethod: 'AX',
+                            store: 'Gaur City 1'
+                        }
+                    ]
+                };
+
+                const batOrders = {
+                    received: [
+                        {
+                            orderId: 'DA_1234567894',
+                            customerName: 'Vikas Gupta',
+                            phone: '9876543214',
+                            date: '02-12-2025 13:00',
+                            items: [
+                                { name: 'MRF Grand', package: '15000 balls', threading: 'both' }
+                            ],
+                            total: 1250,
+                            paymentStatus: 'Paid',
+                            paymentMethod: 'Cash',
+                            store: 'Gaur City 1'
+                        }
+                    ],
+                    'in-progress': [
+                        {
+                            orderId: 'DA_1234567895',
+                            customerName: 'Rohit Verma',
+                            phone: '9876543215',
+                            date: '01-12-2025 16:30',
+                            items: [
+                                { name: 'SS Kashmir Willow', package: '20000 balls', threading: 'top' }
+                            ],
+                            total: 1100,
+                            paymentStatus: 'Paid',
+                            paymentMethod: 'BharatPe',
+                            store: 'Noida'
+                        }
+                    ],
+                    completed: [
+                        {
+                            orderId: 'DA_1234567896',
+                            customerName: 'Arun Mehta',
+                            phone: '9876543216',
+                            date: '29-11-2025 15:00',
+                            items: [
+                                { name: 'SG English Willow', package: '30000 balls', threading: 'both' }
+                            ],
+                            total: 2000,
+                            paymentStatus: 'Paid',
+                            store: 'Gaur City 1'
+                        }
+                    ]
+                };
+
+                const data = service === 'racket-stringing' ? racketOrders : batOrders;
+                return data[status] || [];
+            }
+
+            // Render orders in the tab
+            function renderOrders(container, orders, status) {
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h4>No Orders Found</h4>
+                            <p>There are no ${status.replace('-', ' ')} orders for ${currentService.replace('-', ' ')}.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const statusClass = status === 'received' ? 'received' : status === 'in-progress' ? 'in-progress' : 'completed';
+                const statusText = status === 'received' ? 'Received' : status === 'in-progress' ? 'In Progress' : 'Completed';
+
+                const ordersHtml = orders.map(order => `
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <div>
+                                <div class="order-id">${order.orderId}</div>
+                                <div class="order-date">
+                                    <i class="bi bi-calendar"></i> ${order.date}
+                                </div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="customer-info">
+                            <div class="customer-name">
+                                <i class="bi bi-person"></i> ${order.customerName}
+                            </div>
+                            <div class="customer-phone">
+                                <i class="bi bi-telephone"></i> ${order.phone}
+                            </div>
+                            <div class="customer-phone">
+                                <i class="bi bi-shop"></i> ${order.store}
+                            </div>
+                        </div>
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="item-chip">
+                                    ${currentService === 'racket-stringing'
+                        ? `${item.name} - ${item.tension} (${item.qty}x)`
+                        : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
+                    }
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="order-footer">
+                            <div class="order-total">
+                                Total: ₹${order.total}
+                                <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">
+                                    (${order.paymentStatus})
+                                </span>
+                                <br>
+                                <span class="small text-muted">
+                                    <i class="bi ${order.paymentMethod === 'Cash' || order.paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : order.paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
+                                    ${order.paymentMethod}
+                                </span>
+                            </div>
+                            <div class="action-buttons">
+                                ${status !== 'completed' ? `
+                                    <button class="btn btn-action btn-update-status" onclick="updateOrderStatus('${order.orderId}', '${status}')">
+                                        <i class="bi bi-arrow-right-circle"></i> ${status === 'received' ? (currentService === 'racket-stringing' ? 'Start Stringing' : 'Start Knocking') : 'Mark Complete'}
+                                    </button>
+                                ` : ''}
+                                <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
+                                    <i class="bi bi-eye"></i> View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.innerHTML = ordersHtml;
+            }
+
+            // Update a single badge count
+            function updateSingleBadgeCount(status, count) {
+                const badgeIdMap = {
+                    'received': 'receivedCount',
+                    'in-progress': 'inProgressCount',
+                    'completed': 'completedCount'
+                };
+                const badgeId = badgeIdMap[status];
+                if (badgeId) {
+                    const badgeEl = document.getElementById(badgeId);
+                    if (badgeEl) {
+                        badgeEl.textContent = count;
+                    }
+                }
+            }
+
+            // Handle refresh button click
+            window.handleRefresh = async function () {
+                if (isLoading) return;
+
+                const refreshBtn = document.getElementById('refreshBtn');
+                const refreshIcon = document.getElementById('refreshIcon');
+
+                refreshBtn.disabled = true;
+                refreshIcon.classList.add('btn-refresh-spin');
+
+                try {
+                    await loadDashboardData();
+                } finally {
+                    refreshBtn.disabled = false;
+                    refreshIcon.classList.remove('btn-refresh-spin');
+                }
+            };
+
+            // Global functions for button actions
+            window.updateOrderStatus = async function (orderId, currentStatus) {
+                const nextStatusValue = currentStatus === 'received' ? 1 : 2;
+                const actionText = currentStatus === 'received'
+                    ? (currentService === 'racket-stringing' ? 'start stringing' : 'start knocking')
+                    : 'mark as complete';
+
+                const message = `Are you sure you want to ${actionText} for this order?`;
+
+                if (!confirm(message)) {
+                    return;
+                }
+
+                try {
+                    // Get the racket/bat ID from the cached order data
+                    const order = allOrdersCache.find(o => o.orderId === orderId);
+                    if (!order) {
+                        alert('Order not found. Please refresh the page.');
+                        return;
+                    }
+
+                    // Get the first racket/bat from the order (for the specific service type)
+                    let itemId;
+                    if (currentService === 'racket-stringing' && order.racketDetails) {
+                        // Find the first racket with matching status
+                        const statusMap = { 'received': 0, 'in-progress': 1 };
+                        const currentStatusValue = statusMap[currentStatus];
+                        const racket = order.racketDetails.find(r => (r.status !== undefined && r.status !== null ? Number(r.status) : 0) === currentStatusValue);
+                        if (racket) {
+                            itemId = racket.id;
+                        }
+                    } else if (currentService === 'bat-knocking' && order.batDetails) {
+                        // Find the first bat with matching status
+                        const statusMap = { 'received': 0, 'in-progress': 1 };
+                        const currentStatusValue = statusMap[currentStatus];
+                        const bat = order.batDetails.find(b => (b.status !== undefined && b.status !== null ? Number(b.status) : 0) === currentStatusValue);
+                        if (bat) {
+                            itemId = bat.id;
+                        }
+                    }
+
+                    if (!itemId) {
+                        alert('Could not find item to update. Please refresh the page.');
+                        return;
+                    }
+
+                    // Determine the correct endpoint
+                    const endpoint = currentService === 'racket-stringing'
+                        ? `/api/orders/${orderId}/status-by-racket/${itemId}`
+                        : `/api/orders/${orderId}/status-by-bat/${itemId}`;
+
+                    // Make authenticated API call
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({ status: nextStatusValue })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Status updated successfully:', data);
+
+                        // Reload dashboard data to reflect the change
+                        await loadDashboardData();
+
+                        // Show success message
+                        alert(`Status updated successfully! WhatsApp notification sent to customer.`);
+                    } else if (response.status === 401) {
+                        alert('Your session has expired. Please login again.');
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        window.location.reload();
+                    } else {
+                        const error = await response.json();
+                        console.error('Status update failed:', error);
+                        alert(`Failed to update status: ${error.message || error.error || 'Unknown error'}`);
+                    }
+                } catch (err) {
+                    console.error('Error updating status:', err);
+                    alert('Failed to update status. Please check your connection and try again.');
+                } finally {
+                    // Remove loading overlay
+                    isLoading = false;
+                    if (loadingOverlay && loadingOverlay.parentNode) {
+                        loadingOverlay.parentNode.removeChild(loadingOverlay);
+                    }
+                }
+            };
+
+            window.viewOrderDetails = function (orderId) {
+                alert(`View details for order ${orderId}.\n\nDetailed order view will be implemented next.`);
+            };
+
+            // Auto-refresh every 5 minutes (300000ms) - disabled by default, uncomment to enable
+            // Uncomment the lines below to enable auto-refresh
+            /*
+            setInterval(() => {
+                if (isAuthenticated) {
+                    console.log('Auto-refresh: reloading current tab');
+                    loadTabData(currentStatus);
+                }
+            }, 300000); // 5 minutes
+            */
+
+            // Initialize
+            checkAuth();
+        });
+    </script>
+</body>
+
+</html>
