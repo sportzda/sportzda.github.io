@@ -183,6 +183,46 @@
             width: 100%;
         }
 
+        /* Loading Overlay */
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        #loadingOverlay.show {
+            display: flex;
+        }
+
+        .loading-overlay-content {
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .loading-overlay-content .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--accent-color);
+        }
+
+        .loading-overlay-content p {
+            margin-top: 1rem;
+            margin-bottom: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
         .login-box {
             background: white;
             padding: 2.5rem;
@@ -367,6 +407,7 @@
         }
 
         .customer-info {
+            text-align: center;
             margin-bottom: 0.75rem;
         }
 
@@ -382,6 +423,7 @@
         }
 
         .order-items {
+            text-align: center;
             margin-bottom: 0.75rem;
         }
 
@@ -502,6 +544,7 @@
             from {
                 transform: rotate(0deg);
             }
+
             to {
                 transform: rotate(360deg);
             }
@@ -570,6 +613,16 @@
         </div>
     </nav>
 
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-overlay-content">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p id="loadingMessage">Fetching orders...</p>
+        </div>
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal">
         <div class="login-box">
@@ -615,7 +668,8 @@
                             <div class="text-white-50 small">Last Updated</div>
                             <div class="fw-bold" id="lastUpdated">Loading...</div>
                         </div>
-                        <button id="refreshBtn" class="btn btn-light btn-sm" onclick="handleRefresh()" title="Refresh data">
+                        <button id="refreshBtn" class="btn btn-light btn-sm" onclick="handleRefresh()"
+                            title="Refresh data">
                             <i class="bi bi-arrow-clockwise" id="refreshIcon"></i>
                         </button>
                         <button class="btn btn-outline-light btn-sm" onclick="handleLogout()" title="Logout">
@@ -668,29 +722,17 @@
                 <div class="tab-content" id="statusTabContent">
                     <!-- Received Tab -->
                     <div class="tab-pane fade show active" id="received" role="tabpanel">
-                        <div id="receivedContent" class="loading-spinner">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                        <div id="receivedContent"></div>
                     </div>
 
                     <!-- In Progress Tab -->
                     <div class="tab-pane fade" id="in-progress" role="tabpanel">
-                        <div id="inProgressContent" class="loading-spinner">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                        <div id="inProgressContent"></div>
                     </div>
 
                     <!-- Completed Tab -->
                     <div class="tab-pane fade" id="completed" role="tabpanel">
-                        <div id="completedContent" class="loading-spinner">
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+                        <div id="completedContent"></div>
                     </div>
                 </div>
             </div>
@@ -930,22 +972,21 @@
             let allOrdersCache = [];
             let isLoading = false; // Global loading state
 
-            // Show loading spinner with custom text
-            function showLoadingState(message = 'Loading...') {
-                const tabs = ['receivedContent', 'inProgressContent', 'completedContent'];
-                tabs.forEach(tabId => {
-                    const el = document.getElementById(tabId);
-                    if (el) {
-                        el.innerHTML = `
-                            <div class="loading-spinner">
-                                <div class="spinner-border" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="mt-3 text-muted">${message}</p>
-                            </div>
-                        `;
-                    }
-                });
+            // Show/hide loading overlay
+            function showLoadingOverlay(message = 'Loading...') {
+                const overlay = document.getElementById('loadingOverlay');
+                const messageEl = document.getElementById('loadingMessage');
+                if (overlay && messageEl) {
+                    messageEl.textContent = message;
+                    overlay.classList.add('show');
+                }
+            }
+
+            function hideLoadingOverlay() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.classList.remove('show');
+                }
             }
 
             // Load dashboard data - fetch all orders once
@@ -954,15 +995,18 @@
                 isLoading = true;
 
                 updateLastUpdated();
-                showLoadingState('Fetching orders...');
-                
-                // Fetch all orders for current service
-                await fetchAllOrders();
-                
-                // Populate all tabs from cache
-                populateAllTabsFromCache();
-                
-                isLoading = false;
+                showLoadingOverlay('Fetching orders...');
+
+                try {
+                    // Fetch all orders for current service
+                    await fetchAllOrders();
+
+                    // Populate all tabs from cache
+                    populateAllTabsFromCache();
+                } finally {
+                    hideLoadingOverlay();
+                    isLoading = false;
+                }
             }
 
             // Fetch all orders from API (called once per service)
@@ -1386,10 +1430,13 @@
                     return;
                 }
 
+                showLoadingOverlay('Updating order status...');
+
                 try {
                     // Get the racket/bat ID from the cached order data
                     const order = allOrdersCache.find(o => o.orderId === orderId);
                     if (!order) {
+                        hideLoadingOverlay();
                         alert('Order not found. Please refresh the page.');
                         return;
                     }
@@ -1415,6 +1462,7 @@
                     }
 
                     if (!itemId) {
+                        hideLoadingOverlay();
                         alert('Could not find item to update. Please refresh the page.');
                         return;
                     }
@@ -1441,27 +1489,25 @@
                         // Reload dashboard data to reflect the change
                         await loadDashboardData();
 
+                        hideLoadingOverlay();
                         // Show success message
                         alert(`Status updated successfully! WhatsApp notification sent to customer.`);
                     } else if (response.status === 401) {
+                        hideLoadingOverlay();
                         alert('Your session has expired. Please login again.');
                         sessionStorage.removeItem('staffAuthToken');
                         sessionStorage.removeItem('staffUser');
                         window.location.reload();
                     } else {
+                        hideLoadingOverlay();
                         const error = await response.json();
                         console.error('Status update failed:', error);
                         alert(`Failed to update status: ${error.message || error.error || 'Unknown error'}`);
                     }
                 } catch (err) {
+                    hideLoadingOverlay();
                     console.error('Error updating status:', err);
                     alert('Failed to update status. Please check your connection and try again.');
-                } finally {
-                    // Remove loading overlay
-                    isLoading = false;
-                    if (loadingOverlay && loadingOverlay.parentNode) {
-                        loadingOverlay.parentNode.removeChild(loadingOverlay);
-                    }
                 }
             };
 
