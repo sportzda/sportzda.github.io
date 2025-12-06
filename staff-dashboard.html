@@ -187,6 +187,108 @@
             width: 100%;
         }
 
+        /* Order Details Modal */
+        #orderDetailsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            overflow-y: auto;
+        }
+
+        #orderDetailsModal.show {
+            display: flex;
+        }
+
+        .order-details-box {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            margin: 2rem auto;
+        }
+
+        .close-details {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.2s;
+            z-index: 1;
+        }
+
+        .close-details:hover {
+            color: var(--accent-color);
+        }
+
+        .order-details-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-details-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .order-details-section h4 {
+            color: var(--primary-color);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 0.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .item-detail-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .item-detail-card:last-child {
+            margin-bottom: 0;
+        }
+
         /* Loading Overlay */
         #loadingOverlay {
             display: none;
@@ -949,6 +1051,18 @@
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal">
+        <div class="order-details-box">
+            <button id="closeDetailsBtn" class="close-details" title="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <div id="orderDetailsContent">
+                <!-- Content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
 
     <!-- Login Modal -->
     <div id="loginModal">
@@ -2103,8 +2217,213 @@
             };
 
             window.viewOrderDetails = function (orderId) {
-                showToast(`View details for order ${orderId} - Feature coming soon!`, 'info');
+                // Find the order in cache
+                const order = allOrdersCache.find(o => o.orderId === orderId);
+
+                if (!order) {
+                    showToast('Order not found', 'error');
+                    return;
+                }
+
+                const modal = document.getElementById('orderDetailsModal');
+                const content = document.getElementById('orderDetailsContent');
+
+                // Clear previous content
+                content.innerHTML = '';
+
+                // Create header
+                const header = document.createElement('div');
+                header.className = 'order-details-header';
+
+                const title = document.createElement('h3');
+                title.innerHTML = '<i class="bi bi-receipt"></i> Order Details';
+
+                const orderId_el = document.createElement('div');
+                orderId_el.className = 'text-muted';
+                orderId_el.textContent = orderId;
+
+                header.appendChild(title);
+                header.appendChild(orderId_el);
+                content.appendChild(header);
+
+                // Customer Information Section
+                const customerSection = document.createElement('div');
+                customerSection.className = 'order-details-section';
+
+                const customerTitle = document.createElement('h4');
+                customerTitle.innerHTML = '<i class="bi bi-person-circle"></i> Customer Information';
+                customerSection.appendChild(customerTitle);
+
+                const customerDetails = [
+                    { label: 'Name', value: order.customerName },
+                    { label: 'Phone', value: order.phone },
+                    { label: 'Store', value: order.store || 'N/A' },
+                    { label: 'Order Date', value: formatDateTime(order.createdAt || order.date) }
+                ];
+
+                customerDetails.forEach(detail => {
+                    const row = document.createElement('div');
+                    row.className = 'detail-row';
+
+                    const label = document.createElement('span');
+                    label.className = 'detail-label';
+                    label.textContent = detail.label;
+
+                    const value = document.createElement('span');
+                    value.className = 'detail-value';
+                    value.textContent = detail.value;
+
+                    row.appendChild(label);
+                    row.appendChild(value);
+                    customerSection.appendChild(row);
+                });
+
+                content.appendChild(customerSection);
+
+                // Items Section
+                const itemsSection = document.createElement('div');
+                itemsSection.className = 'order-details-section';
+
+                const itemsTitle = document.createElement('h4');
+                itemsTitle.innerHTML = '<i class="bi bi-list-ul"></i> Order Items';
+                itemsSection.appendChild(itemsTitle);
+
+                if (currentService === 'racket-stringing' && order.racketDetails) {
+                    order.racketDetails.forEach((racket, idx) => {
+                        const itemCard = document.createElement('div');
+                        itemCard.className = 'item-detail-card';
+
+                        const itemHeader = document.createElement('div');
+                        itemHeader.style.fontWeight = '600';
+                        itemHeader.style.marginBottom = '0.5rem';
+                        itemHeader.textContent = `Racket ${idx + 1}`;
+                        itemCard.appendChild(itemHeader);
+
+                        const details = [
+                            { label: 'String', value: racket.string || 'N/A' },
+                            { label: 'Tension', value: racket.tension ? `${racket.tension} lbs` : 'N/A' },
+                            { label: 'Quantity', value: racket.qty || 1 },
+                            { label: 'Status', value: racket.status === 0 ? 'Received' : racket.status === 1 ? 'In Progress' : 'Completed' }
+                        ];
+
+                        details.forEach(detail => {
+                            const row = document.createElement('div');
+                            row.className = 'detail-row';
+                            row.style.padding = '0.25rem 0';
+
+                            const label = document.createElement('span');
+                            label.className = 'detail-label';
+                            label.textContent = detail.label;
+
+                            const value = document.createElement('span');
+                            value.className = 'detail-value';
+                            value.textContent = detail.value;
+
+                            row.appendChild(label);
+                            row.appendChild(value);
+                            itemCard.appendChild(row);
+                        });
+
+                        itemsSection.appendChild(itemCard);
+                    });
+                } else if (currentService === 'bat-knocking' && order.batDetails) {
+                    order.batDetails.forEach((bat, idx) => {
+                        const itemCard = document.createElement('div');
+                        itemCard.className = 'item-detail-card';
+
+                        const itemHeader = document.createElement('div');
+                        itemHeader.style.fontWeight = '600';
+                        itemHeader.style.marginBottom = '0.5rem';
+                        itemHeader.textContent = `Bat ${idx + 1}`;
+                        itemCard.appendChild(itemHeader);
+
+                        const details = [
+                            { label: 'Model', value: bat.batModel || 'Cricket Bat' },
+                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' },
+                            { label: 'Threading', value: bat.threading || bat.threadingType || 'None' },
+                            { label: 'Status', value: bat.status === 0 ? 'Received' : bat.status === 1 ? 'In Progress' : 'Completed' }
+                        ];
+
+                        details.forEach(detail => {
+                            const row = document.createElement('div');
+                            row.className = 'detail-row';
+                            row.style.padding = '0.25rem 0';
+
+                            const label = document.createElement('span');
+                            label.className = 'detail-label';
+                            label.textContent = detail.label;
+
+                            const value = document.createElement('span');
+                            value.className = 'detail-value';
+                            value.textContent = detail.value;
+
+                            row.appendChild(label);
+                            row.appendChild(value);
+                            itemCard.appendChild(row);
+                        });
+
+                        itemsSection.appendChild(itemCard);
+                    });
+                }
+
+                content.appendChild(itemsSection);
+
+                // Payment Section
+                const paymentSection = document.createElement('div');
+                paymentSection.className = 'order-details-section';
+
+                const paymentTitle = document.createElement('h4');
+                paymentTitle.innerHTML = '<i class="bi bi-credit-card"></i> Payment Information';
+                paymentSection.appendChild(paymentTitle);
+
+                const paymentDetails = [
+                    { label: 'Payment Method', value: formatPaymentMethod(order.paymentMethod || 'N/A') },
+                    { label: 'Payment Status', value: order.paymentStatus === 'paid' ? 'Paid' : 'Pending' },
+                    { label: 'Total Amount', value: `₹${order.payment?.finalAmount || order.totalAmount || 0}` }
+                ];
+
+                if (order.payment?.couponCode) {
+                    paymentDetails.push({ label: 'Coupon Applied', value: order.payment.couponCode });
+                }
+
+                paymentDetails.forEach(detail => {
+                    const row = document.createElement('div');
+                    row.className = 'detail-row';
+
+                    const label = document.createElement('span');
+                    label.className = 'detail-label';
+                    label.textContent = detail.label;
+
+                    const value = document.createElement('span');
+                    value.className = 'detail-value';
+                    value.textContent = detail.value;
+
+                    row.appendChild(label);
+                    row.appendChild(value);
+                    paymentSection.appendChild(row);
+                });
+
+                content.appendChild(paymentSection);
+
+                // Show modal
+                modal.classList.add('show');
+                document.body.classList.add('modal-open');
             };
+
+            // Close order details modal
+            document.getElementById('closeDetailsBtn').addEventListener('click', function () {
+                const modal = document.getElementById('orderDetailsModal');
+                modal.classList.remove('show');
+                document.body.classList.remove('modal-open');
+            });
+
+            // Close on background click
+            document.getElementById('orderDetailsModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                }
+            });
 
             // Auto-refresh every 5 minutes (300000ms) - disabled by default, uncomment to enable
             // Uncomment the lines below to enable auto-refresh
