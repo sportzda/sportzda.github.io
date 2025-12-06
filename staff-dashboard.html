@@ -3,7 +3,11 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Staff Dashboard — DA SPORTZ</title>
 
     <!-- Favicon -->
@@ -289,6 +293,72 @@
             display: block;
         }
 
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .toast-notification {
+            background: #28a745;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 300px;
+            max-width: 400px;
+            pointer-events: auto;
+            animation: slideIn 0.3s ease-out;
+            font-size: 0.95rem;
+        }
+
+        .toast-notification.toast-error {
+            background: #dc3545;
+        }
+
+        .toast-notification.toast-info {
+            background: #17a2b8;
+        }
+
+        .toast-notification i {
+            font-size: 1.2rem;
+        }
+
+        .toast-notification.fade-out {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
         /* Dashboard Specific Styles */
         .dashboard-header {
             background: linear-gradient(135deg, var(--primary) 0%, #2a3f5f 100%);
@@ -503,6 +573,9 @@
 
         .action-buttons {
             margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .btn-action {
@@ -510,8 +583,10 @@
             border-radius: 6px;
             font-weight: 600;
             font-size: 0.9rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s ease;
         }
 
         .btn-update-status {
@@ -550,21 +625,270 @@
             }
         }
 
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
+            body {
+                font-size: 0.9rem;
+            }
+
+            .top-bar {
+                font-size: 0.8rem;
+                padding: 0.5rem 0 !important;
+            }
+
+            .top-bar .container {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .top-bar .d-flex {
+                flex-direction: column;
+                gap: 0.25rem !important;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .dashboard-header {
+                padding: 1rem 0;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard-header p {
+                font-size: 0.85rem;
+            }
+
+            .service-menu {
+                padding: 1rem;
+            }
+
+            .service-menu h5 {
+                font-size: 1rem;
+            }
+
             .service-menu-btn {
                 width: 100%;
                 margin-right: 0;
+                margin-bottom: 0.5rem;
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .status-tabs .nav-tabs {
+                padding: 0.5rem;
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .status-tabs .nav-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .status-tabs .nav-tabs .nav-link {
+                padding: 0.6rem 1rem;
+                margin-right: 0.25rem;
+                font-size: 0.85rem;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            .status-tabs .tab-content {
+                padding: 1rem;
+            }
+
+            .order-card {
+                padding: 1rem;
+                margin-bottom: 0.75rem;
             }
 
             .order-card-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .order-id {
+                font-size: 1rem;
+            }
+
+            .order-date {
+                font-size: 0.8rem;
+            }
+
+            .customer-info {
+                text-align: left;
+            }
+
+            .customer-name {
+                font-size: 0.95rem;
+            }
+
+            .customer-phone {
+                font-size: 0.85rem;
+            }
+
+            .order-items {
+                text-align: left;
+            }
+
+            .item-chip {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+                margin-right: 0.25rem;
+                margin-bottom: 0.25rem;
+                display: block;
+                margin-bottom: 0.5rem;
             }
 
             .order-footer {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .order-total {
+                font-size: 1rem;
+            }
+
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
                 gap: 0.5rem;
+                width: 100%;
+            }
+
+            .btn-action {
+                width: 100%;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+                justify-content: center;
+            }
+
+            .payment-method-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .payment-method-selector select {
+                width: 100%;
+            }
+
+            .btn-update-payment {
+                width: 100%;
+            }
+
+            .empty-state {
+                padding: 2rem 1rem;
+            }
+
+            .empty-state h4 {
+                font-size: 1.1rem;
+            }
+
+            .empty-state p {
+                font-size: 0.9rem;
+            }
+
+            /* Toast notifications - adjust for mobile */
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .toast-notification {
+                min-width: auto;
+                max-width: 100%;
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            /* Login modal - better mobile view */
+            .login-box {
+                max-width: 90%;
+                padding: 1.5rem;
+            }
+
+            .login-box h2 {
+                font-size: 1.3rem;
+            }
+
+            /* Footer adjustments */
+            footer {
+                font-size: 0.85rem;
+            }
+
+            footer h5 {
+                font-size: 1rem;
+            }
+        }
+
+        /* Extra small devices (phones in portrait, less than 576px) */
+        @media (max-width: 576px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+
+            .status-tabs .nav-tabs .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .status-tabs .nav-tabs .nav-link .badge {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.7rem;
+            }
+
+            .order-id {
+                font-size: 0.95rem;
+            }
+
+            .item-chip {
+                font-size: 0.75rem;
+            }
+
+            .btn-action {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .dashboard-header {
+                padding: 0.75rem 0;
+            }
+
+            .status-tabs .tab-content {
+                max-height: 60vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Improve touch targets for mobile */
+        @media (hover: none) and (pointer: coarse) {
+
+            .btn-action,
+            .service-menu-btn,
+            .status-tabs .nav-link {
+                min-height: 44px;
+            }
+
+            .order-card {
+                cursor: default;
             }
         }
     </style>
@@ -622,6 +946,9 @@
             <p id="loadingMessage">Fetching orders...</p>
         </div>
     </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- Login Modal -->
     <div id="loginModal">
@@ -718,6 +1045,13 @@
                             <span class="badge bg-success rounded-pill ms-2" id="completedCount">0</span>
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pending-payments-tab" data-bs-toggle="tab"
+                            data-bs-target="#pending-payments" type="button" role="tab">
+                            <i class="bi bi-cash-coin"></i> Pending Payments
+                            <span class="badge bg-danger rounded-pill ms-2" id="pendingPaymentsCount">0</span>
+                        </button>
+                    </li>
                 </ul>
                 <div class="tab-content" id="statusTabContent">
                     <!-- Received Tab -->
@@ -733,6 +1067,11 @@
                     <!-- Completed Tab -->
                     <div class="tab-pane fade" id="completed" role="tabpanel">
                         <div id="completedContent"></div>
+                    </div>
+
+                    <!-- Pending Payments Tab -->
+                    <div class="tab-pane fade" id="pending-payments" role="tabpanel">
+                        <div id="pendingPaymentsContent"></div>
                     </div>
                 </div>
             </div>
@@ -858,6 +1197,32 @@
             function hideLoginModal() {
                 loginModal.classList.remove('show');
                 unlockScroll();
+            }
+
+            // Toast notification system
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast-notification toast-${type}`;
+
+                const icon = type === 'success' ? 'check-circle-fill' :
+                    type === 'error' ? 'exclamation-circle-fill' :
+                        'info-circle-fill';
+
+                toast.innerHTML = `
+                    <i class="bi bi-${icon}"></i>
+                    <span>${message}</span>
+                `;
+
+                container.appendChild(toast);
+
+                // Auto-dismiss after 4 seconds
+                setTimeout(() => {
+                    toast.classList.add('fade-out');
+                    setTimeout(() => {
+                        container.removeChild(toast);
+                    }, 300);
+                }, 4000);
             }
 
             // Show dashboard
@@ -1047,6 +1412,7 @@
                 populateTabFromCache('received', 0);
                 populateTabFromCache('in-progress', 1);
                 populateTabFromCache('completed', 2);
+                loadPendingPayments(); // Load pending payments separately
             }
 
             // Populate a single tab by filtering cached orders by racket/bat status
@@ -1399,6 +1765,226 @@
                 }
             }
 
+            // Load pending payments orders (Pay At Outlet with pending payment status)
+            async function loadPendingPayments() {
+                const contentEl = document.getElementById('pendingPaymentsContent');
+                if (!contentEl) {
+                    console.error('Pending payments content element not found');
+                    return;
+                }
+
+                try {
+                    // Fetch orders with Pay At Outlet payment method
+                    const params = new URLSearchParams({
+                        paymentMethod: 'Pay At Outlet',
+                        serviceType: currentService,
+                        limit: 100,
+                        sort: 'desc'
+                    });
+
+                    const response = await fetch(`${API_BASE_URL}/api/orders?${params.toString()}`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const pendingOrders = data.orders || [];
+                        console.log(`Fetched ${pendingOrders.length} pending payment orders`);
+
+                        renderPendingPayments(contentEl, pendingOrders);
+                        updatePendingPaymentsCount(pendingOrders.length);
+                    } else if (response.status === 401) {
+                        alert('Your session has expired. Please login again.');
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        window.location.reload();
+                    } else {
+                        throw new Error(`API returned status ${response.status}`);
+                    }
+                } catch (err) {
+                    console.error('Failed to fetch pending payments:', err);
+                    contentEl.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <h4>Failed to Load</h4>
+                            <p>Could not load pending payments. Please try again.</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Render pending payments orders
+            function renderPendingPayments(container, orders) {
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-check-circle"></i>
+                            <h4>All Payments Collected!</h4>
+                            <p>There are no pending payments for ${currentService.replace('-', ' ')}.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const ordersHtml = orders.map(order => {
+                    const items = currentService === 'racket-stringing'
+                        ? (order.racketDetails || []).map(r => ({
+                            name: r.string || 'Unknown',
+                            tension: r.tension || '-',
+                            qty: r.qty || 1
+                        }))
+                        : (order.batDetails || []).map(b => ({
+                            name: b.batModel || 'Unknown',
+                            package: b.ballPackage || b.package || '-',
+                            threading: b.threadingType || b.threading || ''
+                        }));
+
+                    return `
+                        <div class="order-card">
+                            <div class="order-card-header">
+                                <div>
+                                    <div class="order-id">${order.orderId}</div>
+                                    <div class="order-date">
+                                        <i class="bi bi-calendar"></i> ${new Date(order.createdAt).toLocaleString('en-IN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}
+                                    </div>
+                                </div>
+                                <span class="status-badge" style="background: #fff3cd; color: #856404;">
+                                    <i class="bi bi-cash-coin"></i> Pay At Outlet
+                                </span>
+                            </div>
+                            <div class="customer-info">
+                                <div class="customer-name">
+                                    <i class="bi bi-person"></i> ${order.customerName}
+                                </div>
+                                <div class="customer-phone">
+                                    <i class="bi bi-telephone"></i> ${order.phone}
+                                </div>
+                                <div class="customer-phone">
+                                    <i class="bi bi-shop"></i> ${order.store}
+                                </div>
+                            </div>
+                            <div class="order-items">
+                                ${items.map(item => `
+                                    <div class="item-chip">
+                                        ${currentService === 'racket-stringing'
+                            ? `${item.name} - ${item.tension} (${item.qty}x)`
+                            : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
+                        }
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="order-footer">
+                                <div class="order-total">
+                                    Total: ₹${order.totalAmount || 0}
+                                    <span class="small text-warning">
+                                        (Payment Pending)
+                                    </span>
+                                </div>
+                                <div class="payment-method-selector">
+                                    <select id="payment-method-${order.orderId}" class="form-select">
+                                        <option value="">-- Select Payment Method --</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="AX" selected>Axis Bank (AX)</option>
+                                    </select>
+                                    <button class="btn-update-payment" onclick="updatePaymentMethod('${order.orderId}')">
+                                        <i class="bi bi-check-circle"></i> Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = ordersHtml;
+            }
+
+            // Update pending payments count badge
+            function updatePendingPaymentsCount(count) {
+                const badgeEl = document.getElementById('pendingPaymentsCount');
+                if (badgeEl) {
+                    badgeEl.textContent = count;
+                }
+            }
+
+            // Update payment method for an order
+            window.updatePaymentMethod = async function (orderId) {
+                const selectEl = document.getElementById(`payment-method-${orderId}`);
+                if (!selectEl) {
+                    showToast('Payment method selector not found', 'error');
+                    return;
+                }
+
+                const paymentMethod = selectEl.value;
+                if (!paymentMethod) {
+                    showToast('Please select a payment method', 'error');
+                    return;
+                }
+
+                // Map payment method to integer values expected by backend
+                const paymentMethodMap = {
+                    'Cash': 0,
+                    'AX': 2
+                };
+
+                const paymentMethodValue = paymentMethodMap[paymentMethod];
+                if (paymentMethodValue === undefined) {
+                    showToast('Invalid payment method selected', 'error');
+                    return;
+                }
+
+                if (!confirm(`Update payment method to ${paymentMethod}?`)) {
+                    return;
+                }
+
+                showLoadingOverlay('Updating payment method...');
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({
+                            paymentMethod: paymentMethodValue,
+                            discount_per_racket: 0  // No discount, just updating payment method
+                        })
+                    });
+
+                    if (response.ok) {
+                        console.log('Payment method updated successfully');
+                        hideLoadingOverlay();
+                        showToast(`Payment method updated to ${paymentMethod}!`);
+
+                        // Reload pending payments to reflect changes
+                        await loadPendingPayments();
+                    } else if (response.status === 401) {
+                        hideLoadingOverlay();
+                        alert('Your session has expired. Please login again.');
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        window.location.reload();
+                    } else {
+                        hideLoadingOverlay();
+                        const error = await response.json();
+                        console.error('Payment method update failed:', error);
+                        showToast(`Failed to update: ${error.message || error.error || 'Unknown error'}`, 'error');
+                    }
+                } catch (err) {
+                    hideLoadingOverlay();
+                    console.error('Error updating payment method:', err);
+                    showToast('Failed to update payment method. Please check your connection.', 'error');
+                }
+            };
+
             // Handle refresh button click
             window.handleRefresh = async function () {
                 if (isLoading) return;
@@ -1463,7 +2049,7 @@
 
                     if (!itemId) {
                         hideLoadingOverlay();
-                        alert('Could not find item to update. Please refresh the page.');
+                        showToast('Could not find item to update. Please refresh the page.', 'error');
                         return;
                     }
 
@@ -1491,7 +2077,7 @@
 
                         hideLoadingOverlay();
                         // Show success message
-                        alert(`Status updated successfully! WhatsApp notification sent to customer.`);
+                        showToast('Status updated successfully! WhatsApp notification sent to customer.');
                     } else if (response.status === 401) {
                         hideLoadingOverlay();
                         alert('Your session has expired. Please login again.');
@@ -1502,17 +2088,17 @@
                         hideLoadingOverlay();
                         const error = await response.json();
                         console.error('Status update failed:', error);
-                        alert(`Failed to update status: ${error.message || error.error || 'Unknown error'}`);
+                        showToast(`Failed to update status: ${error.message || error.error || 'Unknown error'}`, 'error');
                     }
                 } catch (err) {
                     hideLoadingOverlay();
                     console.error('Error updating status:', err);
-                    alert('Failed to update status. Please check your connection and try again.');
+                    showToast('Failed to update status. Please check your connection and try again.', 'error');
                 }
             };
 
             window.viewOrderDetails = function (orderId) {
-                alert(`View details for order ${orderId}.\n\nDetailed order view will be implemented next.`);
+                showToast(`View details for order ${orderId} - Feature coming soon!`, 'info');
             };
 
             // Auto-refresh every 5 minutes (300000ms) - disabled by default, uncomment to enable
