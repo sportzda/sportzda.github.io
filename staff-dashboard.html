@@ -1209,10 +1209,15 @@
                     type === 'error' ? 'exclamation-circle-fill' :
                         'info-circle-fill';
 
-                toast.innerHTML = `
-                    <i class="bi bi-${icon}"></i>
-                    <span>${message}</span>
-                `;
+                // Create elements safely to prevent XSS
+                const iconElement = document.createElement('i');
+                iconElement.className = `bi bi-${icon}`;
+
+                const messageSpan = document.createElement('span');
+                messageSpan.textContent = message; // Use textContent to escape HTML
+
+                toast.appendChild(iconElement);
+                toast.appendChild(messageSpan);
 
                 container.appendChild(toast);
 
