@@ -1552,10 +1552,10 @@
 
                 // Filter orders by item status (racket or bat)
                 const filteredOrders = filterOrdersByItemStatus(allOrdersCache, statusValue, currentService);
-                const displayOrders = transformOrdersForDisplay(filteredOrders, currentService);
 
-                renderOrders(contentEl, displayOrders, tabName);
-                updateSingleBadgeCount(tabName, displayOrders.length);
+                // Don't transform - renderOrders now works directly with raw order objects
+                renderOrders(contentEl, filteredOrders, tabName);
+                updateSingleBadgeCount(tabName, filteredOrders.length);
             }
 
             // Filter orders by individual racket/bat status
@@ -1819,6 +1819,7 @@
                             const stringName = racket.string || '-';
                             const tension = racket.tension ? `${racket.tension} lbs` : '-';
                             const qty = racket.qty || 1;
+                            const racketPrice = racket.price || racket.cost || 0;
 
                             cards.push(`
                                 <div class="order-card">
@@ -1842,7 +1843,8 @@
                                     </div>
                                     <div class="order-footer">
                                         <div class="order-total">
-                                            Total: ₹${order.totalAmount || order.total || 0}
+                                            <div><strong>Item Cost:</strong> ₹${racketPrice}</div>
+                                            <div><strong>Order Total:</strong> ₹${order.totalAmount || 0}</div>
                                             <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">(${order.paymentStatus === 'paid' ? 'Paid' : 'Pending'})</span>
                                             <br>
                                             <span class="small text-muted">
@@ -1869,6 +1871,7 @@
                             const name = bat.batModel || 'Cricket Bat';
                             const pkg = bat.ballPackage || bat.package || '-';
                             const threading = bat.threading || bat.threadingType || 'none';
+                            const batPrice = bat.price || bat.cost || 0;
 
                             cards.push(`
                                 <div class="order-card">
@@ -1892,7 +1895,8 @@
                                     </div>
                                     <div class="order-footer">
                                         <div class="order-total">
-                                            Total: ₹${order.totalAmount || order.total || 0}
+                                            <div><strong>Item Cost:</strong> ₹${batPrice}</div>
+                                            <div><strong>Order Total:</strong> ₹${order.totalAmount || 0}</div>
                                             <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">(${order.paymentStatus === 'paid' ? 'Paid' : 'Pending'})</span>
                                         </div>
                                         <div class="action-buttons">
@@ -1996,19 +2000,19 @@
 
                 const ordersHtml = orders.map(order => {
                     const items = currentService === 'racket-stringing'
-                            ? (order.racketDetails || []).map(r => ({
-                                racketName: r.racketName || 'Racket',
-                                stringName: r.string || 'Unknown',
-                                tension: r.tension || '-',
-                                qty: r.qty || 1,
-                                id: r.id
-                            }))
-                            : (order.batDetails || []).map(b => ({
-                                name: b.batModel || 'Unknown',
-                                package: b.ballPackage || b.package || '-',
-                                threading: b.threadingType || b.threading || '',
-                                id: b.id
-                            }));
+                        ? (order.racketDetails || []).map(r => ({
+                            racketName: r.racketName || 'Racket',
+                            stringName: r.string || 'Unknown',
+                            tension: r.tension || '-',
+                            qty: r.qty || 1,
+                            id: r.id
+                        }))
+                        : (order.batDetails || []).map(b => ({
+                            name: b.batModel || 'Unknown',
+                            package: b.ballPackage || b.package || '-',
+                            threading: b.threadingType || b.threading || '',
+                            id: b.id
+                        }));
 
                     return `
                         <div class="order-card">
@@ -2044,9 +2048,9 @@
                                 ${items.map(item => `
                                     <div class="item-chip">
                                         ${currentService === 'racket-stringing'
-                                ? `${item.racketName}: ${item.stringName} - ${item.tension} (${item.qty}x)`
-                                : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
-                            }
+                            ? `${item.racketName}: ${item.stringName} - ${item.tension} (${item.qty}x)`
+                            : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
+                        }
                                     </div>
                                 `).join('')}
                             </div>
