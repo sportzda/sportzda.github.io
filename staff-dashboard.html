@@ -1843,8 +1843,7 @@
                                     </div>
                                     <div class="order-footer">
                                         <div class="order-total">
-                                            <div><strong>Item Cost:</strong> ₹${racketPrice}</div>
-                                            <div><strong>Order Total:</strong> ₹${order.totalAmount || 0}</div>
+                                            <div><strong>Cost:</strong> ₹${racketPrice}</div>
                                             <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">(${order.paymentStatus === 'paid' ? 'Paid' : 'Pending'})</span>
                                             <br>
                                             <span class="small text-muted">
@@ -1895,9 +1894,13 @@
                                     </div>
                                     <div class="order-footer">
                                         <div class="order-total">
-                                            <div><strong>Item Cost:</strong> ₹${batPrice}</div>
-                                            <div><strong>Order Total:</strong> ₹${order.totalAmount || 0}</div>
+                                            <div><strong>Cost:</strong> ₹${batPrice}</div>
                                             <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">(${order.paymentStatus === 'paid' ? 'Paid' : 'Pending'})</span>
+                                            <br>
+                                            <span class="small text-muted">
+                                                <i class="bi ${order.paymentMethod === 'Cash' || order.paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : order.paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
+                                                ${order.paymentMethod}
+                                            </span>
                                         </div>
                                         <div class="action-buttons">
                                             ${status !== 'completed' ? `
