@@ -1889,7 +1889,7 @@
                                     <div class="order-items">
                                         <div class="item-card">
                                             <div class="item-title">${name}</div>
-                                            <div class="item-meta small text-muted">${pkg}${threading && threading !== 'none' ? ' • ' + threading : ''}</div>
+                                            <div class="item-meta small text-muted">${pkg}${threading && threading !== 'none' ? ' • Threading ' + threading : ''}</div>
                                         </div>
                                     </div>
                                     <div class="order-footer">
@@ -2398,7 +2398,7 @@
 
                         // Only add threading detail if it's not 'none'
                         if (threadingValue !== 'none') {
-                            details.push({ label: 'Threading', value: threadingValue });
+                            details.push({ label: 'Threading', value: 'Threading ' + threadingValue });
                         }
 
                         details.push({ label: 'Status', value: bat.status === 0 ? 'Received' : bat.status === 1 ? 'In Progress' : 'Completed' });

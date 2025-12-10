@@ -132,10 +132,10 @@ test.describe('Staff Dashboard Tests', () => {
                 await page.click('text=Bat Knocking');
                 await page.waitForTimeout(500);
 
-                // Check that the exact threading text is displayed
+                // Check that the exact threading text is displayed with 'Threading' prefix
                 const itemMeta = page.locator('.item-meta').first();
                 const text = await itemMeta.textContent();
-                expect(text).toContain(threading);
+                expect(text).toContain('Threading ' + threading);
             }
         });
 
@@ -230,9 +230,9 @@ test.describe('Staff Dashboard Tests', () => {
             const modal = page.locator('[role="dialog"]').first();
             const modalText = await modal.textContent();
 
-            // Should contain "Threading" label with exact value
+            // Should contain "Threading" label with "Threading both" value
             expect(modalText).toContain('Threading');
-            expect(modalText).toContain('both');
+            expect(modalText).toContain('Threading both');
             // And should still contain other fields
             expect(modalText).toContain('SS TON');
             expect(modalText).toContain('15000');
@@ -300,13 +300,13 @@ test.describe('Staff Dashboard Tests', () => {
             const itemMeta2 = cards[1].locator('.item-meta');
             const text2 = await itemMeta2.textContent();
             expect(text2).toContain('15000');
-            expect(text2).toContain('top');
+            expect(text2).toContain('Threading top');
 
             // Check third card (with both threading)
             const itemMeta3 = cards[2].locator('.item-meta');
             const text3 = await itemMeta3.textContent();
             expect(text3).toContain('20000');
-            expect(text3).toContain('both');
+            expect(text3).toContain('Threading both');
         });
     });
 
