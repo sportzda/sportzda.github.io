@@ -2432,13 +2432,24 @@
 
                 const paymentDetails = [
                     { label: 'Payment Method', value: formatPaymentMethod(order.paymentMethod || 'N/A') },
-                    { label: 'Payment Status', value: order.paymentStatus === 'paid' ? 'Paid' : 'Pending' },
-                    { label: 'Total Amount', value: `₹${order.payment?.finalAmount || order.totalAmount || 0}` }
+                    { label: 'Payment Status', value: order.paymentStatus === 'paid' ? 'Paid' : 'Pending' }
                 ];
 
-                if (order.payment?.couponCode) {
-                    paymentDetails.push({ label: 'Coupon Applied', value: order.payment.couponCode });
+                // Add discount details if coupon applied
+                if (order.payment?.discount) {
+                    if (order.payment.discount.couponCode) {
+                        paymentDetails.push({ label: 'Coupon Code', value: order.payment.discount.couponCode });
+                    }
+                    if (order.payment.discount.couponDiscount) {
+                        paymentDetails.push({ label: 'Discount Amount', value: `₹${order.payment.discount.couponDiscount}` });
+                    }
                 }
+
+                // Add pricing details
+                if (order.payment?.originalAmount) {
+                    paymentDetails.push({ label: 'Original Amount', value: `₹${order.payment.originalAmount}` });
+                }
+                paymentDetails.push({ label: 'Final Amount', value: `₹${order.payment?.finalAmount || order.totalAmount || 0}` });
 
                 paymentDetails.forEach(detail => {
                     const row = document.createElement('div');
