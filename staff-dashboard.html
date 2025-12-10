@@ -1819,7 +1819,8 @@
                             const stringName = racket.string || '-';
                             const tension = racket.tension ? `${racket.tension} lbs` : '-';
                             const qty = racket.qty || 1;
-                            const racketPrice = racket.price || racket.cost || 0;
+                            // For B2B customers, use cost (discounted price). Otherwise use price (or cost if no price)
+                            const racketPrice = racket.cost !== undefined ? racket.cost : (racket.price || 0);
 
                             cards.push(`
                                 <div class="order-card">
@@ -1870,7 +1871,8 @@
                             const name = bat.batModel || 'Cricket Bat';
                             const pkg = bat.ballPackage || bat.package || '-';
                             const threading = bat.threading || bat.threadingType || 'none';
-                            const batPrice = bat.price || bat.cost || 0;
+                            // For B2B customers, use cost (discounted price). Otherwise use price (or cost if no price)
+                            const batPrice = bat.cost !== undefined ? bat.cost : (bat.price || 0);
 
                             cards.push(`
                                 <div class="order-card">
