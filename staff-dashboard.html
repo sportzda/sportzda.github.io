@@ -1889,7 +1889,7 @@
                                     <div class="order-items">
                                         <div class="item-card">
                                             <div class="item-title">${name}</div>
-                                            <div class="item-meta small text-muted">${pkg} • ${threading}</div>
+                                            <div class="item-meta small text-muted">${pkg}${threading && threading !== 'none' ? ' • ' + threading : ''}</div>
                                         </div>
                                     </div>
                                     <div class="order-footer">
@@ -2390,13 +2390,18 @@
                         itemHeader.style.marginBottom = '0.5rem';
                         itemHeader.textContent = `Bat ${idx + 1}`;
                         itemCard.appendChild(itemHeader);
-
+                        const threadingValue = bat.threading || bat.threadingType || 'none';
                         const details = [
                             { label: 'Model', value: bat.batModel || 'Cricket Bat' },
-                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' },
-                            { label: 'Threading', value: bat.threading || bat.threadingType || 'None' },
-                            { label: 'Status', value: bat.status === 0 ? 'Received' : bat.status === 1 ? 'In Progress' : 'Completed' }
+                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' }
                         ];
+
+                        // Only add threading detail if it's not 'none'
+                        if (threadingValue !== 'none') {
+                            details.push({ label: 'Threading', value: threadingValue });
+                        }
+
+                        details.push({ label: 'Status', value: bat.status === 0 ? 'Received' : bat.status === 1 ? 'In Progress' : 'Completed' });
 
                         details.forEach(detail => {
                             const row = document.createElement('div');
