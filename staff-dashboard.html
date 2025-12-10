@@ -1552,10 +1552,10 @@
 
                 // Filter orders by item status (racket or bat)
                 const filteredOrders = filterOrdersByItemStatus(allOrdersCache, statusValue, currentService);
-                const displayOrders = transformOrdersForDisplay(filteredOrders, currentService);
 
-                renderOrders(contentEl, displayOrders, tabName);
-                updateSingleBadgeCount(tabName, displayOrders.length);
+                // Don't transform - renderOrders now works directly with raw order objects
+                renderOrders(contentEl, filteredOrders, tabName);
+                updateSingleBadgeCount(tabName, filteredOrders.length);
             }
 
             // Filter orders by individual racket/bat status
@@ -1792,6 +1792,7 @@
             }
 
             // Render orders in the tab
+            // Now render one card per racket (or bat) so each item shows its own action button and details.
             function renderOrders(container, orders, status) {
                 if (orders.length === 0) {
                     container.innerHTML = `
@@ -1807,65 +1808,118 @@
                 const statusClass = status === 'received' ? 'received' : status === 'in-progress' ? 'in-progress' : 'completed';
                 const statusText = status === 'received' ? 'Received' : status === 'in-progress' ? 'In Progress' : 'Completed';
 
-                const ordersHtml = orders.map(order => `
-                    <div class="order-card">
-                        <div class="order-card-header">
-                            <div>
-                                <div class="order-id">${order.orderId}</div>
-                                <div class="order-date">
-                                    <i class="bi bi-calendar"></i> ${order.date}
-                                </div>
-                            </div>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </div>
-                        <div class="customer-info">
-                            <div class="customer-name">
-                                <i class="bi bi-person"></i> ${order.customerName}
-                            </div>
-                            <div class="customer-phone">
-                                <i class="bi bi-telephone"></i> ${order.phone}
-                            </div>
-                            <div class="customer-phone">
-                                <i class="bi bi-shop"></i> ${order.store}
-                            </div>
-                        </div>
-                        <div class="order-items">
-                            ${order.items.map(item => `
-                                <div class="item-chip">
-                                    ${currentService === 'racket-stringing'
-                        ? `${item.name} - ${item.tension} (${item.qty}x)`
-                        : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
-                    }
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="order-footer">
-                            <div class="order-total">
-                                Total: ₹${order.total}
-                                <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">
-                                    (${order.paymentStatus})
-                                </span>
-                                <br>
-                                <span class="small text-muted">
-                                    <i class="bi ${order.paymentMethod === 'Cash' || order.paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : order.paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
-                                    ${order.paymentMethod}
-                                </span>
-                            </div>
-                            <div class="action-buttons">
-                                ${status !== 'completed' ? `
-                                    <button class="btn btn-action btn-update-status" onclick="updateOrderStatus('${order.orderId}', '${status}')">
-                                        <i class="bi bi-arrow-right-circle"></i> ${status === 'received' ? (currentService === 'racket-stringing' ? 'Start Stringing' : 'Start Knocking') : 'Mark Complete'}
-                                    </button>
-                                ` : ''}
-                                <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
-                                    <i class="bi bi-eye"></i> View Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
+                // Build cards per item (racket or bat) so it's clear which item's status is being changed
+                const cards = [];
 
-                container.innerHTML = ordersHtml;
+                orders.forEach(order => {
+                    // For racket-stringing show each racket separately
+                    if (currentService === 'racket-stringing' && order.racketDetails) {
+                        order.racketDetails.forEach(racket => {
+                            const racketName = racket.racketName || 'Racket';
+                            const stringName = racket.string || '-';
+                            const tension = racket.tension ? `${racket.tension} lbs` : '-';
+                            const qty = racket.qty || 1;
+                            const racketPrice = racket.price || racket.cost || 0;
+
+                            cards.push(`
+                                <div class="order-card">
+                                    <div class="order-card-header">
+                                        <div>
+                                            <div class="order-id">${order.orderId}</div>
+                                            <div class="order-date"><i class="bi bi-calendar"></i> ${new Date(order.createdAt).toLocaleString()}</div>
+                                        </div>
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </div>
+                                    <div class="customer-info">
+                                        <div class="customer-name"><i class="bi bi-person"></i> ${order.customerName}</div>
+                                        <div class="customer-phone"><i class="bi bi-telephone"></i> ${order.phone}</div>
+                                        <div class="customer-phone"><i class="bi bi-shop"></i> ${order.store}</div>
+                                    </div>
+                                    <div class="order-items">
+                                        <div class="item-card">
+                                            <div class="item-title">${racketName}</div>
+                                            <div class="item-meta small text-muted">${stringName} • ${tension} • Qty: ${qty}</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-footer">
+                                        <div class="order-total">
+                                            <div><strong>Cost:</strong> ₹${racketPrice}</div>
+                                            <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">(${order.paymentStatus === 'paid' ? 'Paid' : 'Pending'})</span>
+                                            <br>
+                                            <span class="small text-muted">
+                                                <i class="bi ${order.paymentMethod === 'Cash' || order.paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : order.paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
+                                                ${order.paymentMethod}
+                                            </span>
+                                        </div>
+                                        <div class="action-buttons">
+                                            ${status !== 'completed' ? `
+                                                <button class="btn btn-action btn-update-status" onclick="updateOrderStatus('${order.orderId}', '${status}', '${racket.id}')">
+                                                    <i class="bi bi-arrow-right-circle"></i> ${status === 'received' ? (currentService === 'racket-stringing' ? 'Start Stringing' : 'Start Knocking') : 'Mark Complete'}
+                                                </button>
+                                            ` : ''}
+                                            <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
+                                                <i class="bi bi-eye"></i> View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    } else if (currentService === 'bat-knocking' && order.batDetails) {
+                        order.batDetails.forEach(bat => {
+                            const name = bat.batModel || 'Cricket Bat';
+                            const pkg = bat.ballPackage || bat.package || '-';
+                            const threading = bat.threading || bat.threadingType || 'none';
+                            const batPrice = bat.price || bat.cost || 0;
+
+                            cards.push(`
+                                <div class="order-card">
+                                    <div class="order-card-header">
+                                        <div>
+                                            <div class="order-id">${order.orderId}</div>
+                                            <div class="order-date"><i class="bi bi-calendar"></i> ${new Date(order.createdAt).toLocaleString()}</div>
+                                        </div>
+                                        <span class="status-badge ${statusClass}">${statusText}</span>
+                                    </div>
+                                    <div class="customer-info">
+                                        <div class="customer-name"><i class="bi bi-person"></i> ${order.customerName}</div>
+                                        <div class="customer-phone"><i class="bi bi-telephone"></i> ${order.phone}</div>
+                                        <div class="customer-phone"><i class="bi bi-shop"></i> ${order.store}</div>
+                                    </div>
+                                    <div class="order-items">
+                                        <div class="item-card">
+                                            <div class="item-title">${name}</div>
+                                            <div class="item-meta small text-muted">${pkg} • ${threading}</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-footer">
+                                        <div class="order-total">
+                                            <div><strong>Cost:</strong> ₹${batPrice}</div>
+                                            <span class="small ${order.paymentStatus === 'Paid' ? 'text-success' : 'text-warning'}">(${order.paymentStatus === 'paid' ? 'Paid' : 'Pending'})</span>
+                                            <br>
+                                            <span class="small text-muted">
+                                                <i class="bi ${order.paymentMethod === 'Cash' || order.paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : order.paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
+                                                ${order.paymentMethod}
+                                            </span>
+                                        </div>
+                                        <div class="action-buttons">
+                                            ${status !== 'completed' ? `
+                                                <button class="btn btn-action btn-update-status" onclick="updateOrderStatus('${order.orderId}', '${status}', '${bat.id}')">
+                                                    <i class="bi bi-arrow-right-circle"></i> ${status === 'received' ? 'Start Knocking' : 'Mark Complete'}
+                                                </button>
+                                            ` : ''}
+                                            <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
+                                                <i class="bi bi-eye"></i> View Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `);
+                        });
+                    }
+                });
+
+                container.innerHTML = cards.join('');
             }
 
             // Update a single badge count
@@ -1950,14 +2004,17 @@
                 const ordersHtml = orders.map(order => {
                     const items = currentService === 'racket-stringing'
                         ? (order.racketDetails || []).map(r => ({
-                            name: r.string || 'Unknown',
+                            racketName: r.racketName || 'Racket',
+                            stringName: r.string || 'Unknown',
                             tension: r.tension || '-',
-                            qty: r.qty || 1
+                            qty: r.qty || 1,
+                            id: r.id
                         }))
                         : (order.batDetails || []).map(b => ({
                             name: b.batModel || 'Unknown',
                             package: b.ballPackage || b.package || '-',
-                            threading: b.threadingType || b.threading || ''
+                            threading: b.threadingType || b.threading || '',
+                            id: b.id
                         }));
 
                     return `
@@ -1994,7 +2051,7 @@
                                 ${items.map(item => `
                                     <div class="item-chip">
                                         ${currentService === 'racket-stringing'
-                            ? `${item.name} - ${item.tension} (${item.qty}x)`
+                            ? `${item.racketName}: ${item.stringName} - ${item.tension} (${item.qty}x)`
                             : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
                         }
                                     </div>
@@ -2123,13 +2180,13 @@
             };
 
             // Global functions for button actions
-            window.updateOrderStatus = async function (orderId, currentStatus) {
+            window.updateOrderStatus = async function (orderId, currentStatus, itemId = null) {
                 const nextStatusValue = currentStatus === 'received' ? 1 : 2;
                 const actionText = currentStatus === 'received'
                     ? (currentService === 'racket-stringing' ? 'start stringing' : 'start knocking')
                     : 'mark as complete';
 
-                const message = `Are you sure you want to ${actionText} for this order?`;
+                const message = `Are you sure you want to ${actionText} for this item?`;
 
                 if (!confirm(message)) {
                     return;
@@ -2138,7 +2195,7 @@
                 showLoadingOverlay('Updating order status...');
 
                 try {
-                    // Get the racket/bat ID from the cached order data
+                    // Get the order from cache
                     const order = allOrdersCache.find(o => o.orderId === orderId);
                     if (!order) {
                         hideLoadingOverlay();
@@ -2146,27 +2203,23 @@
                         return;
                     }
 
-                    // Get the first racket/bat from the order (for the specific service type)
-                    let itemId;
-                    if (currentService === 'racket-stringing' && order.racketDetails) {
-                        // Find the first racket with matching status
-                        const statusMap = { 'received': 0, 'in-progress': 1 };
-                        const currentStatusValue = statusMap[currentStatus];
-                        const racket = order.racketDetails.find(r => (r.status !== undefined && r.status !== null ? Number(r.status) : 0) === currentStatusValue);
-                        if (racket) {
-                            itemId = racket.id;
-                        }
-                    } else if (currentService === 'bat-knocking' && order.batDetails) {
-                        // Find the first bat with matching status
-                        const statusMap = { 'received': 0, 'in-progress': 1 };
-                        const currentStatusValue = statusMap[currentStatus];
-                        const bat = order.batDetails.find(b => (b.status !== undefined && b.status !== null ? Number(b.status) : 0) === currentStatusValue);
-                        if (bat) {
-                            itemId = bat.id;
+                    // If itemId is not provided, fallback to previous behaviour (first matching item)
+                    let resolvedItemId = itemId;
+                    if (!resolvedItemId) {
+                        if (currentService === 'racket-stringing' && order.racketDetails) {
+                            const statusMap = { 'received': 0, 'in-progress': 1 };
+                            const currentStatusValue = statusMap[currentStatus];
+                            const racket = order.racketDetails.find(r => (r.status !== undefined && r.status !== null ? Number(r.status) : 0) === currentStatusValue);
+                            if (racket) resolvedItemId = racket.id;
+                        } else if (currentService === 'bat-knocking' && order.batDetails) {
+                            const statusMap = { 'received': 0, 'in-progress': 1 };
+                            const currentStatusValue = statusMap[currentStatus];
+                            const bat = order.batDetails.find(b => (b.status !== undefined && b.status !== null ? Number(b.status) : 0) === currentStatusValue);
+                            if (bat) resolvedItemId = bat.id;
                         }
                     }
 
-                    if (!itemId) {
+                    if (!resolvedItemId) {
                         hideLoadingOverlay();
                         showToast('Could not find item to update. Please refresh the page.', 'error');
                         return;
@@ -2174,8 +2227,8 @@
 
                     // Determine the correct endpoint
                     const endpoint = currentService === 'racket-stringing'
-                        ? `/api/orders/${orderId}/status-by-racket/${itemId}`
-                        : `/api/orders/${orderId}/status-by-bat/${itemId}`;
+                        ? `/api/orders/${orderId}/status-by-racket/${resolvedItemId}`
+                        : `/api/orders/${orderId}/status-by-bat/${resolvedItemId}`;
 
                     // Make authenticated API call
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -2300,6 +2353,7 @@
                         itemCard.appendChild(itemHeader);
 
                         const details = [
+                            { label: 'Model', value: racket.racketName || 'N/A' },
                             { label: 'String', value: racket.string || 'N/A' },
                             { label: 'Tension', value: racket.tension ? `${racket.tension} lbs` : 'N/A' },
                             { label: 'Quantity', value: racket.qty || 1 },
@@ -2378,13 +2432,24 @@
 
                 const paymentDetails = [
                     { label: 'Payment Method', value: formatPaymentMethod(order.paymentMethod || 'N/A') },
-                    { label: 'Payment Status', value: order.paymentStatus === 'paid' ? 'Paid' : 'Pending' },
-                    { label: 'Total Amount', value: `₹${order.payment?.finalAmount || order.totalAmount || 0}` }
+                    { label: 'Payment Status', value: order.paymentStatus === 'paid' ? 'Paid' : 'Pending' }
                 ];
 
-                if (order.payment?.couponCode) {
-                    paymentDetails.push({ label: 'Coupon Applied', value: order.payment.couponCode });
+                // Add discount details if coupon applied
+                if (order.payment?.discount) {
+                    if (order.payment.discount.couponCode) {
+                        paymentDetails.push({ label: 'Coupon Code', value: order.payment.discount.couponCode });
+                    }
+                    if (order.payment.discount.couponDiscount) {
+                        paymentDetails.push({ label: 'Discount Amount', value: `₹${order.payment.discount.couponDiscount}` });
+                    }
                 }
+
+                // Add pricing details
+                if (order.payment?.originalAmount) {
+                    paymentDetails.push({ label: 'Original Amount', value: `₹${order.payment.originalAmount}` });
+                }
+                paymentDetails.push({ label: 'Final Amount', value: `₹${order.payment?.finalAmount || order.totalAmount || 0}` });
 
                 paymentDetails.forEach(detail => {
                     const row = document.createElement('div');
