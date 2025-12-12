@@ -2936,8 +2936,8 @@
                     const itemType = scanMode === 'racket' ? 'rackets' : 'cricket bats';
                     console.log(`[QR-SCAN] Fetching ${itemType} for QR: ${qrCode}`);
 
-                    // Show loading state immediately
-                    unlinkedList.innerHTML = `<div style="padding: 20px; text-align: center; color: #9ca3af;"><i class="bi bi-hourglass-split" style="font-size: 32px; color: #d1d5db; margin-bottom: 10px; display: block;"></i><small>Loading ${itemType}...</small></div>`;
+                    // Show loading overlay - same as "Linking QR"
+                    showLoadingOverlay(`Loading ${itemType}...`);
 
                     const response = await fetch(`${API_BASE_URL}/api/qr/${encodeURIComponent(qrCode)}?mode=${scanMode}`, {
                         headers: {
@@ -2951,11 +2951,13 @@
                     console.log(`[QR-SCAN] Response data:`, data);
 
                     if (!data.success) {
+                        hideLoadingOverlay();
                         throw new Error(data.message || `Failed to fetch QR data`);
                     }
 
                     // If QR is already linked, show details and status update options
                     if (data.linked) {
+                        hideLoadingOverlay();
                         const order = data.order;
                         const rackets = order.rackets || [];
                         const linkedRacket = rackets.find(r => r.isLinkedToScannedQr);
@@ -3101,7 +3103,8 @@
                         const racketsToDisplay = data.rackets || [];
                         if (racketsToDisplay.length > 0) {
                             cachedUnlinkedRackets = racketsToDisplay;
-                            // Clear loading state and display updated list from server
+                            // Hide loading overlay and display updated list from server
+                            hideLoadingOverlay();
                             unlinkedList.innerHTML = '';
                             displayCachedItems();
                         }
@@ -3110,13 +3113,15 @@
                         const batsToDisplay = data.rackets || [];
                         if (batsToDisplay.length > 0) {
                             cachedUnlinkedBats = batsToDisplay;
-                            // Clear loading state and display updated list from server
+                            // Hide loading overlay and display updated list
+                            hideLoadingOverlay();
                             unlinkedList.innerHTML = '';
                             // Link QR button stays disabled until user selects an item
                             displayCachedItems();
                         }
                     }
                 } catch (error) {
+                    hideLoadingOverlay();
                     console.error('Error fetching QR data:', error);
                     // If fetch fails, keep showing cached data
                     console.log('[QR-SCAN] Keeping cached items displayed');
@@ -3131,6 +3136,9 @@
                     }
 
                     try {
+                        // Set flag to prevent modal closure during linking
+                        isLinkingInProgress = true;
+
                         // Show loading overlay instead of button state
                         showLoadingOverlay('Linking QR');
                         linkBtn.disabled = true;
@@ -3182,8 +3190,22 @@
                         // After linking, display the linked racket/bat with status instead of closing
                         // Extract the linked item details from the response
                         const linkedOrder = result.order || result.data || {};
-                        const linkedRackets = linkedOrder.rackets || [];
-                        const justLinkedItem = linkedRackets.find(r => r.id === selectedItemId);
+                        const linkedRackets = linkedOrder.rackets || linkedOrder.racketDetails || [];
+                        const linkedBats = linkedOrder.bats || linkedOrder.batDetails || [];
+
+                        let justLinkedItem = null;
+
+                        if (scanMode === 'racket') {
+                            justLinkedItem = linkedRackets.find(r => r.id === selectedItemId);
+                        } else {
+                            justLinkedItem = linkedBats.find(b => b.id === selectedItemId);
+                        }
+
+                        // If we still can't find it in the response, try to reconstruct from cached data
+                        if (!justLinkedItem) {
+                            const cachedItems = scanMode === 'racket' ? cachedUnlinkedRackets : cachedUnlinkedBats;
+                            justLinkedItem = cachedItems.find(item => item.id === selectedItemId);
+                        }
 
                         if (justLinkedItem) {
                             // Display linked item details with status update options (same as already-linked state)
@@ -3218,11 +3240,14 @@
                             }
 
                             let displayHtml = `
+                                <div style="margin-bottom: 10px; padding: 8px; background: #10b981; color: white; border-radius: 6px; font-weight: 600; font-size: 13px; text-align: center;">
+                                    <i class="bi bi-check-circle"></i> Linked Item
+                                </div>
                                 <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
                                     <div style="margin-bottom: 15px;">
-                                        <h6 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 600;">Customer: ${linkedOrder.customerName}</h6>
-                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Order: ${linkedOrder.orderId}</p>
-                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Store: ${linkedOrder.store}</p>
+                                        <h6 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 600;">Customer: ${linkedOrder.customerName || 'N/A'}</h6>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Order: ${linkedOrder.orderId || 'N/A'}</p>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Store: ${linkedOrder.store || 'N/A'}</p>
                                     </div>
                                     
                                     <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #10b981;">
@@ -3239,17 +3264,18 @@
 
                             unlinkedList.innerHTML = displayHtml;
 
-                            // Disable both Link QR and Scan Again buttons since a racket is now linked
-                            linkBtn.disabled = true;
-                            linkBtn.style.opacity = '0.5';
-                            linkBtn.style.cursor = 'not-allowed';
-                            scanAgainBtn.disabled = true;
-                            scanAgainBtn.style.opacity = '0.5';
-                            scanAgainBtn.style.cursor = 'not-allowed';
+                            // Close the modal after showing the linked item briefly and display success toast
+                            setTimeout(() => {
+                                qrModal.style.display = 'none';
+                                stopCamera();
+                                // Reload the current tab to show updated data
+                                if (isAuthenticated) {
+                                    loadTabData(currentStatus);
+                                }
+                            }, 1500);
 
-                            // Hide camera section since we're showing linked details
-                            cameraSection.style.display = 'none';
-                            scanAgainBtn.style.display = 'block';
+                            // Linking is complete, reset flag
+                            isLinkingInProgress = false;
 
                             // Add event listener for status update button
                             const updateBtn = document.getElementById('updateStatusBtn');
