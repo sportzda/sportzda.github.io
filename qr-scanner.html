@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Scanner - Dasportz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container-main {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .scanner-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .scanner-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e3a8a 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .scanner-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .scanner-header p {
+            margin-bottom: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .scanner-body {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            font-size: 18px;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+            outline: none;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 20px;
+            border: 3px dashed var(--primary-color);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f3f4f6;
+        }
+
+        #camera-video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .scanning-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 16px;
+            height: 16px;
+            background: var(--success-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .scanning-indicator.inactive {
+            background: var(--warning-color);
+            animation: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            background: #1e3a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-danger-custom {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger-custom:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-success-custom {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success-custom:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .result-card {
+            background: #f9fafb;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .result-card.success {
+            border-left-color: var(--success-color);
+            background: #f0fdf4;
+        }
+
+        .result-card.error {
+            border-left-color: var(--danger-color);
+            background: #fef2f2;
+        }
+
+        .result-card h5 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .result-card.success h5 {
+            color: var(--success-color);
+        }
+
+        .result-card.error h5 {
+            color: var(--danger-color);
+        }
+
+        .order-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .order-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-info-label {
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .order-info-value {
+            color: #1e40af;
+            font-weight: 500;
+        }
+
+        .racket-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .racket-item {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .racket-item:last-child {
+            border-bottom: none;
+        }
+
+        .racket-item.linked {
+            background: #f0fdf4;
+        }
+
+        .racket-item.unlinked {
+            background: #fef3c7;
+        }
+
+        .racket-details {
+            flex: 1;
+        }
+
+        .racket-name {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .racket-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .racket-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-link-qr {
+            padding: 6px 16px;
+            font-size: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-link-qr:hover {
+            background: #1e3a8a;
+        }
+
+        .btn-link-qr:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .manual-input-section {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .manual-input-section h6 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .alert-custom {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert-custom.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-custom.success {
+            background: #d1fae5;
+            border: 1px solid var(--success-color);
+            color: #065f46;
+        }
+
+        .alert-custom.error {
+            background: #fee2e2;
+            border: 1px solid var(--danger-color);
+            color: #7f1d1d;
+        }
+
+        .alert-custom.info {
+            background: #dbeafe;
+            border: 1px solid var(--primary-color);
+            color: #1e3a8a;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .qr-code-display {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .no-unlinked {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        .no-unlinked i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #d1d5db;
+        }
+
+        @media (max-width: 768px) {
+            .scanner-header h1 {
+                font-size: 22px;
+            }
+
+            .button-group button {
+                min-width: 100px;
+            }
+
+            .racket-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .racket-actions {
+                margin-left: 0;
+                margin-top: 10px;
+                width: 100%;
+            }
+
+            .racket-item.linked {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-main">
+        <div class="scanner-section">
+            <div class="scanner-header">
+                <h1><i class="bi bi-qr-code"></i> QR Code Scanner</h1>
+                <p>Scan QR codes to link rackets/bats or retrieve order information</p>
+            </div>
+
+            <div class="scanner-body">
+                <!-- Alerts -->
+                <div id="alert-container"></div>
+
+                <!-- Scanner Tabs -->
+                <ul class="nav nav-tabs mb-4" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="camera-tab" data-bs-toggle="tab"
+                            data-bs-target="#camera-pane" type="button" role="tab">
+                            <i class="bi bi-camera"></i> Camera Scanner
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="manual-tab" data-bs-toggle="tab" data-bs-target="#manual-pane"
+                            type="button" role="tab">
+                            <i class="bi bi-keyboard"></i> Manual Input
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Camera Tab -->
+                    <div class="tab-pane fade show active" id="camera-pane" role="tabpanel">
+                        <div class="video-container">
+                            <video id="camera-video" playsinline></video>
+                            <div class="scanning-indicator inactive" id="scanning-indicator"></div>
+                        </div>
+
+                        <div class="button-group">
+                            <button class="btn-primary-custom" id="start-camera-btn">
+                                <i class="bi bi-play-circle"></i> Start Camera
+                            </button>
+                            <button class="btn-danger-custom" id="stop-camera-btn" style="display: none;">
+                                <i class="bi bi-stop-circle"></i> Stop Camera
+                            </button>
+                            <button class="btn-success-custom" id="retake-btn" style="display: none;">
+                                <i class="bi bi-arrow-clockwise"></i> Retake
+                            </button>
+                        </div>
+
+                        <p class="text-muted text-center" style="font-size: 13px;">
+                            <i class="bi bi-info-circle"></i> Allow camera access and position the QR code within the
+                            frame
+                        </p>
+                    </div>
+
+                    <!-- Manual Input Tab -->
+                    <div class="tab-pane fade" id="manual-pane" role="tabpanel">
+                        <div class="manual-input-section">
+                            <h6><i class="bi bi-keyboard"></i> Enter QR Code Manually</h6>
+                            <div class="input-group">
+                                <input type="text" id="manual-qr-input"
+                                    placeholder="Enter QR code value and press Enter or click Scan" autocomplete="off"
+                                    spellcheck="false" />
+                            </div>
+                            <div class="button-group">
+                                <button class="btn-primary-custom" id="manual-scan-btn">
+                                    <i class="bi bi-search"></i> Scan
+                                </button>
+                                <button class="btn-danger-custom" id="clear-input-btn">
+                                    <i class="bi bi-x-circle"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="results-section">
+                    <hr class="my-4" />
+
+                    <!-- Linked Result -->
+                    <div id="linked-result" style="display: none;">
+                        <div class="result-card success">
+                            <h5><i class="bi bi-check-circle"></i> QR Code Already Linked</h5>
+
+                            <div class="qr-code-display">
+                                <i class="bi bi-qr-code"></i> <span id="result-qr-code"></span>
+                            </div>
+
+                            <div class="order-info" style="margin-top: 15px;">
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Order ID:</span>
+                                    <span class="order-info-value" id="result-order-id"></span>
+                                </div>
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Customer:</span>
+                                    <span class="order-info-value" id="result-customer-name"></span>
+                                </div>
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Phone:</span>
+                                    <span class="order-info-value" id="result-phone"></span>
+                                </div>
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Store:</span>
+                                    <span class="order-info-value" id="result-store"></span>
+                                </div>
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Amount:</span>
+                                    <span class="order-info-value" id="result-amount"></span>
+                                </div>
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Status:</span>
+                                    <span id="result-status"></span>
+                                </div>
+                            </div>
+
+                            <h6 style="margin-top: 20px; font-weight: 700; color: var(--primary-color);">
+                                <i class="bi bi-list-check"></i> Rackets/Bats
+                            </h6>
+                            <div class="racket-list" id="linked-rackets-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Unlinked Result -->
+                    <div id="unlinked-result" style="display: none;">
+                        <div class="result-card">
+                            <h5><i class="bi bi-link-45deg"></i> QR Code Not Linked - Select Item to Link</h5>
+
+                            <div class="qr-code-display">
+                                <i class="bi bi-qr-code"></i> <span id="unlinked-qr-code"></span>
+                            </div>
+
+                            <p style="margin-top: 15px; color: #6b7280; font-size: 14px;">
+                                <i class="bi bi-info-circle"></i> This QR code is not linked to any racket. Select a
+                                racket below to link it.
+                            </p>
+
+                            <div id="unlinked-rackets-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- Error Result -->
+                    <div id="error-result" style="display: none;">
+                        <div class="result-card error">
+                            <h5><i class="bi bi-exclamation-triangle"></i> Error Scanning QR Code</h5>
+                            <p id="error-message" style="margin-bottom: 0;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const BACKEND_BASE = 'http://localhost:3000'; // Update with your backend URL
+
+        class QRScanner {
+            constructor() {
+                this.video = document.getElementById('camera-video');
+                this.canvas = document.createElement('canvas');
+                this.canvasContext = this.canvas.getContext('2d');
+                this.scanning = false;
+                this.requestAnimationId = null;
+                this.scannedQRCode = null;
+
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                // Camera buttons
+                document.getElementById('start-camera-btn').addEventListener('click', () => this.startCamera());
+                document.getElementById('stop-camera-btn').addEventListener('click', () => this.stopCamera());
+                document.getElementById('retake-btn').addEventListener('click', () => this.retakePhoto());
+
+                // Manual input
+                document.getElementById('manual-scan-btn').addEventListener('click', () => this.handleManualScan());
+                document.getElementById('manual-qr-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleManualScan();
+                });
+                document.getElementById('clear-input-btn').addEventListener('click', () => {
+                    document.getElementById('manual-qr-input').value = '';
+                    document.getElementById('manual-qr-input').focus();
+                });
+            }
+
+            async startCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' }
+                    });
+
+                    this.video.srcObject = stream;
+                    this.video.play();
+
+                    document.getElementById('start-camera-btn').style.display = 'none';
+                    document.getElementById('stop-camera-btn').style.display = 'block';
+                    document.getElementById('scanning-indicator').classList.remove('inactive');
+
+                    this.scanning = true;
+                    this.scan();
+                } catch (err) {
+                    this.showAlert('error', 'Camera Access Denied', 'Unable to access camera. Please check permissions.');
+                    console.error('Camera access error:', err);
+                }
+            }
+
+            stopCamera() {
+                if (this.video.srcObject) {
+                    this.video.srcObject.getTracks().forEach(track => track.stop());
+                }
+                this.scanning = false;
+                cancelAnimationFrame(this.requestAnimationId);
+
+                document.getElementById('start-camera-btn').style.display = 'block';
+                document.getElementById('stop-camera-btn').style.display = 'none';
+                document.getElementById('scanning-indicator').classList.add('inactive');
+            }
+
+            scan() {
+                if (!this.scanning) return;
+
+                if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+                    this.canvas.width = this.video.videoWidth;
+                    this.canvas.height = this.video.videoHeight;
+
+                    this.canvasContext.drawImage(this.video, 0, 0);
+                    const imageData = this.canvasContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code && code.data) {
+                        this.scannedQRCode = code.data;
+                        this.stopCamera();
+                        this.handleQRScan(code.data);
+                        return;
+                    }
+                }
+
+                this.requestAnimationId = requestAnimationFrame(() => this.scan());
+            }
+
+            retakePhoto() {
+                document.getElementById('start-camera-btn').style.display = 'block';
+                document.getElementById('retake-btn').style.display = 'none';
+                document.getElementById('results-section').classList.remove('active');
+                this.scannedQRCode = null;
+                this.startCamera();
+            }
+
+            handleManualScan() {
+                const qrCode = document.getElementById('manual-qr-input').value.trim();
+                if (!qrCode) {
+                    this.showAlert('error', 'Empty QR Code', 'Please enter a QR code value.');
+                    return;
+                }
+                this.scannedQRCode = qrCode;
+                this.handleQRScan(qrCode);
+            }
+
+            async handleQRScan(qrCode) {
+                try {
+                    this.showAlert('info', 'Scanning...', 'Processing QR code...');
+                    const response = await fetch(`${BACKEND_BASE}/api/qr/${encodeURIComponent(qrCode)}`);
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        this.showResult('error', data.message || 'Failed to scan QR code');
+                        return;
+                    }
+
+                    if (data.linked) {
+                        this.showLinkedResult(data);
+                    } else {
+                        this.showUnlinkedResult(data);
+                    }
+                } catch (err) {
+                    console.error('QR scan error:', err);
+                    this.showResult('error', 'Error scanning QR code: ' + err.message);
+                }
+            }
+
+            showLinkedResult(data) {
+                const order = data.order;
+                const linkedRacketId = data.linkedRacketId;
+
+                document.getElementById('result-qr-code').textContent = data.qrCode;
+                document.getElementById('result-order-id').textContent = order.orderId;
+                document.getElementById('result-customer-name').textContent = order.customerName;
+                document.getElementById('result-phone').textContent = order.phone;
+                document.getElementById('result-store').textContent = order.store;
+                document.getElementById('result-amount').textContent = `₹${order.totalAmount}`;
+
+                const statusBadge = document.createElement('span');
+                statusBadge.className = `badge ${order.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}`;
+                statusBadge.textContent = order.paymentStatus === 'paid' ? 'Paid' : 'Pending';
+                document.getElementById('result-status').innerHTML = '';
+                document.getElementById('result-status').appendChild(statusBadge);
+
+                const racketsList = document.getElementById('linked-rackets-list');
+                racketsList.innerHTML = '';
+
+                order.rackets.forEach(racket => {
+                    const isLinked = racket.id === linkedRacketId;
+                    const item = document.createElement('div');
+                    item.className = `racket-item ${isLinked ? 'linked' : ''}`;
+
+                    item.innerHTML = `
+                        <div class="racket-details">
+                            <div class="racket-name">${racket.racketName || 'Racket'}</div>
+                            <div class="racket-meta">
+                                String: ${racket.string} | Tension: ${racket.tension} | Qty: ${racket.qty}
+                                <br>Cost: ₹${racket.cost || racket.price || 0}
+                            </div>
+                            ${isLinked ? '<span class="badge badge-success" style="margin-top: 8px;"><i class="bi bi-check-lg"></i> QR Linked</span>' : ''}
+                        </div>
+                    `;
+
+                    racketsList.appendChild(item);
+                });
+
+                document.getElementById('linked-result').style.display = 'block';
+                document.getElementById('unlinked-result').style.display = 'none';
+                document.getElementById('error-result').style.display = 'none';
+                document.getElementById('results-section').classList.add('active');
+                document.getElementById('retake-btn').style.display = 'block';
+
+                this.showAlert('success', 'QR Code Found', `Successfully linked to order ${order.orderId}`);
+            }
+
+            showUnlinkedResult(data) {
+                document.getElementById('unlinked-qr-code').textContent = data.qrCode;
+
+                const racketsList = document.getElementById('unlinked-rackets-list');
+                racketsList.innerHTML = '';
+
+                const unlinkedRackets = data.unlinkedRackets || [];
+
+                if (unlinkedRackets.length === 0) {
+                    racketsList.innerHTML = `
+                        <div class="no-unlinked">
+                            <i class="bi bi-check-circle"></i>
+                            <p>All rackets are already linked to QR codes</p>
+                        </div>
+                    `;
+                } else {
+                    unlinkedRackets.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'racket-item unlinked';
+                        itemDiv.innerHTML = `
+                            <div class="racket-details">
+                                <div class="racket-name">${item.racketName || item.racket || 'Racket'}</div>
+                                <div class="racket-meta">
+                                    String: ${item.string || '-'} | Tension: ${item.tension || '-'} | Qty: ${item.qty || 1}
+                                    <br>Order: ${item.orderId} | Cost: ₹${item.cost || item.price || 0}
+                                </div>
+                            </div>
+                            <div class="racket-actions">
+                                <button class="btn-link-qr" onclick="qrScanner.linkQRToRacket('${data.qrCode}', '${item.orderId}', '${item.id}')">
+                                    <i class="bi bi-link-45deg"></i> Link
+                                </button>
+                            </div>
+                        `;
+                        racketsList.appendChild(itemDiv);
+                    });
+                }
+
+                document.getElementById('linked-result').style.display = 'none';
+                document.getElementById('unlinked-result').style.display = 'block';
+                document.getElementById('error-result').style.display = 'none';
+                document.getElementById('results-section').classList.add('active');
+                document.getElementById('retake-btn').style.display = 'block';
+
+                this.showAlert('info', 'QR Not Linked', `Found ${unlinkedRackets.length} unlinked rackets`);
+            }
+
+            async linkQRToRacket(qrCode, orderId, racketId) {
+                try {
+                    const btn = event.target.closest('.btn-link-qr');
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="loading-spinner"></span> Linking...';
+
+                    const response = await fetch(`${BACKEND_BASE}/api/qr/${encodeURIComponent(qrCode)}/link`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderId,
+                            racketId
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        this.showAlert('success', 'Success', `QR code linked successfully to racket!`);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        this.showAlert('error', 'Link Failed', data.message);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-link-45deg"></i> Link';
+                    }
+                } catch (err) {
+                    this.showAlert('error', 'Error', 'Failed to link QR code: ' + err.message);
+                    event.target.closest('.btn-link-qr').disabled = false;
+                    event.target.closest('.btn-link-qr').innerHTML = '<i class="bi bi-link-45deg"></i> Link';
+                }
+            }
+
+            showResult(type, message) {
+                if (type === 'error') {
+                    document.getElementById('error-message').textContent = message;
+                    document.getElementById('linked-result').style.display = 'none';
+                    document.getElementById('unlinked-result').style.display = 'none';
+                    document.getElementById('error-result').style.display = 'block';
+                }
+                document.getElementById('results-section').classList.add('active');
+                document.getElementById('retake-btn').style.display = 'block';
+            }
+
+            showAlert(type, title, message) {
+                const alertContainer = document.getElementById('alert-container');
+                const alert = document.createElement('div');
+                alert.className = `alert-custom ${type} show`;
+                alert.innerHTML = `
+                    <strong>${title}:</strong> ${message}
+                `;
+                alertContainer.innerHTML = '';
+                alertContainer.appendChild(alert);
+
+                if (type !== 'error') {
+                    setTimeout(() => {
+                        alert.classList.remove('show');
+                        setTimeout(() => alert.remove(), 300);
+                    }, 4000);
+                }
+            }
+        }
+
+        let qrScanner;
+        document.addEventListener('DOMContentLoaded', () => {
+            qrScanner = new QRScanner();
+        });
+    </script>
+</body>
+
+</html>
