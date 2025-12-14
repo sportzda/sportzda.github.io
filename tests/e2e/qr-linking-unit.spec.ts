@@ -11,6 +11,12 @@ test.describe('QR Code Linking - Unit Tests', () => {
     test.beforeEach(async ({ browser }) => {
         page = await browser.newPage();
 
+        // Mock authentication
+        await page.addInitScript(() => {
+            sessionStorage.setItem('staffAuthToken', 'test_token_123');
+            sessionStorage.setItem('staffUser', 'teststaff');
+        });
+
         // Setup test environment
         await page.addInitScript(() => {
             // Mock global variables used by QR feature
@@ -18,7 +24,28 @@ test.describe('QR Code Linking - Unit Tests', () => {
             (window as any).authToken = 'test_token';
         });
 
+        // Mock authentication API BEFORE navigating
+        await page.route('**/api/staff/verify', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true })
+            });
+        });
+
+        // Mock orders API to prevent 401 errors
+        await page.route('**/api/orders*', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ orders: [] })
+            });
+        });
+
         await page.goto('/staff-dashboard.html');
+
+        // Wait for dashboard to load
+        await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
     });
 
     test.afterEach(async () => {
@@ -113,8 +140,8 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     tension: '26'
                 };
 
-                return racket.id && racket.racketName &&
-                    racket.string && racket.tension;
+                return !!(racket.id && racket.racketName &&
+                    racket.string && racket.tension);
             });
 
             expect(isValid).toBe(true);
@@ -129,7 +156,7 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     threading: 'both'
                 };
 
-                return bat.id && bat.batModel && bat.package;
+                return !!(bat.id && bat.batModel && bat.package);
             });
 
             expect(isValid).toBe(true);
@@ -143,7 +170,7 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     racket: { id: 'racket_1' }
                 };
 
-                return item.orderId && item.customerName && item.racket;
+                return !!(item.orderId && item.customerName && item.racket);
             });
 
             expect(hasOrderInfo).toBe(true);
@@ -157,7 +184,7 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     // string and tension missing
                 };
 
-                return item.id && item.racketName;
+                return !!(item.id && item.racketName);
             });
 
             expect(hasRequired).toBe(true);
@@ -377,8 +404,8 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     }
                 };
 
-                return response.success && response.linked &&
-                    response.linkedRacketId && response.order;
+                return !!(response.success && response.linked &&
+                    response.linkedRacketId && response.order);
             });
 
             expect(isValid).toBe(true);
@@ -395,8 +422,8 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     alreadyLinked: false
                 };
 
-                return response.success && response.qrCode &&
-                    response.orderId && response.racketId;
+                return !!(response.success && response.qrCode &&
+                    response.orderId && response.racketId);
             });
 
             expect(isValid).toBe(true);
@@ -409,7 +436,7 @@ test.describe('QR Code Linking - Unit Tests', () => {
                     message: 'QR code not found'
                 };
 
-                return !error.success && error.message;
+                return !error.success && !!error.message;
             });
 
             expect(isValid).toBe(true);

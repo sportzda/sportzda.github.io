@@ -1053,7 +1053,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Order Details Modal -->
-    <div id="orderDetailsModal">
+    <div id="orderDetailsModal" role="dialog" aria-modal="true" aria-labelledby="orderDetailsTitle">
         <div class="order-details-box">
             <button id="closeDetailsBtn" class="close-details" title="Close">
                 <i class="bi bi-x-lg"></i>
@@ -1258,7 +1258,7 @@
                     <video id="qrVideo"
                         style="width: 100%; border-radius: 8px; background: #000; max-height: 200px; max-width: 200px; margin: 0 auto; display: block; margin-bottom: 10px;"></video>
                     <canvas id="qrCanvas" style="display: none;"></canvas>
-                    <div id="camerStatus" style="text-align: center; color: #059669; font-size: 13px;">
+                    <div id="cameraStatus" style="text-align: center; color: #059669; font-size: 13px;">
                         <small>Position QR code in frame</small>
                     </div>
                 </div>
@@ -1372,12 +1372,19 @@
                             return true;
                         } else {
                             // Token invalid or expired, clear and show login
+                            console.log('Token verification failed with status:', response.status);
                             sessionStorage.removeItem('staffAuthToken');
                             sessionStorage.removeItem('staffUser');
+                            authToken = null;
                         }
                     } catch (err) {
                         console.error('Token verification failed:', err);
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        authToken = null;
                     }
+                } else {
+                    console.log('No auth token found in sessionStorage');
                 }
 
                 showLoginModal();
@@ -1903,8 +1910,10 @@
                             const racketName = racket.racketName || 'Racket';
                             const stringName = racket.string || '-';
                             const tension = racket.tension ? `${racket.tension} lbs` : '-';
+                            const qty = racket.qty || 1;
                             // For B2B customers, use cost (discounted price). Otherwise use price (or cost if no price)
-                            const racketPrice = racket.cost !== undefined ? racket.cost : (racket.price || 0);
+                            const racketPricePerUnit = racket.cost !== undefined ? racket.cost : (racket.price || 0);
+                            const racketPrice = racketPricePerUnit * qty;
 
                             cards.push(`
                                 <div class="order-card">
@@ -1923,7 +1932,7 @@
                                     <div class="order-items">
                                         <div class="item-card">
                                             <div class="item-title">${racketName}</div>
-                                            <div class="item-meta small text-muted">${stringName} • ${tension}</div>
+                                            <div class="item-meta small text-muted">${stringName} • ${tension} • Qty: ${qty}</div>
                                         </div>
                                     </div>
                                     <div class="order-footer">
@@ -2475,9 +2484,11 @@
                         itemHeader.textContent = `Bat ${idx + 1}`;
                         itemCard.appendChild(itemHeader);
                         const threadingValue = bat.threading || bat.threadingType || 'none';
+                        const batCost = bat.cost !== undefined ? bat.cost : (bat.price || 0);
                         const details = [
                             { label: 'Model', value: bat.batModel || 'Cricket Bat' },
-                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' }
+                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' },
+                            { label: 'Cost', value: `₹${batCost}` }
                         ];
 
                         // Only add threading detail if it's not 'none'
@@ -2604,7 +2615,7 @@
             const cameraSection = document.getElementById('cameraSection');
             const qrVideo = document.getElementById('qrVideo');
             const qrCanvas = document.getElementById('qrCanvas');
-            const cameraStatus = document.getElementById('camerStatus');
+            const cameraStatus = document.getElementById('cameraStatus');
             const selectRacketBtn = document.getElementById('selectRacketBtn');
             const selectBatBtn = document.getElementById('selectBatBtn');
             const listLabel = document.getElementById('listLabel');
@@ -2639,10 +2650,16 @@
             // Prefetch unlinked orders on page load
             async function prefetchUnlinkedOrders() {
                 try {
+                    // Only prefetch if authenticated
+                    if (!isAuthenticated || !authToken) {
+                        console.log('[QR-PREFETCH] Skipping prefetch - not authenticated');
+                        return;
+                    }
+
                     console.log('[QR-PREFETCH] Prefetching unlinked orders...');
                     const response = await fetch(`${API_BASE_URL}/api/qr/unlinked/orders`, {
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                            'Authorization': `Bearer ${authToken}`
                         }
                     });
 
@@ -2668,7 +2685,7 @@
 
                     const response = await fetch(`${API_BASE_URL}/api/qr/unlinked/orders?mode=bat`, {
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                            'Authorization': `Bearer ${authToken}`
                         }
                     });
 
