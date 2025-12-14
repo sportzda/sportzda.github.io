@@ -1053,7 +1053,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Order Details Modal -->
-    <div id="orderDetailsModal">
+    <div id="orderDetailsModal" role="dialog" aria-modal="true" aria-labelledby="orderDetailsTitle">
         <div class="order-details-box">
             <button id="closeDetailsBtn" class="close-details" title="Close">
                 <i class="bi bi-x-lg"></i>
@@ -1125,12 +1125,16 @@
             <!-- Service Selection Menu -->
             <div class="service-menu">
                 <h5 class="mb-3"><i class="bi bi-list-ul"></i> Select Service</h5>
-                <div class="d-flex flex-wrap">
+                <div class="d-flex flex-wrap gap-2">
                     <button class="service-menu-btn active" data-service="racket-stringing">
                         <i class="bi bi-bullseye"></i> Racket Stringing
                     </button>
                     <button class="service-menu-btn" data-service="bat-knocking">
                         <i class="bi bi-hammer"></i> Bat Knocking
+                    </button>
+                    <button id="openQRScanBtn" class="service-menu-btn"
+                        style="background-color: #28a745; border-color: #28a745;">
+                        <i class="bi bi-qr-code"></i> Scan QR
                     </button>
                 </div>
             </div>
@@ -1224,8 +1228,74 @@
         </div>
     </footer>
 
+    <!-- QR Code Scanning Modal -->
+    <div id="qrScanModal"
+        style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: flex-end; padding: 20px 0; overflow-y: auto;">
+        <div
+            style="background: white; border-radius: 12px 12px 0 0; width: 100%; max-width: 500px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; margin-top: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h5 style="margin: 0; font-weight: 700; font-size: 18px;"><i class="bi bi-qr-code"></i> Scan QR Code
+                </h5>
+                <button id="closeQRBtn"
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+            </div>
+
+            <!-- Bat/Racket Selection Toggle -->
+            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                <button id="selectRacketBtn"
+                    style="flex: 1; padding: 10px; background: #1e40af; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">
+                    <i class="bi bi-tennis"></i> Racket
+                </button>
+                <button id="selectBatBtn"
+                    style="flex: 1; padding: 10px; background: #e5e7eb; color: #333; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">
+                    <i class="bi bi-baseball"></i> Cricket Bat
+                </button>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <!-- Camera Section -->
+                <div id="cameraSection" style="margin-bottom: 15px;">
+                    <video id="qrVideo"
+                        style="width: 100%; border-radius: 8px; background: #000; max-height: 200px; max-width: 200px; margin: 0 auto; display: block; margin-bottom: 10px;"></video>
+                    <canvas id="qrCanvas" style="display: none;"></canvas>
+                    <div id="cameraStatus" style="text-align: center; color: #059669; font-size: 13px;">
+                        <small>Position QR code in frame</small>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label id="listLabel"
+                    style="display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px;">Select
+                    Order & Racket:</label>
+                <div id="unlinkedList"
+                    style="border: 1px solid #e5e7eb; border-radius: 8px; max-height: 200px; overflow-y: auto; background: #f9fafb;">
+                    <div style="padding: 15px; text-align: center; color: #9ca3af; font-size: 13px;">
+                        <small>Scan a QR code to see available items</small>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button id="scanAgainBtn"
+                    style="flex: 1; padding: 10px; background: #059669; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: none; font-size: 13px;">
+                    <i class="bi bi-camera-fill"></i> Scan Again
+                </button>
+                <button id="linkQRBtn" disabled
+                    style="flex: 1; padding: 10px; background: #1e40af; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">
+                    <i class="bi bi-link-45deg"></i> Link QR
+                </button>
+                <button id="closeQRBtn"
+                    style="flex: 1; padding: 10px; background: #e5e7eb; color: #333; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
     <script>
         // Dashboard Application
@@ -1238,6 +1308,19 @@
             let isAuthenticated = false;
             let currentService = 'racket-stringing';
             let currentStatus = 'received';
+
+            // Loading Overlay Helper Functions
+            function showLoadingOverlay(message = 'Processing...') {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const loadingMessage = document.getElementById('loadingMessage');
+                if (loadingMessage) loadingMessage.textContent = message;
+                if (loadingOverlay) loadingOverlay.classList.add('show');
+            }
+
+            function hideLoadingOverlay() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) loadingOverlay.classList.remove('show');
+            }
 
             // DOM elements
             const loginModal = document.getElementById('loginModal');
@@ -1289,12 +1372,19 @@
                             return true;
                         } else {
                             // Token invalid or expired, clear and show login
+                            console.log('Token verification failed with status:', response.status);
                             sessionStorage.removeItem('staffAuthToken');
                             sessionStorage.removeItem('staffUser');
+                            authToken = null;
                         }
                     } catch (err) {
                         console.error('Token verification failed:', err);
+                        sessionStorage.removeItem('staffAuthToken');
+                        sessionStorage.removeItem('staffUser');
+                        authToken = null;
                     }
+                } else {
+                    console.log('No auth token found in sessionStorage');
                 }
 
                 showLoginModal();
@@ -1421,7 +1511,7 @@
             });
 
             // Service menu buttons
-            const serviceButtons = document.querySelectorAll('.service-menu-btn');
+            const serviceButtons = document.querySelectorAll('.service-menu-btn:not(#openQRScanBtn)');
             serviceButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     serviceButtons.forEach(b => b.classList.remove('active'));
@@ -1795,11 +1885,13 @@
             // Now render one card per racket (or bat) so each item shows its own action button and details.
             function renderOrders(container, orders, status) {
                 if (orders.length === 0) {
+                    const serviceName = currentService ? currentService.replace('-', ' ') : 'service';
+                    const statusName = status ? status.replace('-', ' ') : 'pending';
                     container.innerHTML = `
                         <div class="empty-state">
                             <i class="bi bi-inbox"></i>
                             <h4>No Orders Found</h4>
-                            <p>There are no ${status.replace('-', ' ')} orders for ${currentService.replace('-', ' ')}.</p>
+                            <p>There are no ${statusName} orders for ${serviceName}.</p>
                         </div>
                     `;
                     return;
@@ -1820,7 +1912,8 @@
                             const tension = racket.tension ? `${racket.tension} lbs` : '-';
                             const qty = racket.qty || 1;
                             // For B2B customers, use cost (discounted price). Otherwise use price (or cost if no price)
-                            const racketPrice = racket.cost !== undefined ? racket.cost : (racket.price || 0);
+                            const racketPricePerUnit = racket.cost !== undefined ? racket.cost : (racket.price || 0);
+                            const racketPrice = racketPricePerUnit * qty;
 
                             cards.push(`
                                 <div class="order-card">
@@ -1869,7 +1962,6 @@
                     } else if (currentService === 'bat-knocking' && order.batDetails) {
                         order.batDetails.forEach(bat => {
                             const name = bat.batModel || 'Cricket Bat';
-                            const pkg = bat.ballPackage || bat.package || '-';
                             const threading = bat.threading || bat.threadingType || 'none';
                             // For B2B customers, use cost (discounted price). Otherwise use price (or cost if no price)
                             const batPrice = bat.cost !== undefined ? bat.cost : (bat.price || 0);
@@ -1891,7 +1983,7 @@
                                     <div class="order-items">
                                         <div class="item-card">
                                             <div class="item-title">${name}</div>
-                                            <div class="item-meta small text-muted">${pkg}${threading && threading !== 'none' ? ' • Threading ' + threading : ''}</div>
+                                            <div class="item-meta small text-muted">${threading && threading !== 'none' ? 'Threading ' + threading : ''}</div>
                                         </div>
                                     </div>
                                     <div class="order-footer">
@@ -2053,7 +2145,7 @@
                                 ${items.map(item => `
                                     <div class="item-chip">
                                         ${currentService === 'racket-stringing'
-                            ? `${item.racketName}: ${item.stringName} - ${item.tension} (${item.qty}x)`
+                            ? `${item.racketName}: ${item.stringName} - ${item.tension}`
                             : `${item.name} - ${item.package} ${item.threading ? `+ ${item.threading} threading` : ''}`
                         }
                                     </div>
@@ -2358,7 +2450,6 @@
                             { label: 'Model', value: racket.racketName || 'N/A' },
                             { label: 'String', value: racket.string || 'N/A' },
                             { label: 'Tension', value: racket.tension ? `${racket.tension} lbs` : 'N/A' },
-                            { label: 'Quantity', value: racket.qty || 1 },
                             { label: 'Status', value: racket.status === 0 ? 'Received' : racket.status === 1 ? 'In Progress' : 'Completed' }
                         ];
 
@@ -2393,9 +2484,11 @@
                         itemHeader.textContent = `Bat ${idx + 1}`;
                         itemCard.appendChild(itemHeader);
                         const threadingValue = bat.threading || bat.threadingType || 'none';
+                        const batCost = bat.cost !== undefined ? bat.cost : (bat.price || 0);
                         const details = [
                             { label: 'Model', value: bat.batModel || 'Cricket Bat' },
-                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' }
+                            { label: 'Package', value: bat.ballPackage || bat.package ? `${bat.ballPackage || bat.package} balls` : 'N/A' },
+                            { label: 'Cost', value: `₹${batCost}` }
                         ];
 
                         // Only add threading detail if it's not 'none'
@@ -2508,8 +2601,787 @@
             }, 300000); // 5 minutes
             */
 
+            // QR Scanning Functionality
+            let qrScannedData = null;
+            let cameraStream = null;
+            let cameraActive = false;
+            let qrScanInterval = null;
+            let cachedUnlinkedRackets = []; // Cache unlinked rackets for instant display
+            const qrScanBtn = document.getElementById('openQRScanBtn');
+            const qrModal = document.getElementById('qrScanModal');
+            const unlinkedList = document.getElementById('unlinkedList');
+            const linkBtn = document.getElementById('linkQRBtn');
+            const scanAgainBtn = document.getElementById('scanAgainBtn');
+            const cameraSection = document.getElementById('cameraSection');
+            const qrVideo = document.getElementById('qrVideo');
+            const qrCanvas = document.getElementById('qrCanvas');
+            const cameraStatus = document.getElementById('cameraStatus');
+            const selectRacketBtn = document.getElementById('selectRacketBtn');
+            const selectBatBtn = document.getElementById('selectBatBtn');
+            const listLabel = document.getElementById('listLabel');
+            let selectedItemId = null;
+            let selectedItemType = null;
+            let scanMode = 'racket'; // 'racket' or 'bat'
+            let cachedUnlinkedBats = []; // Cache unlinked bats
+
+            // Toggle between Racket and Bat mode
+            selectRacketBtn.addEventListener('click', () => {
+                scanMode = 'racket';
+                selectRacketBtn.style.background = '#1e40af';
+                selectRacketBtn.style.color = 'white';
+                selectBatBtn.style.background = '#e5e7eb';
+                selectBatBtn.style.color = '#333';
+                listLabel.textContent = 'Select Racket:';
+                // Don't show list until QR is scanned
+                unlinkedList.innerHTML = '<div style="padding: 15px; text-align: center; color: #9ca3af; font-size: 13px;"><small>Scan a QR code to see available items</small></div>';
+            });
+
+            selectBatBtn.addEventListener('click', () => {
+                scanMode = 'bat';
+                selectBatBtn.style.background = '#1e40af';
+                selectBatBtn.style.color = 'white';
+                selectRacketBtn.style.background = '#e5e7eb';
+                selectRacketBtn.style.color = '#333';
+                listLabel.textContent = 'Select Cricket Bat:';
+                // Don't show list until QR is scanned (even when switching to bat mode)
+                unlinkedList.innerHTML = '<div style="padding: 15px; text-align: center; color: #9ca3af; font-size: 13px;"><small>Scan a QR code to see available items</small></div>';
+            });
+
+            // Prefetch unlinked orders on page load
+            async function prefetchUnlinkedOrders() {
+                try {
+                    // Only prefetch if authenticated
+                    if (!isAuthenticated || !authToken) {
+                        console.log('[QR-PREFETCH] Skipping prefetch - not authenticated');
+                        return;
+                    }
+
+                    console.log('[QR-PREFETCH] Prefetching unlinked orders...');
+                    const response = await fetch(`${API_BASE_URL}/api/qr/unlinked/orders`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            cachedUnlinkedRackets = data.rackets || [];
+                            console.log(`[QR-PREFETCH] Cached ${cachedUnlinkedRackets.length} unlinked rackets`);
+                        }
+                    }
+                } catch (error) {
+                    console.warn('[QR-PREFETCH] Failed to prefetch unlinked orders:', error);
+                    // Continue anyway, will fetch on demand
+                }
+            }
+
+            // Prefetch unlinked cricket bats on demand
+            async function prefetchUnlinkedBats() {
+                try {
+                    console.log('[QR-PREFETCH] Prefetching unlinked cricket bats...');
+                    // Show loading message immediately
+                    unlinkedList.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;"><i class="bi bi-hourglass-split" style="font-size: 32px; color: #d1d5db; margin-bottom: 10px; display: block;"></i><small>Loading cricket bats...</small></div>';
+
+                    const response = await fetch(`${API_BASE_URL}/api/qr/unlinked/orders?mode=bat`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            // Reuse rackets array for cricket bats (same structure)
+                            cachedUnlinkedBats = data.rackets || [];
+                            console.log(`[QR-PREFETCH] Cached ${cachedUnlinkedBats.length} unlinked cricket bats`);
+                            // Display the loaded cricket bats
+                            displayCachedItems();
+                        }
+                    }
+                } catch (error) {
+                    console.warn('[QR-PREFETCH] Failed to prefetch unlinked cricket bats:', error);
+                    // Show error message
+                    unlinkedList.innerHTML = '<div style="padding: 20px; text-align: center; color: #9ca3af;"><small>Unable to load cricket bats</small></div>';
+                }
+            }
+
+            // Display cached unlinked rackets/bats
+            function displayCachedItems() {
+                unlinkedList.innerHTML = '';
+                selectedItemId = null;
+                selectedItemType = null;
+                linkBtn.disabled = true;
+                linkBtn.style.opacity = '0.5';
+                linkBtn.style.cursor = 'not-allowed';
+
+                const cachedItems = scanMode === 'racket' ? cachedUnlinkedRackets : cachedUnlinkedBats;
+                const itemType = scanMode === 'racket' ? 'racket' : 'cricket bat';
+
+                if (cachedItems.length === 0) {
+                    const plural = itemType === 'racket' ? 'rackets' : 'cricket bats';
+                    unlinkedList.innerHTML = `<div style="padding: 20px; text-align: center; color: #9ca3af;"><i class="bi bi-hourglass-split" style="font-size: 32px; color: #d1d5db; margin-bottom: 10px; display: block;"></i><small>Loading ${plural}...</small></div>`;
+                    return;
+                }
+
+                // Limit to 5 items max
+                const itemsToShow = cachedItems.slice(0, 5);
+
+                itemsToShow.forEach(item => {
+                    // Both racket and bat modes use item.racket key for the data object
+                    const itemData = item.racket || item;
+                    const orderId = item.orderId || '';
+                    const customerName = item.customerName || '';
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'list-group-item cursor-pointer';
+                    itemDiv.style.cursor = 'pointer';
+                    itemDiv.style.padding = '15px';
+                    itemDiv.style.borderBottom = '1px solid #e5e7eb';
+
+                    const orderInfo = orderId ? `<div class="small text-muted" style="margin-bottom: 8px;">${orderId} • ${customerName}</div>` : '';
+
+                    let itemHTML = '';
+                    if (scanMode === 'racket') {
+                        itemHTML = `
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div style="flex: 1;">
+                                    ${orderInfo}
+                                    <strong>${itemData.racketName || 'Racket'}</strong>
+                                    <div class="small text-muted">${itemData.string || 'Unknown String'} • ${itemData.tension ? itemData.tension + ' lbs' : '-'}</div>
+                                </div>
+                                <input type="radio" name="selectedItem" value="${itemData.id}" style="margin-top: 5px;">
+                            </div>
+                        `;
+                    } else {
+                        // For cricket bats, display in same format as rackets: Name • Package • Threading
+                        const threadingValue = itemData.threading || 'none';
+                        const packageValue = itemData.package ? `${itemData.package} balls` : '';
+                        const threadingDisplay = threadingValue !== 'none' ? ` • ${threadingValue.charAt(0).toUpperCase() + threadingValue.slice(1)} Threading` : '';
+                        const secondLine = `${packageValue}${threadingDisplay}`;
+
+                        itemHTML = `
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div style="flex: 1;">
+                                    ${orderInfo}
+                                    <strong>${itemData.batModel || itemData.racketName || 'Cricket Bat'}</strong>
+                                    <div class="small text-muted">${secondLine}</div>
+                                </div>
+                                <input type="radio" name="selectedItem" value="${itemData.id}" style="margin-top: 5px;">
+                            </div>
+                        `;
+                    }
+
+                    itemDiv.innerHTML = itemHTML;
+
+                    itemDiv.addEventListener('click', () => {
+                        document.querySelectorAll('input[name="selectedItem"]').forEach(r => r.checked = false);
+                        itemDiv.querySelector('input[type="radio"]').checked = true;
+                        selectedItemId = itemData.id;
+                        selectedItemType = scanMode;
+                        linkBtn.disabled = false;
+                        linkBtn.style.opacity = '1';
+                        linkBtn.style.cursor = 'pointer';
+                    });
+
+                    unlinkedList.appendChild(itemDiv);
+                });
+            }            // Start camera
+            async function startCamera() {
+                if (cameraActive) return;
+
+                try {
+                    cameraStatus.innerHTML = '<small style="color: #059669;">Requesting camera access...</small>';
+                    const constraints = {
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    };
+                    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    qrVideo.srcObject = cameraStream;
+                    cameraActive = true;
+
+                    // Wait for video to be ready
+                    qrVideo.onloadedmetadata = () => {
+                        qrVideo.play();
+                        scanQRCode();
+                    };
+                } catch (error) {
+                    console.error('Camera access error:', error);
+                    cameraStatus.innerHTML = `<small style="color: #dc2626;">Camera access denied. Please check permissions.</small>`;
+                    cameraActive = false;
+                }
+            }
+
+            // Stop camera
+            function stopCamera() {
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                    cameraStream = null;
+                }
+                cameraActive = false;
+                if (qrScanInterval) {
+                    clearInterval(qrScanInterval);
+                }
+                // Hide camera section and show Scan Again button after QR detection
+                cameraSection.style.display = 'none';
+                scanAgainBtn.style.display = 'block';
+            }
+
+            // Scan QR code from video
+            function scanQRCode() {
+                if (!cameraActive) return;
+
+                qrScanInterval = setInterval(() => {
+                    if (!qrVideo.paused && !qrVideo.ended && cameraActive) {
+                        const canvasContext = qrCanvas.getContext('2d');
+                        qrCanvas.width = qrVideo.videoWidth;
+                        qrCanvas.height = qrVideo.videoHeight;
+                        canvasContext.drawImage(qrVideo, 0, 0, qrCanvas.width, qrCanvas.height);
+
+                        const imageData = canvasContext.getImageData(0, 0, qrCanvas.width, qrCanvas.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                        if (code && code.data) {
+                            let qrValue = code.data.trim();
+                            console.log(`[QR-SCAN] Raw QR value: ${qrValue}`);
+
+                            // Extract ID from URL if it's a full URL
+                            if (qrValue.startsWith('http://') || qrValue.startsWith('https://')) {
+                                try {
+                                    // Remove protocol for simpler parsing
+                                    let pathStr = qrValue.replace(/^https?:\/\//, '');
+                                    // Get the last part after any slashes
+                                    const parts = pathStr.split('/');
+                                    qrValue = parts[parts.length - 1].trim();
+                                } catch (e) {
+                                    console.error('URL parsing error:', e);
+                                    qrValue = qrValue.split('/').pop().trim();
+                                }
+                            }
+
+                            console.log(`[QR-SCAN] Extracted QR value: ${qrValue}`);
+                            qrScannedData = qrValue;
+                            cameraStatus.innerHTML = `<small style="color: #059669;">✓ QR Code detected: ${qrValue}</small>`;
+                            stopCamera();
+                            // Enable Scan Again button when QR is successfully detected
+                            scanAgainBtn.disabled = false;
+                            scanAgainBtn.style.opacity = '1';
+                            scanAgainBtn.style.cursor = 'pointer';
+                            fetchAvailableRackets(qrValue);
+                        }
+                    }
+                }, 300);
+            }
+
+            // Open QR Scanner Modal
+            if (qrScanBtn) {
+                qrScanBtn.addEventListener('click', async () => {
+                    qrModal.style.display = 'flex';
+                    qrScannedData = null;
+                    selectedItemId = null;
+                    selectedItemType = null;
+                    scanMode = 'racket'; // Reset to racket mode
+                    cameraStatus.innerHTML = '<small style="color: #059669;">Position QR code in frame</small>';
+
+                    // INIT: Disable both buttons initially (Link QR already has disabled attribute, but ensure state)
+                    linkBtn.disabled = true;
+                    linkBtn.style.opacity = '0.5';
+                    linkBtn.style.cursor = 'not-allowed';
+                    scanAgainBtn.disabled = true;
+                    scanAgainBtn.style.opacity = '0.5';
+                    scanAgainBtn.style.cursor = 'not-allowed';
+
+                    // Reset buttons to racket mode
+                    selectRacketBtn.style.background = '#1e40af';
+                    selectRacketBtn.style.color = 'white';
+                    selectBatBtn.style.background = '#e5e7eb';
+                    selectBatBtn.style.color = '#333';
+                    listLabel.textContent = 'Select Racket:';
+
+                    // Show camera section, hide Scan Again button on fresh open
+                    cameraSection.style.display = 'block';
+                    scanAgainBtn.style.display = 'none';
+
+                    // Clear the list - only show after successful QR scan
+                    unlinkedList.innerHTML = '<div style="padding: 15px; text-align: center; color: #9ca3af; font-size: 13px;"><small>Scan a QR code to see available items</small></div>';
+
+                    startCamera();
+                });
+            }
+
+            // Close QR Modal
+            const allCloseButtons = document.querySelectorAll('#closeQRBtn');
+            allCloseButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    qrModal.style.display = 'none';
+                    stopCamera();
+                });
+            });
+
+            // Scan Again button - restart camera for new QR scan
+            if (scanAgainBtn) {
+                scanAgainBtn.addEventListener('click', () => {
+                    // Reset state
+                    qrScannedData = null;
+                    selectedItemId = null;
+                    selectedItemType = null;
+                    cameraStatus.innerHTML = '<small style="color: #059669;">Position QR code in frame</small>';
+                    linkBtn.disabled = true;
+
+                    // Clear list and show loading icon
+                    const itemType = scanMode === 'racket' ? 'rackets' : 'cricket bats';
+                    unlinkedList.innerHTML = `<div style="padding: 20px; text-align: center; color: #9ca3af;"><i class="bi bi-hourglass-split" style="font-size: 32px; color: #d1d5db; margin-bottom: 10px; display: block;"></i><small>Loading ${itemType}...</small></div>`;
+
+                    // Reset racket selection radio buttons
+                    document.querySelectorAll('input[name="selectedItem"]').forEach(r => r.checked = false);
+
+                    // Show camera, hide Scan Again button
+                    cameraSection.style.display = 'block';
+                    scanAgainBtn.style.display = 'none';
+
+                    // Restart camera
+                    startCamera();
+                });
+            }
+
+            // Fetch and display available items (rackets/cricket bats) for QR
+            async function fetchAvailableRackets(qrCode) {
+                try {
+                    const itemType = scanMode === 'racket' ? 'rackets' : 'cricket bats';
+                    console.log(`[QR-SCAN] Fetching ${itemType} for QR: ${qrCode}`);
+
+                    // Show loading overlay - same as "Linking QR"
+                    showLoadingOverlay(`Loading ${itemType}...`);
+
+                    const response = await fetch(`${API_BASE_URL}/api/qr/${encodeURIComponent(qrCode)}?mode=${scanMode}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        }
+                    });
+
+                    console.log(`[QR-SCAN] Response status: ${response.status}`);
+
+                    const data = await response.json();
+                    console.log(`[QR-SCAN] Response data:`, data);
+
+                    if (!data.success) {
+                        hideLoadingOverlay();
+                        throw new Error(data.message || `Failed to fetch QR data`);
+                    }
+
+                    // If QR is already linked, show details and status update options
+                    if (data.linked) {
+                        hideLoadingOverlay();
+                        const order = data.order;
+                        const rackets = order.rackets || [];
+                        const linkedRacket = rackets.find(r => r.isLinkedToScannedQr);
+
+                        if (linkedRacket) {
+                            // Check if already completed
+                            if (linkedRacket.status === 2) {
+                                showToast(`${scanMode === 'racket' ? 'Racket' : 'Cricket Bat'} already completed`, 'error');
+                                unlinkedList.innerHTML = '';
+                                qrModal.style.display = 'none';
+                                stopCamera();
+                                return;
+                            }
+
+                            // Display linked item details with status update options
+                            const itemName = linkedRacket.racketName || 'Item';
+                            // If status is not set, default to 0 (Not Started)
+                            const racketStatus = typeof linkedRacket.status === 'number' ? linkedRacket.status : 0;
+                            const statusText = racketStatus === 0 ? 'Not Started' : racketStatus === 1 ? 'In Progress' : 'Completed';
+                            const actionLabel = scanMode === 'racket' ?
+                                (racketStatus === 0 ? 'Start Stringing' : 'Mark Complete') :
+                                (racketStatus === 0 ? 'Start Knocking' : 'Mark Complete');
+
+                            // Extract string details if available - format like stringing tab
+                            let stringDetailsHtml = '';
+                            if (linkedRacket.string || linkedRacket.tension) {
+                                let stringName = linkedRacket.string || 'N/A';
+                                const tension = linkedRacket.tension || 'N/A';
+                                // Remove brand prefix to match stringing tab format (e.g., Yonex BG 65 -> BG 65)
+                                const brandPrefixes = ['Yonex ', 'Li-Ning ', 'Hundred ', 'KIZUNA ', 'Head ', 'Babolat ', 'Gravity '];
+                                for (const prefix of brandPrefixes) {
+                                    if (stringName.startsWith(prefix)) {
+                                        stringName = stringName.substring(prefix.length);
+                                        break;
+                                    }
+                                }
+                                stringDetailsHtml = `<p style="margin: 5px 0; color: #6b7280; font-size: 14px;">${stringName} @ ${tension} lbs</p>`;
+                            }
+
+                            let detailsHtml = `
+                                <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                                    <div style="margin-bottom: 15px;">
+                                        <h6 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 600;">Customer: ${order.customerName}</h6>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Order: ${order.orderId}</p>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Store: ${order.store}</p>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #3b82f6;">
+                                        <p style="margin: 5px 0; color: #1f2937; font-weight: 500;">${scanMode === 'racket' ? 'Racket' : 'Bat'}: ${itemName}</p>
+                                        ${stringDetailsHtml}
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Status: <span style="font-weight: 600; color: #3b82f6;">${statusText}</span></p>
+                                    </div>
+                                    
+                                    <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                        ${actionLabel}
+                                    </button>
+                                </div>
+                            `;
+
+                            unlinkedList.innerHTML = detailsHtml;
+
+                            // Disable both Link QR and Scan Again buttons since a racket is already linked
+                            linkBtn.disabled = true;
+                            linkBtn.style.opacity = '0.5';
+                            linkBtn.style.cursor = 'not-allowed';
+                            scanAgainBtn.disabled = true;
+                            scanAgainBtn.style.opacity = '0.5';
+                            scanAgainBtn.style.cursor = 'not-allowed';
+
+                            // Add event listener for status update button
+                            const updateBtn = document.getElementById('updateStatusBtn');
+                            if (updateBtn) {
+                                updateBtn.addEventListener('click', async () => {
+                                    try {
+                                        // Show loading overlay
+                                        const actionLabel = scanMode === 'racket' ?
+                                            (racketStatus === 0 ? 'Starting stringing' : 'Marking complete') :
+                                            (racketStatus === 0 ? 'Starting knocking' : 'Marking complete');
+                                        showLoadingOverlay(actionLabel + '...');
+
+                                        // Use racketStatus variable consistently
+                                        const newStatus = racketStatus === 0 ? 1 : 2;
+                                        const endpoint = scanMode === 'racket' ?
+                                            `${API_BASE_URL}/api/orders/${order.orderId}/status-by-racket/${linkedRacket.id}` :
+                                            `${API_BASE_URL}/api/orders/${order.orderId}/status-by-bat/${linkedRacket.id}`;
+
+                                        // Use the authToken variable that's already in scope
+                                        if (!authToken) {
+                                            hideLoadingOverlay();
+                                            showToast('Session expired. Please login again.', 'error');
+                                            return;
+                                        }
+
+                                        const response = await fetch(endpoint, {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `Bearer ${authToken}`
+                                            },
+                                            body: JSON.stringify({ status: newStatus })
+                                        });
+
+                                        // Check for 401 unauthorized
+                                        if (response.status === 401) {
+                                            hideLoadingOverlay();
+                                            showToast('Session expired. Please login again.', 'error');
+                                            sessionStorage.removeItem('staffAuthToken');
+                                            location.reload();
+                                            return;
+                                        }
+
+                                        const result = await response.json();
+
+                                        if (result.success || result.order) {
+                                            const actionName = scanMode === 'racket' ?
+                                                (newStatus === 1 ? 'stringing' : 'completion') :
+                                                (newStatus === 1 ? 'knocking' : 'completion');
+                                            showToast(`${scanMode === 'racket' ? 'Racket' : 'Cricket Bat'} ${actionName} status updated successfully!`, 'success');
+
+                                            // Clear the list, close modal and reset
+                                            unlinkedList.innerHTML = '';
+                                            qrScannedData = null;
+                                            qrModal.style.display = 'none';
+                                            hideLoadingOverlay();
+                                            stopCamera();
+                                        } else {
+                                            hideLoadingOverlay();
+                                            showToast('Failed to update status. Please try again.', 'error');
+                                        }
+                                    } catch (error) {
+                                        hideLoadingOverlay();
+                                        console.error('Error updating status:', error);
+                                        showToast('Error updating status. Please try again.', 'error');
+                                    }
+                                });
+                            }
+                        }
+                        return;
+                    }
+
+                    // Update cache with fresh data from server (limited to 5)
+                    if (scanMode === 'racket') {
+                        const racketsToDisplay = data.rackets || [];
+                        if (racketsToDisplay.length > 0) {
+                            cachedUnlinkedRackets = racketsToDisplay;
+                            // Hide loading overlay and display updated list from server
+                            hideLoadingOverlay();
+                            unlinkedList.innerHTML = '';
+                            displayCachedItems();
+                        }
+                    } else {
+                        // For cricket bats, reuse rackets field from the same endpoint
+                        const batsToDisplay = data.rackets || [];
+                        if (batsToDisplay.length > 0) {
+                            cachedUnlinkedBats = batsToDisplay;
+                            // Hide loading overlay and display updated list
+                            hideLoadingOverlay();
+                            unlinkedList.innerHTML = '';
+                            // Link QR button stays disabled until user selects an item
+                            displayCachedItems();
+                        }
+                    }
+                } catch (error) {
+                    hideLoadingOverlay();
+                    console.error('Error fetching QR data:', error);
+                    // If fetch fails, keep showing cached data
+                    console.log('[QR-SCAN] Keeping cached items displayed');
+                }
+            }            // Link QR with Selected Item
+            if (linkBtn) {
+                linkBtn.addEventListener('click', async () => {
+                    if (!qrScannedData || !selectedItemId) {
+                        const itemType = scanMode === 'racket' ? 'racket' : 'bat';
+                        showToast(`Please scan a QR code and select a ${itemType}`, 'error');
+                        return;
+                    }
+
+                    try {
+                        // Set flag to prevent modal closure during linking
+                        isLinkingInProgress = true;
+
+                        // Show loading overlay instead of button state
+                        showLoadingOverlay('Linking QR');
+                        linkBtn.disabled = true;
+
+                        // Get the order ID from the displayed item
+                        const selectedRadio = document.querySelector('input[name="selectedItem"]:checked');
+                        const selectedItem = selectedRadio?.closest('.list-group-item');
+                        const orderIdText = selectedItem?.querySelector('.small.text-muted')?.textContent;
+                        const orderId = orderIdText?.split(' •')[0] || '';
+
+                        if (!orderId) {
+                            hideLoadingOverlay();
+                            linkBtn.disabled = false;
+                            showToast('Could not determine order. Please try again.', 'error');
+                            return;
+                        }
+
+                        const itemType = scanMode === 'racket' ? 'racket' : 'cricket bat';
+                        console.log(`[QR-LINK] Linking QR ${qrScannedData} to ${itemType} ${selectedItemId} in order ${orderId}`);
+
+                        const body = {
+                            orderId: orderId
+                        };
+                        if (scanMode === 'racket') {
+                            body.racketId = selectedItemId;
+                        } else {
+                            body.batId = selectedItemId;
+                        }
+
+                        const response = await fetch(`${API_BASE_URL}/api/qr/${encodeURIComponent(qrScannedData)}/link`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify(body)
+                        });
+
+                        const result = await response.json();
+                        console.log(`[QR-LINK] Response:`, result);
+
+                        if (!result.success) {
+                            throw new Error(result.message || 'Failed to link QR code');
+                        }
+
+                        showToast('QR code linked successfully!', 'success');
+                        hideLoadingOverlay();
+
+                        // After linking, display the linked racket/bat with status instead of closing
+                        // Extract the linked item details from the response
+                        const linkedOrder = result.order || result.data || {};
+                        const linkedRackets = linkedOrder.rackets || linkedOrder.racketDetails || [];
+                        const linkedBats = linkedOrder.bats || linkedOrder.batDetails || [];
+
+                        let justLinkedItem = null;
+
+                        if (scanMode === 'racket') {
+                            justLinkedItem = linkedRackets.find(r => r.id === selectedItemId);
+                        } else {
+                            justLinkedItem = linkedBats.find(b => b.id === selectedItemId);
+                        }
+
+                        // If we still can't find it in the response, try to reconstruct from cached data
+                        if (!justLinkedItem) {
+                            const cachedItems = scanMode === 'racket' ? cachedUnlinkedRackets : cachedUnlinkedBats;
+                            justLinkedItem = cachedItems.find(item => item.id === selectedItemId);
+                        }
+
+                        if (justLinkedItem) {
+                            // Display linked item details with status update options (same as already-linked state)
+                            const itemName = justLinkedItem.racketName || justLinkedItem.batModel || 'Item';
+                            const linkedStatus = typeof justLinkedItem.status === 'number' ? justLinkedItem.status : 0;
+                            const statusText = linkedStatus === 0 ? 'Not Started' : linkedStatus === 1 ? 'In Progress' : 'Completed';
+                            const actionLabel = scanMode === 'racket' ?
+                                (linkedStatus === 0 ? 'Start Stringing' : 'Mark Complete') :
+                                (linkedStatus === 0 ? 'Start Knocking' : 'Mark Complete');
+
+                            // Extract string/batting details if available
+                            let detailsHtml = '';
+                            if (scanMode === 'racket') {
+                                let stringName = justLinkedItem.string || 'N/A';
+                                const tension = justLinkedItem.tension || 'N/A';
+                                // Remove brand prefix to match stringing tab format
+                                const brandPrefixes = ['Yonex ', 'Li-Ning ', 'Hundred ', 'KIZUNA ', 'Head ', 'Babolat ', 'Gravity '];
+                                for (const prefix of brandPrefixes) {
+                                    if (stringName.startsWith(prefix)) {
+                                        stringName = stringName.substring(prefix.length);
+                                        break;
+                                    }
+                                }
+                                detailsHtml = `<p style="margin: 5px 0; color: #6b7280; font-size: 14px;">${stringName} @ ${tension} lbs</p>`;
+                            } else {
+                                // For cricket bats
+                                const threadingValue = justLinkedItem.threading || 'none';
+                                const packageValue = justLinkedItem.package ? `${justLinkedItem.package} balls` : '';
+                                const threadingDisplay = threadingValue !== 'none' ? ` • ${threadingValue.charAt(0).toUpperCase() + threadingValue.slice(1)} Threading` : '';
+                                const secondLine = `${packageValue}${threadingDisplay}`;
+                                detailsHtml = `<p style="margin: 5px 0; color: #6b7280; font-size: 14px;">${secondLine}</p>`;
+                            }
+
+                            let displayHtml = `
+                                <div style="margin-bottom: 10px; padding: 8px; background: #10b981; color: white; border-radius: 6px; font-weight: 600; font-size: 13px; text-align: center;">
+                                    <i class="bi bi-check-circle"></i> Linked Item
+                                </div>
+                                <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                                    <div style="margin-bottom: 15px;">
+                                        <h6 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 600;">Customer: ${linkedOrder.customerName || 'N/A'}</h6>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Order: ${linkedOrder.orderId || 'N/A'}</p>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Store: ${linkedOrder.store || 'N/A'}</p>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #10b981;">
+                                        <p style="margin: 5px 0; color: #1f2937; font-weight: 500;">${scanMode === 'racket' ? 'Racket' : 'Bat'}: ${itemName}</p>
+                                        ${detailsHtml}
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Status: <span style="font-weight: 600; color: #10b981;">✓ Just Linked</span></p>
+                                    </div>
+                                    
+                                    <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                        ${actionLabel}
+                                    </button>
+                                </div>
+                            `;
+
+                            unlinkedList.innerHTML = displayHtml;
+
+                            // Close the modal after showing the linked item briefly and display success toast
+                            setTimeout(() => {
+                                qrModal.style.display = 'none';
+                                stopCamera();
+                                // Reload the current tab to show updated data
+                                if (isAuthenticated) {
+                                    loadTabData(currentStatus);
+                                }
+                            }, 1500);
+
+                            // Linking is complete, reset flag
+                            isLinkingInProgress = false;
+
+                            // Add event listener for status update button
+                            const updateBtn = document.getElementById('updateStatusBtn');
+                            if (updateBtn) {
+                                updateBtn.addEventListener('click', async () => {
+                                    try {
+                                        // Show loading overlay
+                                        const actionLabel = scanMode === 'racket' ?
+                                            (linkedStatus === 0 ? 'Starting stringing' : 'Marking complete') :
+                                            (linkedStatus === 0 ? 'Starting knocking' : 'Marking complete');
+                                        showLoadingOverlay(actionLabel + '...');
+
+                                        const newStatus = linkedStatus === 0 ? 1 : 2;
+                                        const endpoint = scanMode === 'racket' ?
+                                            `${API_BASE_URL}/api/orders/${linkedOrder.orderId}/status-by-racket/${justLinkedItem.id}` :
+                                            `${API_BASE_URL}/api/orders/${linkedOrder.orderId}/status-by-bat/${justLinkedItem.id}`;
+
+                                        if (!authToken) {
+                                            hideLoadingOverlay();
+                                            showToast('Session expired. Please login again.', 'error');
+                                            return;
+                                        }
+
+                                        const response = await fetch(endpoint, {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': `Bearer ${authToken}`
+                                            },
+                                            body: JSON.stringify({ status: newStatus })
+                                        });
+
+                                        // Check for 401 unauthorized
+                                        if (response.status === 401) {
+                                            hideLoadingOverlay();
+                                            showToast('Session expired. Please login again.', 'error');
+                                            sessionStorage.removeItem('staffAuthToken');
+                                            location.reload();
+                                            return;
+                                        }
+
+                                        const statusUpdateResult = await response.json();
+
+                                        if (statusUpdateResult.success || statusUpdateResult.order) {
+                                            const actionName = scanMode === 'racket' ?
+                                                (newStatus === 1 ? 'stringing' : 'completion') :
+                                                (newStatus === 1 ? 'knocking' : 'completion');
+                                            showToast(`${scanMode === 'racket' ? 'Racket' : 'Cricket Bat'} ${actionName} status updated successfully!`, 'success');
+
+                                            // Close modal and reset
+                                            unlinkedList.innerHTML = '';
+                                            qrScannedData = null;
+                                            qrModal.style.display = 'none';
+                                            hideLoadingOverlay();
+                                            stopCamera();
+                                        } else {
+                                            hideLoadingOverlay();
+                                            showToast('Failed to update status. Please try again.', 'error');
+                                        }
+                                    } catch (error) {
+                                        hideLoadingOverlay();
+                                        console.error('Error updating status:', error);
+                                        showToast('Error updating status. Please try again.', 'error');
+                                    }
+                                });
+                            }
+                        } else {
+                            // If we can't find the linked item details, just close and reload
+                            qrModal.style.display = 'none';
+                            stopCamera();
+                            // Reload the current tab to show updated data
+                            if (isAuthenticated) {
+                                loadTabData(currentStatus);
+                            }
+                        }
+                    } catch (error) {
+                        hideLoadingOverlay();
+                        linkBtn.disabled = false;
+                        console.error('Error linking QR code:', error);
+                        showToast('Error linking QR code: ' + error.message, 'error');
+                    }
+                });
+            }
+
             // Initialize
             checkAuth();
+
+            // Prefetch unlinked orders for faster QR scanning
+            prefetchUnlinkedOrders();
         });
     </script>
 </body>
