@@ -1255,8 +1255,8 @@
             <div style="margin-bottom: 15px;">
                 <!-- Camera Section -->
                 <div id="cameraSection" style="margin-bottom: 15px;">
-                    <video id="qrVideo"
-                        style="width: 100%; border-radius: 8px; background: #000; max-height: 200px; max-width: 200px; margin: 0 auto; display: block; margin-bottom: 10px;"></video>
+                    <video id="qrVideo" autoplay playsinline muted
+                        style="width: 100%; max-width: 400px; height: auto; aspect-ratio: 4/3; border-radius: 8px; background: #000; margin: 0 auto; display: block; margin-bottom: 10px; object-fit: cover;"></video>
                     <canvas id="qrCanvas" style="display: none;"></canvas>
                     <div id="cameraStatus" style="text-align: center; color: #059669; font-size: 13px;">
                         <small>Position QR code in frame</small>
@@ -2803,6 +2803,9 @@
                     qrVideo.srcObject = cameraStream;
                     cameraActive = true;
 
+                    // Update status immediately after permission granted
+                    cameraStatus.innerHTML = '<small style="color: #059669;">✓ Camera active - Position QR code in frame</small>';
+
                     // Wait for video to be ready
                     qrVideo.onloadedmetadata = () => {
                         qrVideo.play();
@@ -2810,7 +2813,15 @@
                     };
                 } catch (error) {
                     console.error('Camera access error:', error);
-                    cameraStatus.innerHTML = `<small style="color: #dc2626;">Camera access denied. Please check permissions.</small>`;
+                    let errorMsg = 'Camera access denied. Please check permissions.';
+                    if (error.name === 'NotAllowedError') {
+                        errorMsg = 'Camera access denied. Please allow camera permissions in your browser settings.';
+                    } else if (error.name === 'NotFoundError') {
+                        errorMsg = 'No camera found on this device.';
+                    } else if (error.name === 'NotReadableError') {
+                        errorMsg = 'Camera is being used by another app. Please close other apps and try again.';
+                    }
+                    cameraStatus.innerHTML = `<small style="color: #dc2626;">${errorMsg}</small>`;
                     cameraActive = false;
                 }
             }
