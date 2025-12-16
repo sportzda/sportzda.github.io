@@ -3288,9 +3288,28 @@
                                 stringDetailsHtml = `<p style="margin: 5px 0; color: #6b7280; font-size: 14px;">${stringName} @ ${tension} lbs</p>`;
                             }
 
-                            // Use finalAmount from order (includes discount)
-                            const itemPrice = order.finalAmount || 0;
-                            
+                            // Use finalAmount from order (includes discount), with fallback calculation
+                            let itemPrice = order.finalAmount || 0;
+
+                            // If finalAmount is 0 or not available, calculate from item details
+                            if (!itemPrice || itemPrice === 0) {
+                                if (scanMode === 'racket') {
+                                    const racketDetails = order.racketDetails || order.rackets || [];
+                                    itemPrice = racketDetails.reduce((sum, racket) => {
+                                        const qty = racket.qty || 1;
+                                        const pricePerUnit = racket.cost !== undefined ? racket.cost : (racket.price || 0);
+                                        return sum + (pricePerUnit * qty);
+                                    }, 0);
+                                } else {
+                                    const batDetails = order.batDetails || order.bats || [];
+                                    itemPrice = batDetails.reduce((sum, bat) => {
+                                        return sum + (bat.cost !== undefined ? bat.cost : (bat.price || 0));
+                                    }, 0);
+                                }
+                            }
+
+                            console.log('[QR-PAYMENT] Order finalAmount:', order.finalAmount, 'Calculated itemPrice:', itemPrice);
+
                             // Check if order is unpaid
                             const isUnpaid = order.paymentStatus !== 'paid' && order.paymentStatus !== 'Paid';
 
