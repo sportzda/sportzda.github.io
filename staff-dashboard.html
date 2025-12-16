@@ -712,6 +712,36 @@
             color: var(--accent-color);
         }
 
+        .btn-update-payment {
+            background: #059669;
+            color: white;
+            border: none;
+        }
+
+        .btn-update-payment:hover {
+            background: #047857;
+        }
+
+        /* Payment Update Modal */
+        #paymentUpdateModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            overflow-y: auto;
+        }
+
+        #paymentUpdateModal.show {
+            display: flex;
+        }
+
         /* Refresh button animation */
         .btn-refresh-spin {
             animation: spin 1s linear infinite;
@@ -1091,6 +1121,74 @@
                     <i class="bi bi-box-arrow-in-right"></i> Login
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Payment Update Modal -->
+    <div id="paymentUpdateModal" role="dialog" aria-modal="true" aria-labelledby="paymentUpdateTitle">
+        <div class="order-details-box" style="max-width: 500px;">
+            <button id="closePaymentModalBtn" class="close-details" title="Close" onclick="closePaymentModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <h3 id="paymentUpdateTitle" class="text-center mb-4">
+                <i class="bi bi-cash-coin"></i> Update Payment
+            </h3>
+            
+            <div id="paymentUpdateContent">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Order ID</label>
+                    <input type="text" id="paymentOrderId" class="form-control" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Total Amount</label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" id="paymentTotalAmount" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Payment Method</label>
+                    <select id="paymentMethod" class="form-select" onchange="handlePaymentMethodChange()">
+                        <option value="">Select payment method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="AX">AX (American Express)</option>
+                        <option value="Both">Both (Cash + AX)</option>
+                    </select>
+                </div>
+
+                <div id="splitPaymentInputs" style="display: none;">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cash Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" id="cashAmount" class="form-control" placeholder="0" min="0" oninput="validateSplitPayment()">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">AX Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input type="number" id="axAmount" class="form-control" placeholder="0" min="0" oninput="validateSplitPayment()">
+                        </div>
+                    </div>
+
+                    <div id="validationMessage" class="alert alert-info" style="display: none;">
+                        <i class="bi bi-info-circle"></i> <span id="validationText"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-secondary flex-fill" onclick="closePaymentModal()">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button id="submitPaymentBtn" class="btn flex-fill" style="background: var(--accent-color); color: white;" onclick="submitPaymentUpdate()" disabled>
+                        <i class="bi bi-check-circle"></i> Submit Payment
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1951,6 +2049,11 @@
                                                     <i class="bi bi-arrow-right-circle"></i> ${status === 'received' ? (currentService === 'racket-stringing' ? 'Start Stringing' : 'Start Knocking') : 'Mark Complete'}
                                                 </button>
                                             ` : ''}
+                                            ${order.paymentStatus !== 'paid' && order.paymentStatus !== 'Paid' ? `
+                                                <button class="btn btn-action btn-update-payment" onclick="openPaymentModal('${order.orderId}', ${racketPrice})">
+                                                    <i class="bi bi-cash-coin"></i> Update Payment
+                                                </button>
+                                            ` : ''}
                                             <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
                                                 <i class="bi bi-eye"></i> View Details
                                             </button>
@@ -2000,6 +2103,11 @@
                                             ${status !== 'completed' ? `
                                                 <button class="btn btn-action btn-update-status" onclick="updateOrderStatus('${order.orderId}', '${status}', '${bat.id}')">
                                                     <i class="bi bi-arrow-right-circle"></i> ${status === 'received' ? 'Start Knocking' : 'Mark Complete'}
+                                                </button>
+                                            ` : ''}
+                                            ${order.paymentStatus !== 'paid' && order.paymentStatus !== 'Paid' ? `
+                                                <button class="btn btn-action btn-update-payment" onclick="openPaymentModal('${order.orderId}', ${batPrice})">
+                                                    <i class="bi bi-cash-coin"></i> Update Payment
                                                 </button>
                                             ` : ''}
                                             <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
@@ -2587,6 +2695,156 @@
                 if (e.target === this) {
                     this.classList.remove('show');
                     document.body.classList.remove('modal-open');
+                }
+            });
+
+            // Payment Update Modal Functions
+            window.openPaymentModal = function (orderId, totalAmount) {
+                const modal = document.getElementById('paymentUpdateModal');
+                
+                // Populate modal fields
+                document.getElementById('paymentOrderId').value = orderId;
+                document.getElementById('paymentTotalAmount').value = totalAmount;
+                
+                // Reset form
+                document.getElementById('paymentMethod').value = '';
+                document.getElementById('cashAmount').value = '';
+                document.getElementById('axAmount').value = '';
+                document.getElementById('splitPaymentInputs').style.display = 'none';
+                document.getElementById('validationMessage').style.display = 'none';
+                document.getElementById('submitPaymentBtn').disabled = true;
+                
+                // Show modal
+                modal.classList.add('show');
+                document.body.classList.add('modal-open');
+            };
+
+            window.closePaymentModal = function () {
+                const modal = document.getElementById('paymentUpdateModal');
+                modal.classList.remove('show');
+                document.body.classList.remove('modal-open');
+            };
+
+            window.handlePaymentMethodChange = function () {
+                const method = document.getElementById('paymentMethod').value;
+                const splitInputs = document.getElementById('splitPaymentInputs');
+                const submitBtn = document.getElementById('submitPaymentBtn');
+                
+                if (method === 'Both') {
+                    splitInputs.style.display = 'block';
+                    submitBtn.disabled = true; // Will be enabled by validation
+                } else if (method === 'Cash' || method === 'AX') {
+                    splitInputs.style.display = 'none';
+                    submitBtn.disabled = false;
+                } else {
+                    splitInputs.style.display = 'none';
+                    submitBtn.disabled = true;
+                }
+                
+                // Reset split amounts
+                document.getElementById('cashAmount').value = '';
+                document.getElementById('axAmount').value = '';
+                document.getElementById('validationMessage').style.display = 'none';
+            };
+
+            window.validateSplitPayment = function () {
+                const totalAmount = parseFloat(document.getElementById('paymentTotalAmount').value) || 0;
+                const cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
+                const axAmount = parseFloat(document.getElementById('axAmount').value) || 0;
+                
+                const sum = cashAmount + axAmount;
+                const validationMsg = document.getElementById('validationMessage');
+                const validationText = document.getElementById('validationText');
+                const submitBtn = document.getElementById('submitPaymentBtn');
+                
+                if (cashAmount === 0 && axAmount === 0) {
+                    validationMsg.style.display = 'none';
+                    submitBtn.disabled = true;
+                    return;
+                }
+                
+                validationMsg.style.display = 'block';
+                
+                if (sum === totalAmount) {
+                    validationMsg.className = 'alert alert-success';
+                    validationText.innerHTML = `✓ Total matches: ₹${cashAmount} (Cash) + ₹${axAmount} (AX) = ₹${sum}`;
+                    submitBtn.disabled = false;
+                } else {
+                    validationMsg.className = 'alert alert-danger';
+                    validationText.innerHTML = `⚠ Total mismatch: ₹${sum} entered but ₹${totalAmount} required. ${sum < totalAmount ? 'Add ₹' + (totalAmount - sum) + ' more.' : 'Reduce by ₹' + (sum - totalAmount) + '.'}`;
+                    submitBtn.disabled = true;
+                }
+            };
+
+            window.submitPaymentUpdate = async function () {
+                const orderId = document.getElementById('paymentOrderId').value;
+                const totalAmount = parseFloat(document.getElementById('paymentTotalAmount').value);
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                
+                let cashAmount = 0;
+                let axAmount = 0;
+                
+                if (paymentMethod === 'Both') {
+                    cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
+                    axAmount = parseFloat(document.getElementById('axAmount').value) || 0;
+                } else if (paymentMethod === 'Cash') {
+                    cashAmount = totalAmount;
+                } else if (paymentMethod === 'AX') {
+                    axAmount = totalAmount;
+                }
+                
+                // Disable button during submission
+                const submitBtn = document.getElementById('submitPaymentBtn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
+                
+                try {
+                    const payload = {
+                        paymentMethod,
+                        totalAmount
+                    };
+                    
+                    if (paymentMethod === 'Both') {
+                        payload.cashAmount = cashAmount;
+                        payload.axAmount = axAmount;
+                    } else if (paymentMethod === 'Cash') {
+                        payload.cashAmount = cashAmount;
+                    } else if (paymentMethod === 'AX') {
+                        payload.axAmount = axAmount;
+                    }
+                    
+                    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/payment`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (response.ok) {
+                        showToast('Payment updated successfully!', 'success');
+                        closePaymentModal();
+                        
+                        // Refresh the current tab to show updated data
+                        loadTabData(currentStatus);
+                    } else {
+                        const errorData = await response.json();
+                        showToast(errorData.error || 'Failed to update payment', 'error');
+                    }
+                } catch (error) {
+                    console.error('Payment update error:', error);
+                    showToast('Failed to update payment. Please check your connection and try again.', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            };
+
+            // Close payment modal on background click
+            document.getElementById('paymentUpdateModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closePaymentModal();
                 }
             });
 
