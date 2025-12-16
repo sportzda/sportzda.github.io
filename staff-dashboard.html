@@ -2783,10 +2783,12 @@
                 
                 let cashAmount = 0;
                 let axAmount = 0;
+                let finalPaymentMethod = paymentMethod;
                 
                 if (paymentMethod === 'Both') {
                     cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
                     axAmount = parseFloat(document.getElementById('axAmount').value) || 0;
+                    finalPaymentMethod = 'Cash+AX';  // Change "Both" to "Cash+AX"
                 } else if (paymentMethod === 'Cash') {
                     cashAmount = totalAmount;
                 } else if (paymentMethod === 'AX') {
@@ -2801,7 +2803,7 @@
                 
                 try {
                     const payload = {
-                        paymentMethod,
+                        paymentMethod: finalPaymentMethod,
                         totalAmount
                     };
                     
