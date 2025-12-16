@@ -3295,14 +3295,7 @@
                             const isUnpaid = order.paymentStatus !== 'paid' && order.paymentStatus !== 'Paid';
 
                             // Build Update Payment button if unpaid
-                            const updatePaymentBtn = isUnpaid ? `
-                                <button id="updatePaymentBtn" style="width: 100%; padding: 10px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;">
-                                    <i class="bi bi-currency-rupee"></i> Update Payment
-                                </button>
-                            ` : '';
-
-                            let detailsHtml = `
-                                <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+                            const updatePaymentBtnHtml = isUnpaid ? `
                                     <div style="margin-bottom: 15px;">
                                         <h6 style="margin: 0 0 10px 0; color: #1f2937; font-weight: 600;">Customer: ${order.customerName}</h6>
                                         <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Order: ${order.orderId}</p>
@@ -3318,7 +3311,7 @@
                                     <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
                                         ${actionLabel}
                                     </button>
-                                    ${updatePaymentBtn}
+                                    ${updatePaymentBtnHtml}
                                 </div>
                             `;
 
