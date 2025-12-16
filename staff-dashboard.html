@@ -3288,9 +3288,9 @@
                                 stringDetailsHtml = `<p style="margin: 5px 0; color: #6b7280; font-size: 14px;">${stringName} @ ${tension} lbs</p>`;
                             }
 
-                            // Determine price based on scan mode
-                            const itemPrice = scanMode === 'racket' ? (order.totalRacketPrice || 0) : (order.totalBatPrice || 0);
-
+                            // Use finalAmount from order (includes discount)
+                            const itemPrice = order.finalAmount || 0;
+                            
                             // Check if order is unpaid
                             const isUnpaid = order.paymentStatus !== 'paid' && order.paymentStatus !== 'Paid';
 
