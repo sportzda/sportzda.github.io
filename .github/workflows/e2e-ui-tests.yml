@@ -1,33 +1,99 @@
 name: E2E UI Tests
 
 on:
-    pull_request:
+  pull_request:
 
 jobs:
-    e2e:
-        runs-on: ubuntu-latest
-        container:
-            image: mcr.microsoft.com/playwright:v1.56.1-jammy
+  e2e:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+    services:
+      mongodb:
+        image: mongo:6.0.13
+        ports:
+          - 27018:27017
+        options: >-
+          --health-cmd="mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' || exit 1"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
 
-            - name: Use Node.js 20
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Install dependencies
-              run: |
-                  if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Checkout backend
+        uses: actions/checkout@v4
+        with:
+          repository: sportzda/backend-process-payments
+          path: backend
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
-            - name: Run Playwright tests
-              run: npx playwright test
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-            - name: Upload Playwright report
-              if: always()
-              uses: actions/upload-artifact@v4
-              with:
-                  name: playwright-report
-                  path: playwright-report
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
+      - name: Start backend server
+        working-directory: backend
+        run: |
+          npm start &
+          echo $! > backend.pid
+          sleep 5
+        env:
+          NODE_ENV: development
+          PORT: 3000
+          MONGO_URI: mongodb://127.0.0.1:27018/test_dasportz
+          MONGO_DATABASE: test_dasportz
+          JWT_SECRET: test-jwt-secret-key-for-testing-only
+          STAFF_USERNAME: staff
+          STAFF_PASSWORD: dasportz2025
+          TWILIO_ACCOUNT_SID: test_account_sid
+          TWILIO_AUTH_TOKEN: test_auth_token
+          TWILIO_WHATSAPP_FROM: +14155238886
+
+      - name: Wait for backend to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/health > /dev/null 2>&1; then
+              echo "Backend is ready!"
+              exit 0
+            fi
+            echo "Waiting for backend... ($i/30)"
+            sleep 2
+          done
+          echo "Backend failed to start"
+          exit 1
+
+      - name: Install frontend dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: npx playwright test
+        env:
+          API_BASE_URL: http://localhost:3000
+          STAFF_USERNAME: staff
+          STAFF_PASSWORD: dasportz2025
+
+      - name: Stop backend server
+        if: always()
+        working-directory: backend
+        run: |
+          if [ -f backend.pid ]; then
+            kill $(cat backend.pid) || true
+          fi
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report

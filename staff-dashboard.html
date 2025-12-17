@@ -298,7 +298,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 9998;
+            z-index: 50000;
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(2px);
@@ -400,7 +400,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 9999;
+            z-index: 99999;
             pointer-events: none;
         }
 
@@ -1331,7 +1331,7 @@
 
     <!-- QR Code Scanning Modal -->
     <div id="qrScanModal"
-        style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: flex-end; padding: 20px 0; overflow-y: auto;">
+        style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: flex-end; padding: 20px 0; overflow-y: auto;">
         <div
             style="background: white; border-radius: 12px 12px 0 0; width: 100%; max-width: 500px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; margin-top: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -2838,10 +2838,11 @@
                         payload.axAmount = axAmount;
                     }
 
-                    const response = await fetch(`${API_BASE_URL}/orders/${orderId}/payment`, {
+                    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}/payment`, {
                         method: 'PATCH',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
                         },
                         body: JSON.stringify(payload)
                     });
@@ -3280,16 +3281,7 @@
                         const linkedRacket = rackets.find(r => r.isLinkedToScannedQr);
 
                         if (linkedRacket) {
-                            // Check if already completed
-                            if (linkedRacket.status === 2) {
-                                showToast(`${scanMode === 'racket' ? 'Racket' : 'Cricket Bat'} already completed`, 'error');
-                                unlinkedList.innerHTML = '';
-                                qrModal.style.display = 'none';
-                                stopCamera();
-                                return;
-                            }
-
-                            // Display linked item details with status update options
+                            // Display linked item details with status update options (including completed items)
                             const itemName = linkedRacket.racketName || 'Item';
                             // If status is not set, default to 0 (Not Started)
                             const racketStatus = typeof linkedRacket.status === 'number' ? linkedRacket.status : 0;
@@ -3341,10 +3333,20 @@
 
                             // Build Update Payment button if unpaid
                             const updatePaymentBtnHtml = isUnpaid ? `
-                                <button id="updatePaymentBtn" style="width: 100%; padding: 10px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;">
+                                <button id="updatePaymentBtn" style="width: 100%; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; margin-top: 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); transition: all 0.2s ease;">
                                     <i class="bi bi-currency-rupee"></i> Update Payment
                                 </button>
                             ` : '';
+
+                            // Build status update button - hide if already completed
+                            const statusUpdateBtnHtml = racketStatus !== 2 ? `
+                                <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                    ${actionLabel}
+                                </button>
+                            ` : '';
+
+                            // Adjust status color based on completion
+                            const statusColor = racketStatus === 2 ? '#059669' : '#3b82f6';
 
                             let detailsHtml = `
                                 <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
@@ -3354,15 +3356,13 @@
                                         <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Store: ${order.store}</p>
                                     </div>
                                     
-                                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #3b82f6;">
+                                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid ${statusColor};">
                                         <p style="margin: 5px 0; color: #1f2937; font-weight: 500;">${scanMode === 'racket' ? 'Racket' : 'Bat'}: ${itemName}</p>
                                         ${stringDetailsHtml}
-                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Status: <span style="font-weight: 600; color: #3b82f6;">${statusText}</span></p>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Status: <span style="font-weight: 600; color: ${statusColor};">${statusText}</span></p>
                                     </div>
                                     
-                                    <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
-                                        ${actionLabel}
-                                    </button>
+                                    ${statusUpdateBtnHtml}
                                     ${updatePaymentBtnHtml}
                                 </div>
                             `;
@@ -3448,6 +3448,18 @@
                             // Add event listener for Update Payment button
                             const updatePaymentBtn = document.getElementById('updatePaymentBtn');
                             if (updatePaymentBtn) {
+                                // Add hover effects
+                                updatePaymentBtn.addEventListener('mouseenter', () => {
+                                    updatePaymentBtn.style.background = '#059669';
+                                    updatePaymentBtn.style.transform = 'translateY(-1px)';
+                                    updatePaymentBtn.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                                });
+                                updatePaymentBtn.addEventListener('mouseleave', () => {
+                                    updatePaymentBtn.style.background = '#10b981';
+                                    updatePaymentBtn.style.transform = 'translateY(0)';
+                                    updatePaymentBtn.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                                });
+
                                 updatePaymentBtn.addEventListener('click', () => {
                                     // Close QR modal and open payment modal
                                     qrModal.style.display = 'none';
