@@ -53,7 +53,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should display payment method dropdown with correct options', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Trigger modal opening (simulate clicking Update Payment)
@@ -72,7 +72,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should show split payment inputs when "Both" is selected', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal
@@ -92,7 +92,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should validate split payment amounts match total', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal with total amount 1000
@@ -125,7 +125,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should show error for mismatched split payment amounts', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal with total amount 1000
@@ -158,7 +158,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should enable submit button for single payment method', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal
@@ -177,7 +177,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('QR Scan - Payment Update Button', () => {
         test('should show Update Payment button for completed QR-linked items', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR scan modal
@@ -229,7 +229,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should hide status update button for completed items', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR scan modal
@@ -257,7 +257,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('Z-Index and Layering', () => {
         test('should display toast above QR modal', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR modal
@@ -282,7 +282,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should display loading overlay above modals', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR modal
@@ -313,7 +313,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('toast should be visible and not blurry', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open modal to test backdrop blur
@@ -338,7 +338,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('Update Payment Button Styling', () => {
         test('should have enhanced styling for Update Payment button', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Simulate QR linked item with Update Payment button
@@ -376,7 +376,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('API Integration', () => {
         test('should call correct API endpoint for payment update', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Track API calls
@@ -405,7 +405,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should include authentication header in payment request', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // Track request headers
@@ -428,7 +428,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('Payment Update Flow - Complete', () => {
         test('should complete full payment update flow for Cash payment', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // 1. Open payment modal
@@ -455,7 +455,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should complete full payment update flow for split payment', async ({ page }) => {
-            await loginToStaffDashboard(page);
+            await setupTestPage(page);
             await page.waitForSelector('#dashboardContent');
 
             // 1. Open payment modal
