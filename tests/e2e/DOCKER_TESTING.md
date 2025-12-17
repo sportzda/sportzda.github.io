@@ -47,7 +47,7 @@ sudo docker-compose -f docker-compose.test.yml down
 ## Docker Services
 
 ### MongoDB (Test)
-- **Image:** mongo:7.0
+- **Image:** mongo:6.0
 - **Port:** 27018 (mapped from 27017 to avoid conflicts)
 - **Database:** test_dasportz
 - **Container:** dasportz-test-mongodb
