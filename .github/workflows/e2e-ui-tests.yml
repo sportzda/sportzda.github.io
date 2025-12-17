@@ -9,7 +9,7 @@ jobs:
 
     services:
       mongodb:
-        image: mongo:6.0.13
+        image: mongo:7.0
         ports:
           - 27018:27017
         options: >-
