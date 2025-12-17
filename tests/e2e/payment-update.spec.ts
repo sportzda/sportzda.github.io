@@ -1,38 +1,34 @@
 import { test, expect, Page } from '@playwright/test';
 
-const API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:3000';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
 const STAFF_USERNAME = process.env.STAFF_USERNAME || 'staff';
 const STAFF_PASSWORD = process.env.STAFF_PASSWORD || 'dasportz2025';
 
 /**
- * E2E Tests for Payment Update Feature
- * Tests the complete flow from QR scan to payment update
+ * E2E Integration Tests for Payment Update Feature
+ * Requires running backend server via Docker
+ * Start backend: cd ../backend-process-payments && sudo docker-compose -f docker-compose.test.yml up -d
  */
 
 test.describe('Payment Update - E2E Tests', () => {
-    // Helper function to login
-    async function loginToStaffDashboard(page: Page) {
+    // Helper to setup test page with real backend login
+    async function setupTestPage(page: Page) {
         await page.goto('/staff-dashboard.html');
+        await page.waitForLoadState('domcontentloaded');
 
-        // Check if already logged in
-        const dashboardVisible = await page.locator('#dashboardContent').isVisible().catch(() => false);
-        if (dashboardVisible) {
-            return;
+        // Perform actual login with backend
+        const loginVisible = await page.locator('#loginModal').isVisible().catch(() => false);
+        if (loginVisible) {
+            await page.fill('#username', STAFF_USERNAME);
+            await page.fill('#password', STAFF_PASSWORD);
+            await page.click('button:has-text("Login")');
+            await page.waitForSelector('#dashboardContent', { timeout: 10000 });
         }
-
-        // Perform login
-        await page.fill('#loginUsername', STAFF_USERNAME);
-        await page.fill('#loginPassword', STAFF_PASSWORD);
-        await page.click('button:has-text("Login")');
-
-        // Wait for successful login
-        await page.waitForSelector('#dashboardContent', { timeout: 10000 });
     }
 
     test.describe('Payment Update Modal', () => {
         test('should open payment modal when Update Payment button clicked', async ({ page }) => {
-            await loginToStaffDashboard(page);
-
+            await setupTestPage(page);
             // Wait for dashboard to load
             await page.waitForSelector('#dashboardContent');
 
