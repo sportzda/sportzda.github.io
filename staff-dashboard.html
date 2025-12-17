@@ -3200,7 +3200,7 @@
                     selectRacketBtn.style.color = 'white';
                     selectBatBtn.style.background = '#e5e7eb';
                     selectBatBtn.style.color = '#333';
-                    listLabel.textContent = 'Select Racket:';
+                    listLabel.textContent = 'Select Item:';
 
                     // Show camera section, hide Scan Again button on fresh open
                     cameraSection.style.display = 'block';
@@ -3231,6 +3231,7 @@
                     selectedItemType = null;
                     cameraStatus.innerHTML = '<small style="color: #059669;">Position QR code in frame</small>';
                     linkBtn.disabled = true;
+                    listLabel.textContent = 'Select Item:';
 
                     // Clear list and show loading icon
                     const itemType = scanMode === 'racket' ? 'rackets' : 'cricket bats';
