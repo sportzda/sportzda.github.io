@@ -316,7 +316,7 @@ test.describe('Payment Update - E2E Tests', () => {
             });
         });
 
-        test('toast should be visible and not blurry', async () => {
+        test('toast should be visible and not blurry', async ({ page }) => {
             await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
