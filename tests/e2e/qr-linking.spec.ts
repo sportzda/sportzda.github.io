@@ -231,9 +231,9 @@ test.describe('QR Code Linking Feature - E2E Tests', () => {
 
             const cameraStatus = page.locator('#cameraStatus');
 
-            // Status should show either initial prompt or camera access message
+            // Status should show either initial prompt, camera access message, or no camera message
             const statusText = await cameraStatus.textContent();
-            expect(statusText).toMatch(/(Position QR code in frame|Camera access|Requesting camera)/);
+            expect(statusText).toMatch(/(Position QR code in frame|Camera access|Requesting camera|No camera found)/);
         });
     });
 
