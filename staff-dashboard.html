@@ -1264,7 +1264,7 @@
                             <span class="badge bg-success rounded-pill ms-2" id="completedCount">0</span>
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation" style="display: none;">
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pending-payments-tab" data-bs-toggle="tab"
                             data-bs-target="#pending-payments" type="button" role="tab">
                             <i class="bi bi-cash-coin"></i> Pending Payments
@@ -2152,37 +2152,14 @@
                 }
 
                 try {
-                    // Fetch orders with Pay At Outlet payment method
-                    const params = new URLSearchParams({
-                        paymentMethod: 'Pay At Outlet',
-                        serviceType: currentService,
-                        limit: 100,
-                        sort: 'desc'
-                    });
+                    // Filter completed orders (status 2) from cache that have unpaid/partial payment
+                    const pendingOrders = filterCompletedOrdersWithPendingPayment(allOrdersCache, currentService);
+                    console.log(`Found ${pendingOrders.length} completed orders with pending payments`);
 
-                    const response = await fetch(`${API_BASE_URL}/api/orders?${params.toString()}`, {
-                        headers: {
-                            'Authorization': `Bearer ${authToken}`
-                        }
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        const pendingOrders = data.orders || [];
-                        console.log(`Fetched ${pendingOrders.length} pending payment orders`);
-
-                        renderPendingPayments(contentEl, pendingOrders);
-                        updatePendingPaymentsCount(pendingOrders.length);
-                    } else if (response.status === 401) {
-                        alert('Your session has expired. Please login again.');
-                        sessionStorage.removeItem('staffAuthToken');
-                        sessionStorage.removeItem('staffUser');
-                        window.location.reload();
-                    } else {
-                        throw new Error(`API returned status ${response.status}`);
-                    }
+                    renderPendingPayments(contentEl, pendingOrders);
+                    updatePendingPaymentsCount(pendingOrders.length);
                 } catch (err) {
-                    console.error('Failed to fetch pending payments:', err);
+                    console.error('Failed to load pending payments:', err);
                     contentEl.innerHTML = `
                         <div class="empty-state">
                             <i class="bi bi-exclamation-triangle"></i>
@@ -2191,6 +2168,48 @@
                         </div>
                     `;
                 }
+            }
+
+            // Filter completed orders (status 2) with unpaid or partial payment
+            function filterCompletedOrdersWithPendingPayment(orders, service) {
+                const filtered = [];
+
+                for (const order of orders) {
+                    // Skip if payment is already completed
+                    if (order.paymentStatus === 'paid' || order.paymentStatus === 'Paid') {
+                        continue;
+                    }
+
+                    if (service === 'racket-stringing' && order.racketDetails) {
+                        // Filter rackets with status 2 (completed)
+                        const completedRackets = order.racketDetails.filter(r => {
+                            const itemStatus = r.status !== undefined && r.status !== null ? Number(r.status) : 0;
+                            return itemStatus === 2;
+                        });
+
+                        if (completedRackets.length > 0) {
+                            filtered.push({
+                                ...order,
+                                racketDetails: completedRackets
+                            });
+                        }
+                    } else if (service === 'bat-knocking' && order.batDetails) {
+                        // Filter bats with status 2 (completed)
+                        const completedBats = order.batDetails.filter(b => {
+                            const itemStatus = b.status !== undefined && b.status !== null ? Number(b.status) : 0;
+                            return itemStatus === 2;
+                        });
+
+                        if (completedBats.length > 0) {
+                            filtered.push({
+                                ...order,
+                                batDetails: completedBats
+                            });
+                        }
+                    }
+                }
+
+                return filtered;
             }
 
             // Render pending payments orders
@@ -2981,14 +3000,21 @@
                 const cachedItems = scanMode === 'racket' ? cachedUnlinkedRackets : cachedUnlinkedBats;
                 const itemType = scanMode === 'racket' ? 'racket' : 'cricket bat';
 
-                if (cachedItems.length === 0) {
+                // Filter items to only show those with status 0 or undefined (not started)
+                const filteredItems = cachedItems.filter(item => {
+                    const itemData = item.racket || item;
+                    const status = itemData.status;
+                    return status === undefined || status === null || status === 0;
+                });
+
+                if (filteredItems.length === 0) {
                     const plural = itemType === 'racket' ? 'rackets' : 'cricket bats';
-                    unlinkedList.innerHTML = `<div style="padding: 20px; text-align: center; color: #9ca3af;"><i class="bi bi-hourglass-split" style="font-size: 32px; color: #d1d5db; margin-bottom: 10px; display: block;"></i><small>Loading ${plural}...</small></div>`;
+                    unlinkedList.innerHTML = `<div style="padding: 20px; text-align: center; color: #9ca3af;"><i class="bi bi-hourglass-split" style="font-size: 32px; color: #d1d5db; margin-bottom: 10px; display: block;"></i><small>No pending ${plural} available</small></div>`;
                     return;
                 }
 
                 // Limit to 5 items max
-                const itemsToShow = cachedItems.slice(0, 5);
+                const itemsToShow = filteredItems.slice(0, 5);
 
                 itemsToShow.forEach(item => {
                     // Both racket and bat modes use item.racket key for the data object

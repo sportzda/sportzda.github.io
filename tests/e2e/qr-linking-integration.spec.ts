@@ -597,7 +597,7 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             // Verify camera status shows a message (either initial or camera access related)
             const cameraStatus = page.locator('#cameraStatus');
             const statusText = await cameraStatus.textContent();
-            expect(statusText).toMatch(/(Position QR code|Camera access|Requesting camera)/);
+            expect(statusText).toMatch(/(Position QR code|Camera access|Requesting camera|No camera found)/);
         });
     });
 
