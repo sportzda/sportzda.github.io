@@ -655,4 +655,268 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             await expect(listLabel).toContainText('Select Racket');
         });
     });
+
+    test.describe('QR Code Prefix Auto-Detection', () => {
+        test('should auto-detect racket mode from RQ_ prefix', async () => {
+            // Mock QR scan response for racket (RQ_ prefix)
+            await page.route('**/api/qr/RQ_001*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'RQ_001',
+                        linked: false,
+                        unlinkedRacketsCount: 1,
+                        rackets: [
+                            {
+                                orderId: 'DA_2024001',
+                                customerName: 'Test User',
+                                racket: {
+                                    id: 'racket_001',
+                                    racketName: 'Yonex Astrox 99',
+                                    string: 'BG 65',
+                                    tension: '26'
+                                }
+                            }
+                        ]
+                    })
+                });
+            });
+
+            // Open QR scanner
+            await page.locator('#openQRScanBtn').click();
+            await page.waitForSelector('#qrScanModal.show');
+
+            // Simulate QR code scan with RQ_ prefix
+            await page.evaluate(() => {
+                const qrCode = 'RQ_001';
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn(qrCode);
+            });
+
+            await page.waitForTimeout(500);
+
+            // Verify label updated to racket mode
+            const listLabel = page.locator('#listLabel');
+            await expect(listLabel).toContainText('Select Racket:');
+
+            // Verify racket items are displayed
+            const unlinkedList = page.locator('#unlinkedList');
+            await expect(unlinkedList).toContainText('Yonex Astrox 99');
+        });
+
+        test('should auto-detect cricket bat mode from CB_ prefix', async () => {
+            // Mock QR scan response for bat (CB_ prefix)
+            await page.route('**/api/qr/CB_001*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'CB_001',
+                        linked: false,
+                        unlinkedBatsCount: 1,
+                        bats: [
+                            {
+                                orderId: 'DA_BAT_001',
+                                customerName: 'Cricket Player',
+                                bat: {
+                                    id: 'bat_001',
+                                    batModel: 'MRF Genius',
+                                    package: '15000',
+                                    threading: 'both'
+                                }
+                            }
+                        ]
+                    })
+                });
+            });
+
+            // Open QR scanner
+            await page.locator('#openQRScanBtn').click();
+            await page.waitForSelector('#qrScanModal.show');
+
+            // Simulate QR code scan with CB_ prefix
+            await page.evaluate(() => {
+                const qrCode = 'CB_001';
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn(qrCode);
+            });
+
+            await page.waitForTimeout(500);
+
+            // Verify label updated to bat mode
+            const listLabel = page.locator('#listLabel');
+            await expect(listLabel).toContainText('Select Cricket Bat:');
+
+            // Verify bat items are displayed
+            const unlinkedList = page.locator('#unlinkedList');
+            await expect(unlinkedList).toContainText('MRF Genius');
+        });
+
+        test('should hide racket/bat toggle buttons', async () => {
+            // Open QR scanner
+            await page.locator('#openQRScanBtn').click();
+            await page.waitForSelector('#qrScanModal.show');
+
+            // Verify toggle button container is hidden
+            const selectRacketBtn = page.locator('#selectRacketBtn');
+            const selectBatBtn = page.locator('#selectBatBtn');
+            
+            // Buttons should not be visible since parent div has display: none
+            await expect(selectRacketBtn).toBeHidden();
+            await expect(selectBatBtn).toBeHidden();
+        });
+
+        test('should fetch correct endpoint based on detected mode', async () => {
+            let requestedMode = '';
+
+            // Mock both racket and bat QR scan requests
+            await page.route('**/api/qr/RQ_002*', async (route) => {
+                const url = route.request().url();
+                if (url.includes('mode=racket')) {
+                    requestedMode = 'racket';
+                }
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'RQ_002',
+                        linked: false,
+                        unlinkedRacketsCount: 0,
+                        rackets: []
+                    })
+                });
+            });
+
+            await page.route('**/api/qr/CB_002*', async (route) => {
+                const url = route.request().url();
+                if (url.includes('mode=bat')) {
+                    requestedMode = 'bat';
+                }
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'CB_002',
+                        linked: false,
+                        unlinkedBatsCount: 0,
+                        bats: []
+                    })
+                });
+            });
+
+            // Open QR scanner
+            await page.locator('#openQRScanBtn').click();
+            await page.waitForSelector('#qrScanModal.show');
+
+            // Test racket QR
+            await page.evaluate(() => {
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn('RQ_002');
+            });
+            await page.waitForTimeout(300);
+            expect(requestedMode).toBe('racket');
+
+            // Test bat QR
+            await page.evaluate(() => {
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn('CB_002');
+            });
+            await page.waitForTimeout(300);
+            expect(requestedMode).toBe('bat');
+        });
+
+        test('should handle QR without prefix gracefully', async () => {
+            // Mock QR scan response without prefix (defaults to racket mode)
+            await page.route('**/api/qr/GENERIC_QR*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'GENERIC_QR',
+                        linked: false,
+                        unlinkedRacketsCount: 0,
+                        rackets: []
+                    })
+                });
+            });
+
+            // Open QR scanner
+            await page.locator('#openQRScanBtn').click();
+            await page.waitForSelector('#qrScanModal.show');
+
+            // Simulate QR code scan without prefix
+            await page.evaluate(() => {
+                const qrCode = 'GENERIC_QR';
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn(qrCode);
+            });
+
+            await page.waitForTimeout(500);
+
+            // Should still work (defaults to current mode)
+            const unlinkedList = page.locator('#unlinkedList');
+            await expect(unlinkedList).toBeVisible();
+        });
+
+        test('should switch mode when scanning different prefix types', async () => {
+            // Mock both QR types
+            await page.route('**/api/qr/RQ_SWITCH*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'RQ_SWITCH',
+                        linked: false,
+                        unlinkedRacketsCount: 0,
+                        rackets: []
+                    })
+                });
+            });
+
+            await page.route('**/api/qr/CB_SWITCH*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        qrCode: 'CB_SWITCH',
+                        linked: false,
+                        unlinkedBatsCount: 0,
+                        bats: []
+                    })
+                });
+            });
+
+            // Open QR scanner
+            await page.locator('#openQRScanBtn').click();
+            await page.waitForSelector('#qrScanModal.show');
+
+            // Scan racket QR
+            await page.evaluate(() => {
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn('RQ_SWITCH');
+            });
+            await page.waitForTimeout(300);
+
+            let listLabel = page.locator('#listLabel');
+            await expect(listLabel).toContainText('Select Racket:');
+
+            // Scan bat QR
+            await page.evaluate(() => {
+                const fetchFn = (window as any).fetchAvailableRackets;
+                if (fetchFn) fetchFn('CB_SWITCH');
+            });
+            await page.waitForTimeout(300);
+
+            listLabel = page.locator('#listLabel');
+            await expect(listLabel).toContainText('Select Cricket Bat:');
+        });
+    });
 });
