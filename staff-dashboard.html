@@ -1341,8 +1341,8 @@
                     style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
             </div>
 
-            <!-- Bat/Racket Selection Toggle -->
-            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+            <!-- Bat/Racket Selection Toggle - Hidden, auto-detected from QR prefix -->
+            <div style="margin-bottom: 15px; display: none; gap: 10px;">
                 <button id="selectRacketBtn"
                     style="flex: 1; padding: 10px; background: #1e40af; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">
                     <i class="bi bi-tennis"></i> Racket
@@ -1368,7 +1368,7 @@
             <div style="margin-bottom: 15px;">
                 <label id="listLabel"
                     style="display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px;">Select
-                    Order & Racket:</label>
+                    Item:</label>
                 <div id="unlinkedList"
                     style="border: 1px solid #e5e7eb; border-radius: 8px; max-height: 200px; overflow-y: auto; background: #f9fafb;">
                     <div style="padding: 15px; text-align: center; color: #9ca3af; font-size: 13px;">
@@ -3251,6 +3251,17 @@
             // Fetch and display available items (rackets/cricket bats) for QR
             async function fetchAvailableRackets(qrCode) {
                 try {
+                    // Auto-detect mode from QR prefix
+                    if (qrCode.startsWith('RQ_')) {
+                        scanMode = 'racket';
+                        listLabel.textContent = 'Select Racket:';
+                        console.log('[QR-SCAN] Detected Racket QR (RQ_ prefix)');
+                    } else if (qrCode.startsWith('CB_')) {
+                        scanMode = 'bat';
+                        listLabel.textContent = 'Select Cricket Bat:';
+                        console.log('[QR-SCAN] Detected Cricket Bat QR (CB_ prefix)');
+                    }
+
                     const itemType = scanMode === 'racket' ? 'rackets' : 'cricket bats';
                     console.log(`[QR-SCAN] Fetching ${itemType} for QR: ${qrCode}`);
 
