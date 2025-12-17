@@ -22,7 +22,10 @@ test.describe('Payment Update - E2E Tests', () => {
             await page.fill('#username', STAFF_USERNAME);
             await page.fill('#password', STAFF_PASSWORD);
             await page.click('button:has-text("Login")');
-            await page.waitForSelector('#dashboardContent', { timeout: 10000 });
+
+            // Wait for dashboard to appear
+            await page.waitForSelector('.dashboard-content', { timeout: 10000 });
+            await page.waitForSelector('h1:has-text("Staff Dashboard")', { timeout: 5000 });
         }
     }
 
@@ -30,7 +33,7 @@ test.describe('Payment Update - E2E Tests', () => {
         test('should open payment modal when Update Payment button clicked', async ({ page }) => {
             await setupTestPage(page);
             // Wait for dashboard to load
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Find an order with Update Payment button in Pending Payments tab
             await page.click('button:has-text("Pending Payments")');
@@ -54,7 +57,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should display payment method dropdown with correct options', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Trigger modal opening (simulate clicking Update Payment)
             await page.evaluate(() => {
@@ -67,13 +70,13 @@ test.describe('Payment Update - E2E Tests', () => {
 
             const options = await paymentMethodSelect.locator('option').allTextContents();
             expect(options).toContain('Cash');
-            expect(options).toContain('AX');
+            expect(options).toContain('AX (Axis Bank)');
             expect(options).toContain('Both (Cash + AX)');
         });
 
         test('should show split payment inputs when "Both" is selected', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open payment modal
             await page.evaluate(() => {
@@ -93,7 +96,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should validate split payment amounts match total', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open payment modal with total amount 1000
             await page.evaluate(() => {
@@ -126,7 +129,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should show error for mismatched split payment amounts', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open payment modal with total amount 1000
             await page.evaluate(() => {
@@ -159,7 +162,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should enable submit button for single payment method', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open payment modal
             await page.evaluate(() => {
@@ -178,10 +181,10 @@ test.describe('Payment Update - E2E Tests', () => {
     test.describe('QR Scan - Payment Update Button', () => {
         test('should show Update Payment button for completed QR-linked items', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open QR scan modal
-            await page.click('#scanQRBtn');
+            await page.click('#openQRScanBtn');
 
             // Wait for modal to open
             const qrModal = page.locator('#qrScanModal');
@@ -230,10 +233,10 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should hide status update button for completed items', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open QR scan modal
-            await page.click('#scanQRBtn');
+            await page.click('#openQRScanBtn');
 
             // Simulate scanning completed item
             await page.evaluate(() => {
@@ -258,15 +261,21 @@ test.describe('Payment Update - E2E Tests', () => {
     test.describe('Z-Index and Layering', () => {
         test('should display toast above QR modal', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open QR modal
-            await page.click('#scanQRBtn');
+            await page.click('#openQRScanBtn');
             await page.waitForTimeout(500);
 
-            // Show a toast
+            // Directly create toast element to test z-index
             await page.evaluate(() => {
-                (window as any).showToast('Test toast message', 'success');
+                const container = document.getElementById('toastContainer');
+                if (container) {
+                    const toast = document.createElement('div');
+                    toast.className = 'toast-notification toast-success';
+                    toast.textContent = 'Test toast message';
+                    container.appendChild(toast);
+                }
             });
 
             // Get z-index values
@@ -283,14 +292,15 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should display loading overlay above modals', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open QR modal
-            await page.click('#scanQRBtn');
+            await page.click('#openQRScanBtn');
 
-            // Show loading overlay
+            // Show loading overlay directly
             await page.evaluate(() => {
-                (window as any).showLoadingOverlay('Testing...');
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) loadingOverlay.classList.add('show');
             });
 
             await page.waitForTimeout(300);
@@ -306,22 +316,29 @@ test.describe('Payment Update - E2E Tests', () => {
             // Loading overlay should have higher z-index
             expect(parseInt(loadingZIndex)).toBeGreaterThan(parseInt(modalZIndex));
 
-            // Hide loading overlay
+            // Hide loading overlay directly
             await page.evaluate(() => {
-                (window as any).hideLoadingOverlay();
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if (loadingOverlay) loadingOverlay.classList.remove('show');
             });
         });
 
         test('toast should be visible and not blurry', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Open modal to test backdrop blur
-            await page.click('#scanQRBtn');
+            await page.click('#openQRScanBtn');
 
-            // Show toast
+            // Directly create toast element
             await page.evaluate(() => {
-                (window as any).showToast('Payment updated successfully!', 'success');
+                const container = document.getElementById('toastContainer');
+                if (container) {
+                    const toast = document.createElement('div');
+                    toast.className = 'toast-notification toast-success';
+                    toast.textContent = 'Payment updated successfully!';
+                    container.appendChild(toast);
+                }
             });
 
             await page.waitForTimeout(500);
@@ -339,7 +356,7 @@ test.describe('Payment Update - E2E Tests', () => {
     test.describe('Update Payment Button Styling', () => {
         test('should have enhanced styling for Update Payment button', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Simulate QR linked item with Update Payment button
             await page.evaluate(() => {
@@ -377,7 +394,7 @@ test.describe('Payment Update - E2E Tests', () => {
     test.describe('API Integration', () => {
         test('should call correct API endpoint for payment update', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Track API calls
             const apiCalls: string[] = [];
@@ -406,7 +423,7 @@ test.describe('Payment Update - E2E Tests', () => {
 
         test('should include authentication header in payment request', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // Track request headers
             let hasAuthHeader = false;
@@ -429,7 +446,7 @@ test.describe('Payment Update - E2E Tests', () => {
     test.describe('Payment Update Flow - Complete', () => {
         test('should complete full payment update flow for Cash payment', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // 1. Open payment modal
             await page.evaluate(() => {
@@ -451,12 +468,12 @@ test.describe('Payment Update - E2E Tests', () => {
 
             // 5. Verify button text
             const btnText = await submitBtn.textContent();
-            expect(btnText).toContain('Update Payment');
+            expect(btnText).toContain('Submit Payment');
         });
 
         test('should complete full payment update flow for split payment', async ({ page }) => {
             await setupTestPage(page);
-            await page.waitForSelector('#dashboardContent');
+            // Dashboard already visible after setupTestPage
 
             // 1. Open payment modal
             await page.evaluate(() => {

@@ -6,7 +6,9 @@
     "scripts": {
         "test": "playwright test",
         "test:headed": "playwright test --headed",
-        "test:report": "playwright show-report"
+        "test:report": "playwright show-report",
+        "test:e2e": "BACKEND_RUNNING=true playwright test tests/e2e/payment-update.spec.ts",
+        "test:e2e:headed": "BACKEND_RUNNING=true playwright test tests/e2e/payment-update.spec.ts --headed"
     },
     "devDependencies": {
         "@playwright/test": "^1.56.1",
