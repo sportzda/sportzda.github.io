@@ -763,7 +763,7 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             // Verify toggle button container is hidden
             const selectRacketBtn = page.locator('#selectRacketBtn');
             const selectBatBtn = page.locator('#selectBatBtn');
-            
+
             // Buttons should not be visible since parent div has display: none
             await expect(selectRacketBtn).toBeHidden();
             await expect(selectBatBtn).toBeHidden();
