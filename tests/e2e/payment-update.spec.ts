@@ -10,36 +10,28 @@ const STAFF_PASSWORD = process.env.STAFF_PASSWORD || 'dasportz2025';
  */
 
 test.describe('Payment Update - E2E Tests', () => {
-    let page: Page;
-    let authToken: string;
-
-    test.beforeAll(async ({ browser }) => {
-        page = await browser.newPage();
-
-        // Login to get auth token
+    // Helper function to login
+    async function loginToStaffDashboard(page: Page) {
         await page.goto('/staff-dashboard.html');
+
+        // Check if already logged in
+        const dashboardVisible = await page.locator('#dashboardContent').isVisible().catch(() => false);
+        if (dashboardVisible) {
+            return;
+        }
+
+        // Perform login
         await page.fill('#loginUsername', STAFF_USERNAME);
         await page.fill('#loginPassword', STAFF_PASSWORD);
         await page.click('button:has-text("Login")');
 
         // Wait for successful login
         await page.waitForSelector('#dashboardContent', { timeout: 10000 });
-
-        // Get auth token from sessionStorage
-        authToken = await page.evaluate(() => {
-            return sessionStorage.getItem('staffAuthToken') || '';
-        });
-
-        expect(authToken).toBeTruthy();
-    });
-
-    test.afterAll(async () => {
-        await page.close();
-    });
+    }
 
     test.describe('Payment Update Modal', () => {
-        test('should open payment modal when Update Payment button clicked', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should open payment modal when Update Payment button clicked', async ({ page }) => {
+            await loginToStaffDashboard(page);
 
             // Wait for dashboard to load
             await page.waitForSelector('#dashboardContent');
@@ -64,8 +56,8 @@ test.describe('Payment Update - E2E Tests', () => {
             }
         });
 
-        test('should display payment method dropdown with correct options', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should display payment method dropdown with correct options', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Trigger modal opening (simulate clicking Update Payment)
@@ -83,8 +75,8 @@ test.describe('Payment Update - E2E Tests', () => {
             expect(options).toContain('Both (Cash + AX)');
         });
 
-        test('should show split payment inputs when "Both" is selected', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should show split payment inputs when "Both" is selected', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal
@@ -103,8 +95,8 @@ test.describe('Payment Update - E2E Tests', () => {
             await expect(page.locator('#axAmount')).toBeVisible();
         });
 
-        test('should validate split payment amounts match total', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should validate split payment amounts match total', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal with total amount 1000
@@ -136,8 +128,8 @@ test.describe('Payment Update - E2E Tests', () => {
             await expect(submitBtn).toBeEnabled();
         });
 
-        test('should show error for mismatched split payment amounts', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should show error for mismatched split payment amounts', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal with total amount 1000
@@ -169,8 +161,8 @@ test.describe('Payment Update - E2E Tests', () => {
             await expect(submitBtn).toBeDisabled();
         });
 
-        test('should enable submit button for single payment method', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should enable submit button for single payment method', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open payment modal
@@ -188,8 +180,8 @@ test.describe('Payment Update - E2E Tests', () => {
     });
 
     test.describe('QR Scan - Payment Update Button', () => {
-        test('should show Update Payment button for completed QR-linked items', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should show Update Payment button for completed QR-linked items', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR scan modal
@@ -240,8 +232,8 @@ test.describe('Payment Update - E2E Tests', () => {
             }
         });
 
-        test('should hide status update button for completed items', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should hide status update button for completed items', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR scan modal
@@ -268,8 +260,8 @@ test.describe('Payment Update - E2E Tests', () => {
     });
 
     test.describe('Z-Index and Layering', () => {
-        test('should display toast above QR modal', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should display toast above QR modal', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR modal
@@ -293,8 +285,8 @@ test.describe('Payment Update - E2E Tests', () => {
             expect(parseInt(toastZIndex)).toBeGreaterThan(parseInt(modalZIndex));
         });
 
-        test('should display loading overlay above modals', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should display loading overlay above modals', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open QR modal
@@ -325,7 +317,7 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('toast should be visible and not blurry', async () => {
-            await page.goto('/staff-dashboard.html');
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Open modal to test backdrop blur
@@ -349,8 +341,8 @@ test.describe('Payment Update - E2E Tests', () => {
     });
 
     test.describe('Update Payment Button Styling', () => {
-        test('should have enhanced styling for Update Payment button', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should have enhanced styling for Update Payment button', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Simulate QR linked item with Update Payment button
@@ -387,8 +379,8 @@ test.describe('Payment Update - E2E Tests', () => {
     });
 
     test.describe('API Integration', () => {
-        test('should call correct API endpoint for payment update', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should call correct API endpoint for payment update', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Track API calls
@@ -416,8 +408,8 @@ test.describe('Payment Update - E2E Tests', () => {
             expect(true).toBe(true); // Placeholder for actual API test
         });
 
-        test('should include authentication header in payment request', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should include authentication header in payment request', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // Track request headers
@@ -439,8 +431,8 @@ test.describe('Payment Update - E2E Tests', () => {
     });
 
     test.describe('Payment Update Flow - Complete', () => {
-        test('should complete full payment update flow for Cash payment', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should complete full payment update flow for Cash payment', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // 1. Open payment modal
@@ -466,8 +458,8 @@ test.describe('Payment Update - E2E Tests', () => {
             expect(btnText).toContain('Update Payment');
         });
 
-        test('should complete full payment update flow for split payment', async () => {
-            await page.goto('/staff-dashboard.html');
+        test('should complete full payment update flow for split payment', async ({ page }) => {
+            await loginToStaffDashboard(page);
             await page.waitForSelector('#dashboardContent');
 
             // 1. Open payment modal
