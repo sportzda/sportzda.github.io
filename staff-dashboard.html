@@ -3332,7 +3332,7 @@
 
                             // Build Update Payment button if unpaid
                             const updatePaymentBtnHtml = isUnpaid ? `
-                                <button id="updatePaymentBtn" style="width: 100%; padding: 10px; background: #059669; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 8px;">
+                                <button id="updatePaymentBtn" style="width: 100%; padding: 12px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; margin-top: 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); transition: all 0.2s ease;">
                                     <i class="bi bi-currency-rupee"></i> Update Payment
                                 </button>
                             ` : '';
@@ -3447,6 +3447,18 @@
                             // Add event listener for Update Payment button
                             const updatePaymentBtn = document.getElementById('updatePaymentBtn');
                             if (updatePaymentBtn) {
+                                // Add hover effects
+                                updatePaymentBtn.addEventListener('mouseenter', () => {
+                                    updatePaymentBtn.style.background = '#059669';
+                                    updatePaymentBtn.style.transform = 'translateY(-1px)';
+                                    updatePaymentBtn.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.4)';
+                                });
+                                updatePaymentBtn.addEventListener('mouseleave', () => {
+                                    updatePaymentBtn.style.background = '#10b981';
+                                    updatePaymentBtn.style.transform = 'translateY(0)';
+                                    updatePaymentBtn.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                                });
+
                                 updatePaymentBtn.addEventListener('click', () => {
                                     // Close QR modal and open payment modal
                                     qrModal.style.display = 'none';
