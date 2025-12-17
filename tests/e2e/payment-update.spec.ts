@@ -153,8 +153,8 @@ test.describe('Payment Update - E2E Tests', () => {
 
             const validationText = await page.locator('#validationText').textContent();
             expect(validationText).toContain('Total mismatch');
-            expect(validationText).toContain('₹800');
-            expect(validationText).toContain('₹1000');
+            expect(validationText).toContain('₹800 entered');
+            expect(validationText).toContain('₹1000 required');
 
             // Submit button should be disabled
             const submitBtn = page.locator('#submitPaymentBtn');
