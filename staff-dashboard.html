@@ -3280,16 +3280,7 @@
                         const linkedRacket = rackets.find(r => r.isLinkedToScannedQr);
 
                         if (linkedRacket) {
-                            // Check if already completed
-                            if (linkedRacket.status === 2) {
-                                showToast(`${scanMode === 'racket' ? 'Racket' : 'Cricket Bat'} already completed`, 'error');
-                                unlinkedList.innerHTML = '';
-                                qrModal.style.display = 'none';
-                                stopCamera();
-                                return;
-                            }
-
-                            // Display linked item details with status update options
+                            // Display linked item details with status update options (including completed items)
                             const itemName = linkedRacket.racketName || 'Item';
                             // If status is not set, default to 0 (Not Started)
                             const racketStatus = typeof linkedRacket.status === 'number' ? linkedRacket.status : 0;
@@ -3346,6 +3337,16 @@
                                 </button>
                             ` : '';
 
+                            // Build status update button - hide if already completed
+                            const statusUpdateBtnHtml = racketStatus !== 2 ? `
+                                <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                    ${actionLabel}
+                                </button>
+                            ` : '';
+
+                            // Adjust status color based on completion
+                            const statusColor = racketStatus === 2 ? '#059669' : '#3b82f6';
+
                             let detailsHtml = `
                                 <div style="padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
                                     <div style="margin-bottom: 15px;">
@@ -3354,15 +3355,13 @@
                                         <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Store: ${order.store}</p>
                                     </div>
                                     
-                                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #3b82f6;">
+                                    <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid ${statusColor};">
                                         <p style="margin: 5px 0; color: #1f2937; font-weight: 500;">${scanMode === 'racket' ? 'Racket' : 'Bat'}: ${itemName}</p>
                                         ${stringDetailsHtml}
-                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Status: <span style="font-weight: 600; color: #3b82f6;">${statusText}</span></p>
+                                        <p style="margin: 5px 0; color: #6b7280; font-size: 14px;">Status: <span style="font-weight: 600; color: ${statusColor};">${statusText}</span></p>
                                     </div>
                                     
-                                    <button id="updateStatusBtn" style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px;">
-                                        ${actionLabel}
-                                    </button>
+                                    ${statusUpdateBtnHtml}
                                     ${updatePaymentBtnHtml}
                                 </div>
                             `;
