@@ -3082,15 +3082,72 @@
 
                 try {
                     cameraStatus.innerHTML = '<small style="color: #059669;">Requesting camera access...</small>';
-                    const constraints = {
-                        video: {
-                            facingMode: 'environment',
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
+                    
+                    // Check if getUserMedia is supported
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        throw new Error('Camera API not supported in this browser/WebView');
+                    }
+
+                    // Try multiple constraint combinations for better Android WebView compatibility
+                    const constraintSets = [
+                        // First try: Ideal settings with environment camera
+                        {
+                            video: {
+                                facingMode: { exact: 'environment' },
+                                width: { ideal: 1280 },
+                                height: { ideal: 720 }
+                            }
+                        },
+                        // Second try: Fallback without exact facingMode
+                        {
+                            video: {
+                                facingMode: 'environment',
+                                width: { ideal: 1280 },
+                                height: { ideal: 720 }
+                            }
+                        },
+                        // Third try: Basic constraints
+                        {
+                            video: {
+                                facingMode: 'environment'
+                            }
+                        },
+                        // Fourth try: Any camera
+                        {
+                            video: true
                         }
-                    };
-                    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    ];
+
+                    let stream = null;
+                    let lastError = null;
+
+                    // Try each constraint set until one works
+                    for (const constraints of constraintSets) {
+                        try {
+                            console.log('[CAMERA] Trying constraints:', JSON.stringify(constraints));
+                            stream = await navigator.mediaDevices.getUserMedia(constraints);
+                            if (stream) {
+                                console.log('[CAMERA] Successfully got stream with constraints:', JSON.stringify(constraints));
+                                break;
+                            }
+                        } catch (err) {
+                            console.warn('[CAMERA] Failed with constraints:', JSON.stringify(constraints), err);
+                            lastError = err;
+                        }
+                    }
+
+                    if (!stream) {
+                        throw lastError || new Error('Failed to access camera with any constraint set');
+                    }
+
+                    cameraStream = stream;
                     qrVideo.srcObject = cameraStream;
+                    
+                    // Set video attributes for better Android WebView compatibility
+                    qrVideo.setAttribute('playsinline', 'true');
+                    qrVideo.setAttribute('autoplay', 'true');
+                    qrVideo.muted = true;
+                    
                     cameraActive = true;
 
                     // Update status immediately after permission granted
@@ -3098,18 +3155,30 @@
 
                     // Wait for video to be ready
                     qrVideo.onloadedmetadata = () => {
-                        qrVideo.play();
-                        scanQRCode();
+                        qrVideo.play().then(() => {
+                            console.log('[CAMERA] Video playing successfully');
+                            scanQRCode();
+                        }).catch(playError => {
+                            console.error('[CAMERA] Video play error:', playError);
+                            cameraStatus.innerHTML = '<small style="color: #dc2626;">Failed to start video playback</small>';
+                        });
                     };
                 } catch (error) {
                     console.error('Camera access error:', error);
                     let errorMsg = 'Camera access denied. Please check permissions.';
-                    if (error.name === 'NotAllowedError') {
-                        errorMsg = 'Camera access denied. Please allow camera permissions in your browser settings.';
-                    } else if (error.name === 'NotFoundError') {
+                    if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                        errorMsg = 'Camera access denied. Please allow camera permissions in your browser/app settings.';
+                    } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
                         errorMsg = 'No camera found on this device.';
-                    } else if (error.name === 'NotReadableError') {
+                    } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
                         errorMsg = 'Camera is being used by another app. Please close other apps and try again.';
+                    } else if (error.name === 'OverconstrainedError') {
+                        errorMsg = 'Camera constraints not supported. Trying with basic settings...';
+                        // Auto-retry with basic constraints
+                        setTimeout(startCamera, 1000);
+                        return;
+                    } else if (error.message && error.message.includes('not supported')) {
+                        errorMsg = 'Camera not supported in this WebView. Please use Chrome or enable camera permissions in app settings.';
                     }
                     cameraStatus.innerHTML = `<small style="color: #dc2626;">${errorMsg}</small>`;
                     cameraActive = false;
