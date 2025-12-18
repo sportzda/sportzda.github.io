@@ -1415,10 +1415,10 @@
                 const ua = navigator.userAgent.toLowerCase();
                 // Check for Android and WebView indicators
                 const isAndroid = ua.indexOf('android') > -1;
-                const isWebView = ua.indexOf('wv') > -1 || 
-                                  ua.indexOf('version/') > -1 && ua.indexOf('chrome') > -1 ||
-                                  typeof window.AndroidInterface !== 'undefined' ||
-                                  typeof window.AndroidApp !== 'undefined';
+                const isWebView = ua.indexOf('wv') > -1 ||
+                    ua.indexOf('version/') > -1 && ua.indexOf('chrome') > -1 ||
+                    typeof window.AndroidInterface !== 'undefined' ||
+                    typeof window.AndroidApp !== 'undefined';
                 return isAndroid && isWebView;
             }
 
@@ -1597,9 +1597,9 @@
                         storage.setItem('staffUser', username);
                         isAuthenticated = true;
                         loginError.classList.remove('show');
-                        
+
                         console.log(`[AUTH] Login successful - stored in ${isAndroidWebView() ? 'localStorage (persistent)' : 'sessionStorage (session only)'}`);
-                        
+
                         showDashboard(username);
                     } else {
                         // Show error message
