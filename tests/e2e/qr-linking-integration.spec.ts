@@ -145,7 +145,7 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             });
 
             // Wait for API call and UI update
-            await page.waitForTimeout(1000);
+            await page.waitForTimeout(300);
 
             // Verify label changed to cricket bat mode
             await expect(page.locator('#listLabel')).toContainText('Select Cricket Bat');
@@ -689,7 +689,7 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
                 if (fetchFn) fetchFn(qrCode);
             });
 
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(200);
 
             // Verify label updated to racket mode
             const listLabel = page.locator('#listLabel');
@@ -738,7 +738,7 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
                 if (fetchFn) fetchFn(qrCode);
             });
 
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(200);
 
             // Verify label updated to bat mode
             const listLabel = page.locator('#listLabel');
@@ -851,7 +851,7 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
                 if (fetchFn) fetchFn(qrCode);
             });
 
-            await page.waitForTimeout(500);
+            await page.waitForTimeout(200);
 
             // Should still work (defaults to current mode)
             const unlinkedList = page.locator('#unlinkedList');
