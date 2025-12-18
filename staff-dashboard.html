@@ -3003,7 +3003,7 @@
 
                 // Filter items to only show those with status 0 or undefined (not started)
                 const filteredItems = cachedItems.filter(item => {
-                    const itemData = item.racket || item;
+                    const itemData = scanMode === 'racket' ? (item.racket || item) : (item.bat || item);
                     const status = itemData.status;
                     return status === undefined || status === null || status === 0;
                 });
@@ -3018,8 +3018,8 @@
                 const itemsToShow = filteredItems.slice(0, 5);
 
                 itemsToShow.forEach(item => {
-                    // Both racket and bat modes use item.racket key for the data object
-                    const itemData = item.racket || item;
+                    // Get item data based on mode: rackets use item.racket, bats use item.bat
+                    const itemData = scanMode === 'racket' ? (item.racket || item) : (item.bat || item);
                     const orderId = item.orderId || '';
                     const customerName = item.customerName || '';
 
@@ -3200,7 +3200,7 @@
                     selectRacketBtn.style.color = 'white';
                     selectBatBtn.style.background = '#e5e7eb';
                     selectBatBtn.style.color = '#333';
-                    listLabel.textContent = 'Select Racket:';
+                    listLabel.textContent = 'Select Item:';
 
                     // Show camera section, hide Scan Again button on fresh open
                     cameraSection.style.display = 'block';
@@ -3231,6 +3231,7 @@
                     selectedItemType = null;
                     cameraStatus.innerHTML = '<small style="color: #059669;">Position QR code in frame</small>';
                     linkBtn.disabled = true;
+                    listLabel.textContent = 'Select Item:';
 
                     // Clear list and show loading icon
                     const itemType = scanMode === 'racket' ? 'rackets' : 'cricket bats';
@@ -3493,8 +3494,8 @@
                             displayCachedItems();
                         }
                     } else {
-                        // For cricket bats, reuse rackets field from the same endpoint
-                        const batsToDisplay = data.rackets || [];
+                        // For cricket bats, use bats field from response
+                        const batsToDisplay = data.bats || [];
                         if (batsToDisplay.length > 0) {
                             cachedUnlinkedBats = batsToDisplay;
                             // Hide loading overlay and display updated list
@@ -3742,6 +3743,11 @@
                         showToast('Error linking QR code: ' + error.message, 'error');
                     }
                 });
+            }
+
+            // Expose fetchAvailableRackets for testing
+            if (typeof window !== 'undefined') {
+                window.fetchAvailableRackets = fetchAvailableRackets;
             }
 
             // Initialize

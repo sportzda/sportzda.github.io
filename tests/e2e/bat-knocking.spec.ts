@@ -360,12 +360,19 @@ test.describe('Bat Knocking UI Tests', () => {
                 const threadingTop = row.locator('.threading-top');
                 const threadingBoth = row.locator('.threading-both');
 
-                // Check both
-                await threadingBoth.check();
+                // Wait for checkboxes to be ready
+                await threadingBoth.waitFor({ state: 'visible' });
+                await threadingTop.waitFor({ state: 'visible' });
+
+                // Check both using setChecked (more reliable than check)
+                await threadingBoth.setChecked(true);
                 await expect(threadingBoth).toBeChecked();
 
+                // Wait a bit for any UI updates to settle
+                await page.waitForTimeout(100);
+
                 // Check top - should uncheck both
-                await threadingTop.check();
+                await threadingTop.setChecked(true);
                 await expect(threadingTop).toBeChecked();
                 await expect(threadingBoth).not.toBeChecked();
 
