@@ -11,14 +11,14 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('Badge Count Tests', () => {
-    
+
     test.beforeEach(async ({ page }) => {
         // Mock authentication
         await page.addInitScript(() => {
             sessionStorage.setItem('staffAuthToken', 'test_token_badge');
             sessionStorage.setItem('staffUser', 'teststaff');
         });
-        
+
         // Mock authentication API
         await page.route('**/api/staff/verify', async (route) => {
             await route.fulfill({
@@ -28,7 +28,7 @@ test.describe('Badge Count Tests', () => {
             });
         });
     });
-    
+
     test.describe('Racket Stringing - Multiple Rackets in Same Order', () => {
         test('should count individual rackets, not orders - 2 rackets in progress in 1 order', async ({ page }) => {
             // Mock orders API with 1 order containing 2 rackets both in progress (status: 1)
@@ -69,17 +69,17 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
-            
+
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // Check In Progress badge count - should be 2 (not 1)
             const inProgressBadge = page.locator('#inProgressCount');
             await expect(inProgressBadge).toHaveText('2');
         });
-        
+
         test('should count correctly with mixed statuses in same order', async ({ page }) => {
             // 1 order with: 2 received (status 0), 1 in-progress (status 1), 1 completed (status 2)
             await page.route('**/api/orders*', async (route) => {
@@ -107,17 +107,17 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // Verify each badge shows correct count
             await expect(page.locator('#receivedCount')).toHaveText('2');
             await expect(page.locator('#inProgressCount')).toHaveText('1');
             await expect(page.locator('#completedCount')).toHaveText('1');
         });
     });
-    
+
     test.describe('Racket Stringing - Multiple Orders', () => {
         test('should sum rackets across multiple orders', async ({ page }) => {
             // 2 orders: Order 1 has 2 in-progress, Order 2 has 1 in-progress
@@ -156,14 +156,14 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // Total should be 3 (2 from order 1 + 1 from order 2)
             await expect(page.locator('#inProgressCount')).toHaveText('3');
         });
-        
+
         test('should count correctly with multiple orders having different statuses', async ({ page }) => {
             await page.route('**/api/orders*', async (route) => {
                 await route.fulfill({
@@ -214,10 +214,10 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // Received: r1 + r5 = 2
             // In Progress: r2 + r3 = 2
             // Completed: r4 + r6 = 2
@@ -226,7 +226,7 @@ test.describe('Badge Count Tests', () => {
             await expect(page.locator('#completedCount')).toHaveText('2');
         });
     });
-    
+
     test.describe('Bat Knocking - Multiple Bats in Same Order', () => {
         test('should count individual bats, not orders - 2 bats in progress in 1 order', async ({ page }) => {
             await page.route('**/api/orders*', async (route) => {
@@ -266,19 +266,19 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // Switch to bat-knocking tab
             await page.click('text=Bat Knocking');
             await page.waitForTimeout(500);
-            
+
             // Check In Progress badge count - should be 2 (not 1)
             const inProgressBadge = page.locator('#inProgressCount');
             await expect(inProgressBadge).toHaveText('2');
         });
-        
+
         test('should count bats correctly across multiple orders', async ({ page }) => {
             await page.route('**/api/orders*', async (route) => {
                 await route.fulfill({
@@ -316,21 +316,21 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // Switch to bat-knocking
             await page.click('text=Bat Knocking');
             await page.waitForTimeout(500);
-            
+
             // Received: 1, In Progress: 2, Completed: 1
             await expect(page.locator('#receivedCount')).toHaveText('1');
             await expect(page.locator('#inProgressCount')).toHaveText('2');
             await expect(page.locator('#completedCount')).toHaveText('1');
         });
     });
-    
+
     test.describe('Edge Cases', () => {
         test('should show 0 when no orders exist', async ({ page }) => {
             await page.route('**/api/orders*', async (route) => {
@@ -340,15 +340,15 @@ test.describe('Badge Count Tests', () => {
                     body: JSON.stringify({ orders: [] })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             await expect(page.locator('#receivedCount')).toHaveText('0');
             await expect(page.locator('#inProgressCount')).toHaveText('0');
             await expect(page.locator('#completedCount')).toHaveText('0');
         });
-        
+
         test('should handle orders with missing status (defaults to 0)', async ({ page }) => {
             await page.route('**/api/orders*', async (route) => {
                 await route.fulfill({
@@ -373,15 +373,15 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             // r1 should default to status 0 (received), r2 is status 1 (in-progress)
             await expect(page.locator('#receivedCount')).toHaveText('1');
             await expect(page.locator('#inProgressCount')).toHaveText('1');
         });
-        
+
         test('should count single racket correctly (not show 0)', async ({ page }) => {
             await page.route('**/api/orders*', async (route) => {
                 await route.fulfill({
@@ -405,10 +405,10 @@ test.describe('Badge Count Tests', () => {
                     })
                 });
             });
-            
+
             await page.goto('/staff-dashboard.html');
             await page.waitForSelector('.dashboard-content', { timeout: 5000 });
-            
+
             await expect(page.locator('#inProgressCount')).toHaveText('1');
         });
     });
