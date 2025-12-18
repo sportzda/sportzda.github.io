@@ -1770,9 +1770,19 @@
                 // Filter orders by item status (racket or bat)
                 const filteredOrders = filterOrdersByItemStatus(allOrdersCache, statusValue, currentService);
 
+                // Count total number of items (rackets/bats) across all filtered orders
+                const itemCount = filteredOrders.reduce((total, order) => {
+                    if (currentService === 'racket-stringing' && order.racketDetails) {
+                        return total + order.racketDetails.length;
+                    } else if (currentService === 'bat-knocking' && order.batDetails) {
+                        return total + order.batDetails.length;
+                    }
+                    return total;
+                }, 0);
+
                 // Don't transform - renderOrders now works directly with raw order objects
                 renderOrders(contentEl, filteredOrders, tabName);
-                updateSingleBadgeCount(tabName, filteredOrders.length);
+                updateSingleBadgeCount(tabName, itemCount);
             }
 
             // Filter orders by individual racket/bat status
