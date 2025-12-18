@@ -1410,6 +1410,23 @@
             let currentService = 'racket-stringing';
             let currentStatus = 'received';
 
+            // Detect if running in Android WebView
+            function isAndroidWebView() {
+                const ua = navigator.userAgent.toLowerCase();
+                // Check for Android and WebView indicators
+                const isAndroid = ua.indexOf('android') > -1;
+                const isWebView = ua.indexOf('wv') > -1 || 
+                                  ua.indexOf('version/') > -1 && ua.indexOf('chrome') > -1 ||
+                                  typeof window.AndroidInterface !== 'undefined' ||
+                                  typeof window.AndroidApp !== 'undefined';
+                return isAndroid && isWebView;
+            }
+
+            // Get appropriate storage (localStorage for Android app, sessionStorage for browsers)
+            function getStorage() {
+                return isAndroidWebView() ? localStorage : sessionStorage;
+            }
+
             // Loading Overlay Helper Functions
             function showLoadingOverlay(message = 'Processing...') {
                 const loadingOverlay = document.getElementById('loadingOverlay');
@@ -1455,8 +1472,11 @@
 
             // Check authentication on page load
             async function checkAuth() {
-                authToken = sessionStorage.getItem('staffAuthToken');
-                const username = sessionStorage.getItem('staffUser');
+                const storage = getStorage();
+                authToken = storage.getItem('staffAuthToken');
+                const username = storage.getItem('staffUser');
+
+                console.log(`[AUTH] Running in ${isAndroidWebView() ? 'Android WebView' : 'Browser'} - using ${isAndroidWebView() ? 'localStorage' : 'sessionStorage'}`);
 
                 if (authToken) {
                     // Verify token with backend
@@ -1474,18 +1494,18 @@
                         } else {
                             // Token invalid or expired, clear and show login
                             console.log('Token verification failed with status:', response.status);
-                            sessionStorage.removeItem('staffAuthToken');
-                            sessionStorage.removeItem('staffUser');
+                            storage.removeItem('staffAuthToken');
+                            storage.removeItem('staffUser');
                             authToken = null;
                         }
                     } catch (err) {
                         console.error('Token verification failed:', err);
-                        sessionStorage.removeItem('staffAuthToken');
-                        sessionStorage.removeItem('staffUser');
+                        storage.removeItem('staffAuthToken');
+                        storage.removeItem('staffUser');
                         authToken = null;
                     }
                 } else {
-                    console.log('No auth token found in sessionStorage');
+                    console.log('No auth token found in storage');
                 }
 
                 showLoginModal();
@@ -1570,12 +1590,16 @@
                     const data = await response.json();
 
                     if (response.ok && data.success) {
-                        // Store token and user info
+                        const storage = getStorage();
+                        // Store token - localStorage for Android app, sessionStorage for browser
                         authToken = data.token;
-                        sessionStorage.setItem('staffAuthToken', data.token);
-                        sessionStorage.setItem('staffUser', username);
+                        storage.setItem('staffAuthToken', data.token);
+                        storage.setItem('staffUser', username);
                         isAuthenticated = true;
                         loginError.classList.remove('show');
+                        
+                        console.log(`[AUTH] Login successful - stored in ${isAndroidWebView() ? 'localStorage (persistent)' : 'sessionStorage (session only)'}`);
+                        
                         showDashboard(username);
                     } else {
                         // Show error message
@@ -1603,10 +1627,12 @@
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (confirm('Are you sure you want to logout?')) {
-                    sessionStorage.removeItem('staffAuthToken');
-                    sessionStorage.removeItem('staffUser');
+                    const storage = getStorage();
+                    storage.removeItem('staffAuthToken');
+                    storage.removeItem('staffUser');
                     authToken = null;
                     isAuthenticated = false;
+                    console.log(`[AUTH] Logged out - cleared ${isAndroidWebView() ? 'localStorage' : 'sessionStorage'}`);
                     window.location.href = 'index.html';
                 }
             });
@@ -3082,7 +3108,7 @@
 
                 try {
                     cameraStatus.innerHTML = '<small style="color: #059669;">Requesting camera access...</small>';
-                    
+
                     // Check if getUserMedia is supported
                     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                         throw new Error('Camera API not supported in this browser/WebView');
@@ -3142,12 +3168,12 @@
 
                     cameraStream = stream;
                     qrVideo.srcObject = cameraStream;
-                    
+
                     // Set video attributes for better Android WebView compatibility
                     qrVideo.setAttribute('playsinline', 'true');
                     qrVideo.setAttribute('autoplay', 'true');
                     qrVideo.muted = true;
-                    
+
                     cameraActive = true;
 
                     // Update status immediately after permission granted
