@@ -134,9 +134,13 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
                 });
             });
 
-            // Open QR scanner
+            // Open QR scanner and wait for modal to appear
             const qrScanBtn = page.locator('#openQRScanBtn');
             await qrScanBtn.click();
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Simulate scanning CB_ prefixed QR (auto-detects bat mode)
             await page.evaluate(() => {
@@ -680,7 +684,10 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
 
             // Open QR scanner
             await page.locator('#openQRScanBtn').click();
-            await page.waitForSelector('#qrScanModal.show');
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Simulate QR code scan with RQ_ prefix
             await page.evaluate(() => {
@@ -729,7 +736,10 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
 
             // Open QR scanner
             await page.locator('#openQRScanBtn').click();
-            await page.waitForSelector('#qrScanModal.show');
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Simulate QR code scan with CB_ prefix
             await page.evaluate(() => {
@@ -752,7 +762,10 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
         test('should hide racket/bat toggle buttons', async () => {
             // Open QR scanner
             await page.locator('#openQRScanBtn').click();
-            await page.waitForSelector('#qrScanModal.show');
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Verify toggle button container is hidden
             const selectRacketBtn = page.locator('#selectRacketBtn');
@@ -805,7 +818,10 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
 
             // Open QR scanner
             await page.locator('#openQRScanBtn').click();
-            await page.waitForSelector('#qrScanModal.show');
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Test racket QR
             await page.evaluate(() => {
@@ -842,7 +858,10 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
 
             // Open QR scanner
             await page.locator('#openQRScanBtn').click();
-            await page.waitForSelector('#qrScanModal.show');
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Simulate QR code scan without prefix
             await page.evaluate(() => {
@@ -890,7 +909,10 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
 
             // Open QR scanner
             await page.locator('#openQRScanBtn').click();
-            await page.waitForSelector('#qrScanModal.show');
+            await page.waitForFunction(() => {
+                const modal = document.getElementById('qrScanModal');
+                return modal && modal.style.display === 'flex';
+            });
 
             // Scan racket QR
             await page.evaluate(() => {
