@@ -32,8 +32,8 @@ test.describe('QR Code Linking Feature - E2E Tests', () => {
 
         await page.goto('/staff-dashboard.html');
 
-        // Wait for dashboard to load
-        await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+        // Wait for dashboard to load (reduced timeout)
+        await page.waitForSelector('.dashboard-content', { timeout: 3000 });
     });
 
     test.afterEach(async () => {
