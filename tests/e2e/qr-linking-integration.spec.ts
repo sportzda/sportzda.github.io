@@ -101,20 +101,21 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             await qrScanBtn.click();
             await expect(page.locator('#qrScanModal')).toBeVisible();
 
-            // Verify modal is in correct state
-            await expect(page.locator('#selectRacketBtn')).toHaveCSS('background-color', 'rgb(30, 64, 175)');
+            // Verify modal is in correct state (toggle buttons hidden, auto-detect from QR)
+            await expect(page.locator('#selectRacketBtn')).toBeHidden();
+            await expect(page.locator('#selectBatBtn')).toBeHidden();
             await expect(page.locator('#linkQRBtn')).toBeDisabled();
         });
 
         test('should complete workflow for cricket bat linking', async () => {
-            // Mock QR scan response for cricket bat
-            await page.route('**/api/qr/QR_BAT_001*', async (route) => {
+            // Mock QR scan response for cricket bat with CB_ prefix
+            await page.route('**/api/qr/CB_BAT_001*', async (route) => {
                 await route.fulfill({
                     status: 200,
                     contentType: 'application/json',
                     body: JSON.stringify({
                         success: true,
-                        qrCode: 'QR_BAT_001',
+                        qrCode: 'CB_BAT_001',
                         linked: false,
                         unlinkedBatsCount: 1,
                         rackets: [
@@ -137,11 +138,16 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             const qrScanBtn = page.locator('#openQRScanBtn');
             await qrScanBtn.click();
 
-            // Switch to bat mode
-            const selectBatBtn = page.locator('#selectBatBtn');
-            await selectBatBtn.click();
+            // Simulate scanning CB_ prefixed QR (auto-detects bat mode)
+            await page.evaluate(() => {
+                // Call fetchAvailableRackets directly with CB_ prefix
+                (window as any).fetchAvailableRackets('CB_BAT_001');
+            });
 
-            // Verify label changed
+            // Wait for API call and UI update
+            await page.waitForTimeout(1000);
+
+            // Verify label changed to cricket bat mode
             await expect(page.locator('#listLabel')).toContainText('Select Cricket Bat');
         });
 
@@ -550,26 +556,23 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             const qrScanBtn = page.locator('#openQRScanBtn');
             await qrScanBtn.click();
 
-            // Set QR data
+            // Set QR data with racket prefix
             await page.evaluate(() => {
-                (window as any).qrScannedData = 'TEST_QR';
+                (window as any).qrScannedData = 'RQ_TEST_QR';
             });
-
-            // Switch modes
-            const selectBatBtn = page.locator('#selectBatBtn');
-            await selectBatBtn.click();
 
             // Data should persist
             const qrData = await page.evaluate(() => (window as any).qrScannedData);
-            expect(qrData).toBe('TEST_QR');
+            expect(qrData).toBe('RQ_TEST_QR');
 
-            // Switch back
-            const selectRacketBtn = page.locator('#selectRacketBtn');
-            await selectRacketBtn.click();
+            // Set QR data with bat prefix
+            await page.evaluate(() => {
+                (window as any).qrScannedData = 'CB_TEST_QR';
+            });
 
-            // Data should still be there
+            // Data should be updated
             const qrDataAfter = await page.evaluate(() => (window as any).qrScannedData);
-            expect(qrDataAfter).toBe('TEST_QR');
+            expect(qrDataAfter).toBe('CB_TEST_QR');
         });
 
         test('should clear data when modal reopens', async () => {
@@ -637,22 +640,13 @@ test.describe('QR Code Linking Workflow Integration Tests', () => {
             expect(true).toBe(true);
         });
 
-        test('should debounce rapid mode switches', async () => {
+        test('should show correct initial label before QR scan', async () => {
             const qrScanBtn = page.locator('#openQRScanBtn');
             await qrScanBtn.click();
 
-            const selectRacketBtn = page.locator('#selectRacketBtn');
-            const selectBatBtn = page.locator('#selectBatBtn');
-
-            // Rapid switches
-            for (let i = 0; i < 5; i++) {
-                await selectBatBtn.click();
-                await selectRacketBtn.click();
-            }
-
-            // Should still be in proper state
+            // Before scanning any QR, label should be generic
             const listLabel = page.locator('#listLabel');
-            await expect(listLabel).toContainText('Select Racket');
+            await expect(listLabel).toContainText('Select Item');
         });
     });
 
