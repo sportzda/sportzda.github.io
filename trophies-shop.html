@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "tozdf538hj");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trophies & Awards | DA SPORTZ</title>
+    <meta name="description"
+        content="Premium trophies, medals, and awards for all sports - Cricket, Football, Basketball, Badminton, and more">
+
+    <!-- Bootstrap and Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0f1723;
+            --accent: #ff5900;
+            --accent-2: #00d4aa;
+            --muted: #6b7280;
+            --card-bg: #ffffff;
+            --primary-color: #1f1f1f;
+            --accent-color: #ff5900;
+            --nav-hover: #ff5900;
+            --bg-light: #f4f4f4;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Barlow', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: #f5f7fb;
+            color: var(--primary);
+            font-size: 1rem;
+            line-height: 1.6;
+            background-color: var(--bg-light);
+            color: var(--primary-color);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Top Bar */
+        .offer-bar {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .top-bar {
+            background: var(--primary);
+            color: #fff;
+            font-size: .95rem;
+        }
+
+        .top-bar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Navbar */
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.6rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--primary-color) !important;
+            position: relative;
+        }
+
+        .dropdown-menu {
+            --bs-dropdown-link-hover-bg: #ff59001a;
+            --bs-dropdown-link-active-bg: #ff5900;
+            --bs-dropdown-link-active-color: #fff;
+        }
+
+        .nav-link:focus,
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '';
+            display: block;
+            height: 2px;
+            width: 0;
+            background: var(--nav-hover);
+            transition: width 0.3s ease-in-out;
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            width: 100%;
+        }
+
+        nav.navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #2a3f5f 100%);
+            color: white;
+            padding: 80px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,89,0,0.1)"/></svg>');
+            background-size: 100px 100px;
+            opacity: 0.1;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .filter-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            background: #f5f7fb;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.95rem;
+            width: 100%;
+            justify-content: flex-start;
+            color: var(--muted);
+        }
+
+        .filter-chip:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 89, 0, 0.2);
+        }
+
+        .filter-chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .filter-chip i {
+            margin-right: 6px;
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            position: relative;
+            padding-top: 100%;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 20px;
+            transition: transform 0.4s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        .product-body {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .product-category {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .btn-buy-now {
+            flex: 1;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-buy-now:hover {
+            background: #e64f00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 89, 0, 0.3);
+        }
+
+        .btn-add-cart {
+            flex: 1;
+            background: white;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            padding: 10px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 89, 0, 0.3);
+        }
+
+        /* Cart Sidebar */
+        .cart-sidebar {
+            position: fixed;
+            right: -450px;
+            top: 0;
+            width: 450px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2001 !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 2000 !important;
+        }
+
+        .cart-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-header {
+            padding: 25px;
+            border-bottom: 1px solid #e1e1e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h3 {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.3s;
+        }
+
+        .cart-close:hover {
+            color: var(--accent);
+        }
+
+        .cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .cart-item:hover {
+            background: #f0f1f3;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            background: white;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .qty-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+
+        .cart-item-remove:hover {
+            color: #dc3545;
+        }
+
+        .cart-footer {
+            padding: 25px;
+            border-top: 2px solid #e1e1e1;
+            background: #f8f9fa;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-checkout:hover {
+            background: #e64f00;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 89, 0, 0.4);
+        }
+
+        /* Checkout Modal */
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 25px;
+        }
+
+        .payment-option {
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .payment-option:hover {
+            border-color: var(--accent);
+            background: #fff5f0;
+        }
+
+        .payment-option.selected {
+            border-color: var(--accent);
+            background: #fff5f0;
+            border-width: 3px;
+        }
+
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Empty State */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-cart i {
+            font-size: 4rem;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .filter-chip {
+                font-size: 0.85rem;
+                padding: 8px 16px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: #ffffff;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        footer h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+
+        footer .bi {
+            font-size: 1.5rem;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s;
+        }
+
+        .image-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoomIn 0.3s;
+        }
+
+        .image-modal-content img {
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .image-modal-close:hover {
+            color: var(--accent);
+        }
+
+        .image-modal-info {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            right: 0;
+            color: white;
+            text-align: center;
+        }
+
+        .image-modal-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .image-modal-info p {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .customization-section {
+            animation: slideDown 0.3s;
+        }
+
+        /* Customization Modal */
+        .customization-modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .customization-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .customization-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: zoomIn 0.3s;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .customization-modal-header {
+            background: linear-gradient(135deg, var(--accent), #e64f00);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .customization-modal-header h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .customization-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .customization-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .customization-modal-body {
+            padding: 30px;
+        }
+
+        .product-preview {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .product-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-preview-info h4 {
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .product-preview-info p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .product-preview-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .customization-form-section {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .customization-form-section h5 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skip-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        .customization-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .customization-actions button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-skip-add {
+            background: #e9ecef;
+            color: var(--primary);
+        }
+
+        .btn-skip-add:hover {
+            background: #dee2e6;
+        }
+
+        .btn-add-with-custom {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-add-with-custom:hover {
+            background: #e64f00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 89, 0, 0.3);
+        }
+
+        @media (max-width: 576px) {
+            .customization-actions {
+                flex-direction: column;
+            }
+
+            .product-preview {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .filter-section {
+                position: relative;
+                top: 0;
+                border-right: none;
+                border-bottom: 2px solid #e1e1e1;
+                margin-bottom: 2rem;
+            }
+
+            .filter-chip {
+                display: inline-flex;
+                width: auto;
+                margin: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Offer Bar -->
+    <div class="offer-bar text-center py-2">
+        Get 5% OFF on purchase of 2 or more trophies! | Order now!
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar py-2 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone"></i> +91-8800505769</span>
+                <span><i class="bi bi-envelope"></i> contact@dasportz.com</span>
+            </div>
+            <div class="d-flex align-items-center gap-3 mt-2 mt-md-0">
+                <a href="https://g.co/kgs/n2Rg2j5" target="_blank" class="text-white"><i class="bi bi-google"></i>
+                    Google Business</a>
+                <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                    class="text-white"><i class="bi bi-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">DA SPORTZ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between align-items-center" id="navMain">
+                <ul class="navbar-nav ms-auto d-flex align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house"></i> Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-tools"></i> Services
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+                            <li><a class="dropdown-item" href="index.html#jersey-sublimation">Jersey Sublimation</a>
+                            </li>
+                            <li><a class="dropdown-item" href="stringing-booking.html">Racket Stringing</a></li>
+                            <li><a class="dropdown-item" href="bat-knocking.html">Machine Cricket Bat Knocking</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-box-seam"></i> Products
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="productsDropdown">
+                            <li><a class="dropdown-item" href="trophies-shop.html">Trophies and Awards</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#about"><i class="bi bi-info-circle"></i>
+                            About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html#contact"><i
+                                class="bi bi-envelope-open"></i> Contact</a></li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-dark position-relative" id="cartToggle">
+                            <i class="bi bi-cart3"></i>
+                            <span class="cart-badge" id="cartCount">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container position-relative">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1>🏆 Trophies & Awards</h1>
+                    <p class="subtitle">Premium trophies, medals & awards for every sport and occasion</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content with Sidebar -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Left Sidebar - Filters -->
+                <div class="col-lg-3 col-md-4 mb-4">
+                    <div class="filter-section">
+                        <h4 class="fw-bold mb-4" style="color: var(--primary);"><i class="bi bi-funnel me-2"></i>Filters
+                        </h4>
+
+                        <div class="mb-4">
+                            <h6 class="text-uppercase fw-bold text-muted mb-3" style="font-size: 0.85rem;">Sport</h6>
+                            <div id="sportFilters">
+                                <span class="filter-chip active" data-sport="all"><i class="bi bi-grid"></i>All
+                                    Sports</span>
+                                <span class="filter-chip" data-sport="cricket"><i
+                                        class="bi bi-circle"></i>Cricket</span>
+                                <span class="filter-chip" data-sport="football"><i
+                                        class="bi bi-circle"></i>Football</span>
+                                <span class="filter-chip" data-sport="basketball"><i
+                                        class="bi bi-circle"></i>Basketball</span>
+                                <span class="filter-chip" data-sport="badminton"><i
+                                        class="bi bi-circle"></i>Badminton</span>
+                                <span class="filter-chip" data-sport="karate"><i class="bi bi-circle"></i>Karate</span>
+                                <span class="filter-chip" data-sport="running"><i
+                                        class="bi bi-circle"></i>Running</span>
+                                <span class="filter-chip" data-sport="tennis"><i class="bi bi-circle"></i>Tennis</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h6 class="text-uppercase fw-bold text-muted mb-3" style="font-size: 0.85rem;">Type</h6>
+                            <div id="typeFilters">
+                                <span class="filter-chip active" data-type="all"><i class="bi bi-grid"></i>All
+                                    Types</span>
+                                <span class="filter-chip" data-type="trophy"><i class="bi bi-trophy"></i>Trophies</span>
+                                <span class="filter-chip" data-type="medal"><i class="bi bi-award"></i>Medals</span>
+                                <span class="filter-chip" data-type="shield"><i class="bi bi-shield"></i>Shields</span>
+                                <span class="filter-chip" data-type="plaque"><i
+                                        class="bi bi-bookmark"></i>Plaques</span>
+                                <span class="filter-chip" data-type="cup"><i class="bi bi-cup"></i>Cups</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Products -->
+                <div class="col-lg-9 col-md-8">
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="row g-4" id="productsGrid">
+                        <!-- Products will be dynamically inserted here -->
+                    </div>
+                    <div class="text-center py-5 d-none" id="noProducts">
+                        <i class="bi bi-search" style="font-size: 3rem; color: var(--muted);"></i>
+                        <h4 class="mt-3">No products found</h4>
+                        <p class="text-muted">Try different filters</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="bi bi-cart3 me-2"></i>Your Cart</h3>
+            <button class="cart-close" id="cartClose">&times;</button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="empty-cart">
+                <i class="bi bi-cart-x"></i>
+                <h5>Your cart is empty</h5>
+                <p class="text-muted">Add some awesome trophies!</p>
+            </div>
+        </div>
+        <div class="cart-footer d-none" id="cartFooter">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <button class="btn-checkout" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                <i class="bi bi-credit-card me-2"></i>Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modalImage" src="" alt="Product Image">
+            <div class="image-modal-info">
+                <h3 id="modalProductName"></h3>
+                <p id="modalProductDetails"></p>
+
+                <!-- Customization Section -->
+                <div class="customization-section mt-3" id="customizationSection" style="display: none;">
+                    <div class="bg-white rounded p-3 text-dark" style="max-width: 500px; margin: 0 auto;">
+                        <h5 class="fw-bold text-center mb-3">
+                            <i class="bi bi-palette"></i> Customize Your Trophy
+                        </h5>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Custom Text (Optional)</label>
+                            <input type="text" class="form-control" id="customText"
+                                placeholder="Enter text for engraving (e.g., Winner 2025)">
+                            <small class="text-muted">This text will be engraved on your trophy</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Upload Logo (Optional)</label>
+                            <input type="file" class="form-control" id="customLogo" accept="image/*">
+                            <small class="text-muted">Upload your logo/image (PNG, JPG)</small>
+                        </div>
+                        <div id="logoPreview" class="text-center mt-2" style="display: none;">
+                            <img id="logoPreviewImg" src="" alt="Logo Preview"
+                                style="max-height: 100px; border: 2px solid #ddd; border-radius: 8px; padding: 5px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 d-flex gap-2 justify-content-center">
+                    <button class="btn btn-secondary" id="toggleCustomizationBtn" onclick="toggleCustomization()">
+                        <i class="bi bi-palette"></i> Add Customization
+                    </button>
+                    <button class="btn" style="background: var(--accent); color: white;" id="modalBuyNow">
+                        <i class="bi bi-cart-plus"></i> Buy Now
+                    </button>
+                    <button class="btn btn-outline-light" id="modalAddToCart">
+                        <i class="bi bi-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title mb-0"><i class="bi bi-credit-card me-2"></i>Checkout</h4>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="checkoutForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Full Name *</label>
+                            <input type="text" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone Number *</label>
+                            <input type="tel" class="form-control form-control-lg" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" class="form-control form-control-lg">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Delivery Address *</label>
+                            <textarea class="form-control form-control-lg" rows="3" required></textarea>
+                        </div>
+
+                        <h5 class="mb-3 fw-bold">Select Payment Method</h5>
+                        <div class="payment-option" data-payment="online">
+                            <div class="payment-icon">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Online Payment</h6>
+                                <small class="text-muted">UPI, Cards, Wallets</small>
+                            </div>
+                        </div>
+                        <div class="payment-option" data-payment="cash">
+                            <div class="payment-icon" style="background: #28a745;">
+                                <i class="bi bi-cash"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Cash on Delivery</h6>
+                                <small class="text-muted">Pay when you receive</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4 p-3 bg-light rounded">
+                            <span class="fw-bold">Total Amount:</span>
+                            <span class="h4 mb-0 text-primary" id="modalTotal">₹0</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-lg w-100 mt-3"
+                            style="background: var(--accent); color: white; font-weight: 600;">
+                            <i class="bi bi-check-circle me-2"></i>Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customization Modal -->
+    <div class="customization-modal" id="customizationModal">
+        <div class="customization-modal-content">
+            <div class="customization-modal-header">
+                <h3><i class="bi bi-palette me-2"></i>Personalize Your Trophy</h3>
+                <button class="customization-modal-close" onclick="closeCustomizationModal()">&times;</button>
+            </div>
+            <div class="customization-modal-body">
+                <!-- Product Preview -->
+                <div class="product-preview">
+                    <img id="customModalProductImage" src="" alt="Product">
+                    <div class="product-preview-info flex-grow-1">
+                        <h4 id="customModalProductName"></h4>
+                        <p id="customModalProductDetails"></p>
+                        <div class="product-preview-price" id="customModalProductPrice"></div>
+                    </div>
+                </div>
+
+                <!-- Skip Notice -->
+                <div class="skip-notice">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>Optional:</strong> You can skip customization and add the trophy as-is, or personalize it
+                    with text and logo.
+                </div>
+
+                <!-- Customization Form -->
+                <div class="customization-form-section">
+                    <h5><i class="bi bi-pencil-square"></i> Custom Text Engraving</h5>
+                    <input type="text" class="form-control form-control-lg" id="customModalText"
+                        placeholder="e.g., Champion 2025, Best Player, etc.">
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle"></i> This text will be engraved on your trophy
+                    </small>
+                </div>
+
+                <div class="customization-form-section">
+                    <h5><i class="bi bi-image"></i> Upload Your Logo</h5>
+                    <input type="file" class="form-control form-control-lg" id="customModalLogo" accept="image/*">
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle"></i> Accepted formats: PNG, JPG, JPEG (Max 5MB)
+                    </small>
+                    <div id="customModalLogoPreview" class="text-center mt-3" style="display: none;">
+                        <img id="customModalLogoPreviewImg" src="" alt="Logo Preview"
+                            style="max-height: 120px; border: 2px solid #ddd; border-radius: 8px; padding: 10px;">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="customization-actions">
+                    <button class="btn-skip-add" onclick="skipCustomization()">
+                        <i class="bi bi-cart-plus me-2"></i>Skip & Add to Cart
+                    </button>
+                    <button class="btn-add-with-custom" onclick="confirmCustomization()">
+                        <i class="bi bi-check-circle me-2"></i>Add with Customization
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">DA SPORTZ</h5>
+                    <p>Your one-stop shop for premium sports gear. Trusted by players. Loved by champions.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund_cancellation.html">Refund & Cancellation</a></li>
+                        <li><a href="https://g.co/kgs/n2Rg2j5" target="_blank">Google Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="text-uppercase">Follow Us</h5>
+                    <a href="https://www.instagram.com/da.sportz?igsh=MW5jZGNxamVhMm1vaA%3D%3D&utm_source=qr"
+                        class="me-3"><i class="bi bi-instagram"></i></a>
+                    <a href="mailto:contact@dasportz.com"><i class="bi bi-envelope"></i></a>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <small>&copy; 2025 DA SPORTZ. All Rights Reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/trophies-shop.js"></script>
+</body>
+
+</html>
