@@ -58,6 +58,152 @@ let currentFilters = {
 };
 
 // Initialize
+
+// Trophy Admin Add Form Logic
+function setupTrophyAdminForm() {
+    const adminSection = document.getElementById('trophyAdminSection');
+    const addForm = document.getElementById('addTrophyForm');
+    const statusDiv = document.getElementById('addTrophyStatus');
+    const imagesInput = document.getElementById('trophyImagesInput');
+    const imagePreview = document.getElementById('trophyImagePreview');
+
+    // Check if staff user (check localStorage or sessionStorage)
+    const isStaff = checkStaffStatus();
+    if (isStaff && adminSection) {
+        adminSection.style.display = 'block';
+    }
+
+    // Image preview handler
+    if (imagesInput) {
+        imagesInput.addEventListener('change', function (e) {
+            imagePreview.innerHTML = '';
+            const files = e.target.files;
+
+            if (files.length > 0) {
+                const previewContainer = document.createElement('div');
+                previewContainer.className = 'row g-3 mb-3';
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                    if (!validTypes.includes(file.type)) {
+                        showStatus(`Invalid file type: ${file.name}. Only JPEG, PNG, WEBP, GIF allowed.`, 'danger');
+                        continue;
+                    }
+
+                    // Validate file size (5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showStatus(`File too large: ${file.name}. Max 5MB per image.`, 'danger');
+                        continue;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-6 col-lg-4';
+                        col.innerHTML = `
+                            <div class="card border-0 shadow-sm overflow-hidden">
+                                <img src="${event.target.result}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="${file.name}">
+                                <div class="card-body p-2">
+                                    <small class="text-muted d-block text-truncate">${file.name}</small>
+                                    <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
+                                </div>
+                            </div>
+                        `;
+                        previewContainer.appendChild(col);
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                imagePreview.appendChild(previewContainer);
+            }
+        });
+    }
+
+    // Form submission
+    if (addForm) {
+        addForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Validate required fields
+            const name = addForm.querySelector('input[name="name"]').value.trim();
+            const price = addForm.querySelector('input[name="price"]').value;
+            const size = addForm.querySelector('input[name="size"]').value.trim();
+
+            if (!name || !price || !size) {
+                showStatus('Please fill in all required fields (Name, Price, Size).', 'danger');
+                return;
+            }
+
+            // Create FormData
+            const formData = new FormData(addForm);
+
+            // Get images and append to FormData
+            const images = imagesInput.files;
+            for (let i = 0; i < images.length; i++) {
+                formData.append('images', images[i]);
+            }
+
+            try {
+                showStatus('Uploading trophy...', 'info');
+                const apiUrl = getBackendUrl() + '/api/trophies';
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.trophy) {
+                    showStatus('Trophy added successfully! ID: ' + data.trophy._id, 'success');
+                    addForm.reset();
+                    imagePreview.innerHTML = '';
+
+                    // Reload products after 2 seconds
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    showStatus(data.error || data.message || 'Failed to add trophy.', 'danger');
+                }
+            } catch (err) {
+                showStatus('Error: ' + err.message, 'danger');
+                console.error('Trophy upload error:', err);
+            }
+        });
+    }
+
+    function showStatus(message, type) {
+        statusDiv.textContent = message;
+        statusDiv.className = `alert alert-${type}`;
+        statusDiv.classList.remove('d-none');
+
+        if (type === 'success') {
+            setTimeout(() => {
+                statusDiv.classList.add('d-none');
+            }, 5000);
+        }
+    }
+}
+
+function checkStaffStatus() {
+    // Check if user is logged in as staff
+    // This checks sessionStorage/localStorage for staff token or status
+    const staffUser = sessionStorage.getItem('staffUser') || localStorage.getItem('staffUser');
+    return !!staffUser;
+}
+
+function getBackendUrl() {
+    // Auto-detect backend URL
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3000';
+    }
+    return 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initializeFilters();
     displayProducts();
