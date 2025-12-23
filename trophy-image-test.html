@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trophy Image Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        img { max-width: 200px; border: 1px solid #ccc; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Trophy Image Test</h1>
+    
+    <div class="test-section">
+        <h2>API Test</h2>
+        <div id="apiResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Image Rendering Test</h2>
+        <div id="imageTest"></div>
+    </div>
+    
+    <script>
+        async function testTrophies() {
+            const apiDiv = document.getElementById('apiResult');
+            const imageDiv = document.getElementById('imageTest');
+            
+            try {
+                // Fetch trophies
+                const response = await fetch('http://localhost:3000/api/trophies');
+                const data = await response.json();
+                
+                apiDiv.innerHTML = `<p class="success">✓ API Success! Found ${data.trophies.length} trophies</p>`;
+                
+                // Display each trophy and its image
+                data.trophies.forEach((trophy, idx) => {
+                    const trophyDiv = document.createElement('div');
+                    trophyDiv.style.marginBottom = '20px';
+                    trophyDiv.innerHTML = `
+                        <h3>${trophy.name}</h3>
+                        <p>Price: ₹${trophy.price} | Inventory: ${trophy.inventory}</p>
+                    `;
+                    
+                    if (trophy.images && trophy.images.length > 0) {
+                        const imgUrl = trophy.images[0];
+                        trophyDiv.innerHTML += `
+                            <p>Image URL: ${imgUrl}</p>
+                            <p>Loading image...</p>
+                            <img 
+                                src="${imgUrl}" 
+                                alt="${trophy.name}"
+                                onload="this.style.border='2px solid green'; this.nextElementSibling.textContent='✓ Image loaded successfully';"
+                                onerror="this.style.border='2px solid red'; this.nextElementSibling.textContent='✗ Failed to load image';"
+                            />
+                            <p id="status-${idx}"></p>
+                        `;
+                    } else {
+                        trophyDiv.innerHTML += `<p class="error">No images for this trophy</p>`;
+                    }
+                    
+                    imageDiv.appendChild(trophyDiv);
+                });
+                
+            } catch (error) {
+                apiDiv.innerHTML = `<p class="error">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Run test on page load
+        testTrophies();
+    </script>
+</body>
+</html>

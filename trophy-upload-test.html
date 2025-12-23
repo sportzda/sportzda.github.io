@@ -66,9 +66,12 @@
                                             placeholder="e.g., 2500">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Size *</label>
-                                        <input type="text" class="form-control" name="size" required
-                                            placeholder="e.g., Large, Medium, Small">
+                                        <label class="form-label fw-semibold">Height (inches) *</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" name="size" required step="0.1"
+                                                min="0" placeholder="e.g., 12.5">
+                                            <span class="input-group-text">in</span>
+                                        </div>
                                     </div>
                                 </div>
 

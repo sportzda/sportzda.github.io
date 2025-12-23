@@ -1243,14 +1243,12 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="trophySize" class="form-label">Size *</label>
-                                    <select class="form-select" id="trophySize" required>
-                                        <option value="">Select size</option>
-                                        <option value="small">Small</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="large">Large</option>
-                                        <option value="extra-large">Extra Large</option>
-                                    </select>
+                                    <label for="trophySize" class="form-label">Height (inches) *</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="trophySize" min="0" step="0.1"
+                                            placeholder="e.g., 12.5" required>
+                                        <span class="input-group-text">in</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1267,7 +1265,7 @@
                             <input type="file" class="form-control" id="trophyImages" multiple
                                 accept="image/jpeg,image/png,image/webp,image/gif">
                             <small class="text-muted d-block mt-2">
-                                <i class="bi bi-info-circle"></i> Upload up to 10 images (JPG, PNG, WEBP, GIF - Max 5MB
+                                <i class="bi bi-info-circle"></i> Upload up to 3 images (JPG, PNG, WEBP, GIF - Max 5MB
                                 each)
                             </small>
                         </div>
@@ -1578,6 +1576,326 @@
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
     <script>
+        // Global helper functions (outside DOMContentLoaded)
+        // Get API base URL
+        function getAPIBaseURL() {
+            return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000'
+                : 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
+        }
+
+        // Toast notification (global)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+
+            const icon = type === 'success' ? 'check-circle-fill' :
+                type === 'error' ? 'exclamation-circle-fill' :
+                    'info-circle-fill';
+
+            const iconElement = document.createElement('i');
+            iconElement.className = `bi bi-${icon}`;
+
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = message;
+
+            toast.appendChild(iconElement);
+            toast.appendChild(messageSpan);
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    if (container.contains(toast)) container.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+
+        // Loading overlay helpers (global)
+        function showLoadingOverlay(message = 'Processing...') {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) loadingMessage.textContent = message;
+            if (loadingOverlay) loadingOverlay.classList.add('show');
+        }
+
+        function hideLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.classList.remove('show');
+        }
+
+        // Logout function - can be called from anywhere
+        function performLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    // Clear from both storage types to be safe
+                    localStorage.removeItem('staffAuthToken');
+                    localStorage.removeItem('staffUser');
+                    localStorage.removeItem('staffRole');
+                    sessionStorage.removeItem('staffAuthToken');
+                    sessionStorage.removeItem('staffUser');
+                    sessionStorage.removeItem('staffRole');
+                    
+                    console.log('[AUTH] Logout successful - cleared all storage');
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 100);
+                } catch (err) {
+                    console.error('[AUTH] Error during logout:', err);
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        // Logout handler
+        function handleLogout() {
+            performLogout();
+        }
+
+        // Delete Trophy (global function)
+        async function deleteTrophy(id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                showLoadingOverlay('Deleting trophy...');
+
+                const API_BASE_URL = getAPIBaseURL();
+                const authToken = sessionStorage.getItem('staffAuthToken') || localStorage.getItem('staffAuthToken');
+
+                const response = await fetch(`${API_BASE_URL}/api/trophies/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    showToast('Session expired. Please login again.', 'error');
+                    sessionStorage.removeItem('staffAuthToken');
+                    localStorage.removeItem('staffAuthToken');
+                    sessionStorage.removeItem('staffRole');
+                    localStorage.removeItem('staffRole');
+                    location.reload();
+                    return;
+                }
+
+                if (response.ok) {
+                    showToast('Trophy deleted successfully!', 'success');
+                    // Reload trophies table
+                    loadTrophies();
+                } else {
+                    const error = await response.json();
+                    let errorMessage = error.error || 'Failed to delete trophy';
+                    
+                    if (response.status === 403 && error.error === 'admin_required') {
+                        errorMessage = 'Only admins can delete trophies. Please contact your administrator.';
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting trophy:', error);
+                showToast('Error deleting trophy', 'error');
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+
+        // Load Trophies (global function)
+        async function loadTrophies() {
+            try {
+                showLoadingOverlay('Loading trophies...');
+                const API_BASE_URL = getAPIBaseURL();
+                const authToken = sessionStorage.getItem('staffAuthToken') || localStorage.getItem('staffAuthToken');
+
+                const response = await fetch(`${API_BASE_URL}/api/trophies`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    showToast('Session expired. Please login again.', 'error');
+                    sessionStorage.removeItem('staffAuthToken');
+                    localStorage.removeItem('staffAuthToken');
+                    location.reload();
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.trophies) {
+                    displayTrophies(data.trophies);
+                } else {
+                    showToast('Failed to load trophies', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading trophies:', error);
+                showToast('Error loading trophies', 'error');
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+
+        // Save Trophy (global function)
+        async function saveTrophy() {
+            const form = document.getElementById('trophyForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const API_BASE_URL = getAPIBaseURL();
+            const authToken = sessionStorage.getItem('staffAuthToken') || localStorage.getItem('staffAuthToken');
+
+            const trophyId = document.getElementById('trophyId').value;
+            const isEdit = !!trophyId;
+            const statusDiv = document.getElementById('trophyFormStatus');
+
+            // Create FormData for file uploads
+            const formData = new FormData();
+            formData.append('name', document.getElementById('trophyName').value);
+            formData.append('price', document.getElementById('trophyPrice').value);
+            formData.append('category', document.getElementById('trophyCategory').value);
+            formData.append('size', document.getElementById('trophySize').value);
+            formData.append('description', document.getElementById('trophyDescription').value);
+            formData.append('available', document.getElementById('trophyAvailable').checked);
+            formData.append('customizable', document.getElementById('trophyCustomizable').checked);
+
+            // Handle image uploads
+            const imagesInput = document.getElementById('trophyImages');
+            let uploadCount = 0;
+            if (imagesInput && imagesInput.files.length > 0) {
+                // Validate images before upload
+                const images = imagesInput.files;
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                console.log(`[Trophy Upload] Starting upload of ${images.length} images`);
+
+                for (let i = 0; i < images.length; i++) {
+                    console.log(`[Trophy Upload] Processing image ${i + 1}: ${images[i].name} (${images[i].size} bytes)`);
+
+                    if (!validTypes.includes(images[i].type)) {
+                        statusDiv.className = 'alert alert-danger';
+                        statusDiv.textContent = `Invalid image type: ${images[i].name}. Only JPG, PNG, WEBP, GIF allowed.`;
+                        statusDiv.style.display = 'block';
+                        return;
+                    }
+                    if (images[i].size > maxSize) {
+                        statusDiv.className = 'alert alert-danger';
+                        statusDiv.textContent = `Image too large: ${images[i].name}. Max 5MB per image.`;
+                        statusDiv.style.display = 'block';
+                        return;
+                    }
+                    console.log(`[Trophy Upload] Appending image ${i + 1} to FormData: ${images[i].name}`);
+                    formData.append('images', images[i]);
+                    uploadCount++;
+                }
+                console.log(`[Trophy Upload] Total images appended to FormData: ${uploadCount}`);
+            } else {
+                console.log('[Trophy Upload] No images selected');
+            }
+
+            try {
+                showLoadingOverlay(isEdit ? 'Updating trophy...' : 'Adding trophy...');
+                statusDiv.style.display = 'none';
+
+                const url = isEdit ? `${API_BASE_URL}/api/trophies/${trophyId}` : `${API_BASE_URL}/api/trophies`;
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                console.log(`[Trophy Upload] Sending ${method} request to ${url}`);
+                console.log(`[Trophy Upload] FormData contains ${uploadCount} images`);
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                        // DO NOT set Content-Type for FormData - browser will set it with boundary
+                    },
+                    body: formData
+                });
+
+                console.log(`[Trophy Upload] Response status: ${response.status}`);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(`[Trophy Upload] Success! Trophy saved with ${result.trophy?.images?.length || 0} images`);
+                    showToast(`Trophy ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
+
+                    // Close modal and reload trophies
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('trophyModal'));
+                    modal.hide();
+
+                    loadTrophies();
+                } else {
+                    const error = await response.json();
+                    let errorMessage = error.message || error.error || `Failed to ${isEdit ? 'update' : 'add'} trophy`;
+                    
+                    if (response.status === 403 && error.error === 'admin_required') {
+                        errorMessage = 'Only admins can manage trophies. Please contact your administrator.';
+                    }
+                    
+                    statusDiv.className = 'alert alert-danger';
+                    statusDiv.textContent = errorMessage;
+                    statusDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error saving trophy:', error);
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.textContent = `Error ${isEdit ? 'updating' : 'adding'} trophy`;
+                statusDiv.style.display = 'block';
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+        function displayTrophies(trophies) {
+            const tbody = document.getElementById('trophiesTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (trophies.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No trophies found</td></tr>';
+                return;
+            }
+
+            trophies.forEach(trophy => {
+                const row = document.createElement('tr');
+                const firstImage = trophy.images && trophy.images.length > 0 ? trophy.images[0] : '/img/placeholder-trophy.png';
+                const imageCount = trophy.images ? trophy.images.length : 0;
+
+                row.innerHTML = `
+                    <td>
+                        <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                        ${imageCount > 1 ? `<small class="text-muted d-block">+${imageCount - 1} more</small>` : ''}
+                    </td>
+                    <td>${trophy.name}</td>
+                    <td>${trophy.description || 'N/A'}</td>
+                    <td>₹${trophy.price}</td>
+                    <td>${trophy.category || 'N/A'}</td>
+                    <td>${trophy.size} inches</td>
+                    <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editTrophy('${trophy._id}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteTrophy('${trophy._id}', '${trophy.name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         // Dashboard Application
         document.addEventListener('DOMContentLoaded', function () {
             // Configuration - Auto-detect environment
@@ -1604,19 +1922,6 @@
             // Get appropriate storage (localStorage for Android app, sessionStorage for browsers)
             function getStorage() {
                 return isAndroidWebView() ? localStorage : sessionStorage;
-            }
-
-            // Loading Overlay Helper Functions
-            function showLoadingOverlay(message = 'Processing...') {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                const loadingMessage = document.getElementById('loadingMessage');
-                if (loadingMessage) loadingMessage.textContent = message;
-                if (loadingOverlay) loadingOverlay.classList.add('show');
-            }
-
-            function hideLoadingOverlay() {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                if (loadingOverlay) loadingOverlay.classList.remove('show');
             }
 
             // DOM elements
@@ -1654,6 +1959,7 @@
                 const storage = getStorage();
                 authToken = storage.getItem('staffAuthToken');
                 const username = storage.getItem('staffUser');
+                const role = storage.getItem('staffRole');
 
                 console.log(`[AUTH] Running in ${isAndroidWebView() ? 'Android WebView' : 'Browser'} - using ${isAndroidWebView() ? 'localStorage' : 'sessionStorage'}`);
 
@@ -1668,19 +1974,21 @@
 
                         if (response.ok) {
                             isAuthenticated = true;
-                            showDashboard(username);
+                            showDashboard(username, role);
                             return true;
                         } else {
                             // Token invalid or expired, clear and show login
                             console.log('Token verification failed with status:', response.status);
                             storage.removeItem('staffAuthToken');
                             storage.removeItem('staffUser');
+                            storage.removeItem('staffRole');
                             authToken = null;
                         }
                     } catch (err) {
                         console.error('Token verification failed:', err);
                         storage.removeItem('staffAuthToken');
                         storage.removeItem('staffUser');
+                        storage.removeItem('staffRole');
                         authToken = null;
                     }
                 } else {
@@ -1703,45 +2011,23 @@
                 unlockScroll();
             }
 
-            // Toast notification system
-            function showToast(message, type = 'success') {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `toast-notification toast-${type}`;
-
-                const icon = type === 'success' ? 'check-circle-fill' :
-                    type === 'error' ? 'exclamation-circle-fill' :
-                        'info-circle-fill';
-
-                // Create elements safely to prevent XSS
-                const iconElement = document.createElement('i');
-                iconElement.className = `bi bi-${icon}`;
-
-                const messageSpan = document.createElement('span');
-                messageSpan.textContent = message; // Use textContent to escape HTML
-
-                toast.appendChild(iconElement);
-                toast.appendChild(messageSpan);
-
-                container.appendChild(toast);
-
-                // Auto-dismiss after 4 seconds
-                setTimeout(() => {
-                    toast.classList.add('fade-out');
-                    setTimeout(() => {
-                        container.removeChild(toast);
-                    }, 300);
-                }, 4000);
-            }
-
-            // Show dashboard
-            function showDashboard(username) {
+            // DOM elements
+            function showDashboard(username, role = 'staff') {
                 hideLoginModal();
                 dashboardContent.classList.add('show');
                 // Safely set username to prevent XSS - create elements separately
                 staffUsername.innerHTML = '<i class="bi bi-person-circle"></i> ';
                 const usernameText = document.createTextNode(username || 'Staff');
                 staffUsername.appendChild(usernameText);
+                
+                // Show/hide trophy management tab based on role
+                const trophyTab = document.getElementById('trophy-management-main-tab');
+                if (role === 'admin') {
+                    if (trophyTab) trophyTab.style.display = 'block';
+                } else {
+                    if (trophyTab) trophyTab.style.display = 'none';
+                }
+                
                 updateLastUpdated();
                 loadDashboardData();
             }
@@ -1770,16 +2056,17 @@
 
                     if (response.ok && data.success) {
                         const storage = getStorage();
-                        // Store token - localStorage for Android app, sessionStorage for browser
+                        // Store token and user info - localStorage for Android app, sessionStorage for browser
                         authToken = data.token;
                         storage.setItem('staffAuthToken', data.token);
                         storage.setItem('staffUser', username);
+                        storage.setItem('staffRole', data.staff.role);  // Store role for authorization checks
                         isAuthenticated = true;
                         loginError.classList.remove('show');
 
                         console.log(`[AUTH] Login successful - stored in ${isAndroidWebView() ? 'localStorage (persistent)' : 'sessionStorage (session only)'}`);
 
-                        showDashboard(username);
+                        showDashboard(username, data.staff.role);  // Pass role to showDashboard
                     } else {
                         // Show error message
                         loginError.textContent = data.message || 'Invalid username or password';
@@ -1805,15 +2092,8 @@
             // Logout button
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (confirm('Are you sure you want to logout?')) {
-                    const storage = getStorage();
-                    storage.removeItem('staffAuthToken');
-                    storage.removeItem('staffUser');
-                    authToken = null;
-                    isAuthenticated = false;
-                    console.log(`[AUTH] Logged out - cleared ${isAndroidWebView() ? 'localStorage' : 'sessionStorage'}`);
-                    window.location.href = 'index.html';
-                }
+                e.stopPropagation();
+                performLogout();
             });
 
             // Service menu buttons
@@ -4117,7 +4397,7 @@
                         <td>${trophy.description || 'N/A'}</td>
                         <td>₹${trophy.price}</td>
                         <td>${trophy.category || 'N/A'}</td>
-                        <td>${trophy.size}</td>
+                        <td>${trophy.size} inches</td>
                         <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" onclick="editTrophy('${trophy._id}')">
@@ -4181,130 +4461,6 @@
                     });
             }
 
-            async function saveTrophy() {
-                const form = document.getElementById('trophyForm');
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    return;
-                }
-
-                const trophyId = document.getElementById('trophyId').value;
-                const isEdit = !!trophyId;
-                const statusDiv = document.getElementById('trophyFormStatus');
-
-                // Create FormData for file uploads
-                const formData = new FormData();
-                formData.append('name', document.getElementById('trophyName').value);
-                formData.append('price', document.getElementById('trophyPrice').value);
-                formData.append('category', document.getElementById('trophyCategory').value);
-                formData.append('size', document.getElementById('trophySize').value);
-                formData.append('description', document.getElementById('trophyDescription').value);
-                formData.append('available', document.getElementById('trophyAvailable').checked);
-                formData.append('customizable', document.getElementById('trophyCustomizable').checked);
-
-                // Handle image uploads
-                const imagesInput = document.getElementById('trophyImages');
-                if (imagesInput && imagesInput.files.length > 0) {
-                    // Validate images before upload
-                    const images = imagesInput.files;
-                    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-                    const maxSize = 5 * 1024 * 1024; // 5MB
-
-                    for (let i = 0; i < images.length; i++) {
-                        if (!validTypes.includes(images[i].type)) {
-                            statusDiv.className = 'alert alert-danger';
-                            statusDiv.textContent = `Invalid image type: ${images[i].name}. Only JPG, PNG, WEBP, GIF allowed.`;
-                            statusDiv.style.display = 'block';
-                            return;
-                        }
-                        if (images[i].size > maxSize) {
-                            statusDiv.className = 'alert alert-danger';
-                            statusDiv.textContent = `Image too large: ${images[i].name}. Max 5MB per image.`;
-                            statusDiv.style.display = 'block';
-                            return;
-                        }
-                        formData.append('images', images[i]);
-                    }
-                }
-
-                try {
-                    showLoadingOverlay(isEdit ? 'Updating trophy...' : 'Adding trophy...');
-                    statusDiv.style.display = 'none';
-
-                    const url = isEdit ? `${API_BASE_URL}/api/trophies/${trophyId}` : `${API_BASE_URL}/api/trophies`;
-                    const method = isEdit ? 'PATCH' : 'POST';
-
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'Authorization': `Bearer ${authToken}`
-                            // DO NOT set Content-Type for FormData - browser will set it with boundary
-                        },
-                        body: formData
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        showToast(`Trophy ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
-
-                        // Close modal and reload trophies
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('trophyModal'));
-                        modal.hide();
-
-                        loadTrophies();
-                    } else {
-                        const error = await response.json();
-                        statusDiv.className = 'alert alert-danger';
-                        statusDiv.textContent = error.error || `Failed to ${isEdit ? 'update' : 'add'} trophy`;
-                        statusDiv.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('Error saving trophy:', error);
-                    statusDiv.className = 'alert alert-danger';
-                    statusDiv.textContent = `Error ${isEdit ? 'updating' : 'adding'} trophy`;
-                    statusDiv.style.display = 'block';
-                } finally {
-                    hideLoadingOverlay();
-                }
-            }
-
-            async function deleteTrophy(id, name) {
-                if (!confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
-                    return;
-                }
-
-                try {
-                    showLoadingOverlay('Deleting trophy...');
-
-                    const response = await fetch(`${API_BASE_URL}/api/trophies/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${authToken}`
-                        }
-                    });
-
-                    if (response.status === 401) {
-                        showToast('Session expired. Please login again.', 'error');
-                        sessionStorage.removeItem('staffAuthToken');
-                        location.reload();
-                        return;
-                    }
-
-                    if (response.ok) {
-                        showToast('Trophy deleted successfully!', 'success');
-                        loadTrophies();
-                    } else {
-                        const error = await response.json();
-                        showToast(error.error || 'Failed to delete trophy', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error deleting trophy:', error);
-                    showToast('Error deleting trophy', 'error');
-                } finally {
-                    hideLoadingOverlay();
-                }
-            }
-
             // Trophy Management Event Listeners
             document.getElementById('addTrophyBtn').addEventListener('click', resetTrophyForm);
             document.getElementById('saveTrophyBtn').addEventListener('click', saveTrophy);
@@ -4312,44 +4468,51 @@
             // Handle image preview for trophy form
             document.getElementById('trophyImages').addEventListener('change', function (e) {
                 const preview = document.getElementById('trophyImagePreview');
-                preview.innerHTML = '';
+                preview.innerHTML = ''; // Clear previous previews
                 const files = e.target.files;
+                const maxImages = 3;
 
                 if (files.length === 0) {
                     return;
                 }
 
-                // Check max 10 files
-                if (files.length > 10) {
+                // Check max 3 images
+                if (files.length > maxImages) {
                     const statusDiv = document.getElementById('trophyFormStatus');
                     statusDiv.className = 'alert alert-warning';
-                    statusDiv.textContent = 'Maximum 10 images allowed. Only the first 10 will be uploaded.';
+                    statusDiv.textContent = `Maximum ${maxImages} images allowed. Only the first ${maxImages} will be uploaded.`;
                     statusDiv.style.display = 'block';
                 }
 
-                for (let i = 0; i < Math.min(files.length, 10); i++) {
+                // Create a container for preview images
+                const previewContainer = document.createElement('div');
+                previewContainer.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;';
+
+                for (let i = 0; i < Math.min(files.length, maxImages); i++) {
                     const file = files[i];
                     const reader = new FileReader();
 
                     reader.onload = function (event) {
                         const div = document.createElement('div');
-                        div.style.cssText = 'display: inline-block; margin: 8px; position: relative; width: 100px;';
+                        div.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 5px;';
 
                         const img = document.createElement('img');
                         img.src = event.target.result;
-                        img.style.cssText = 'width: 100px; height: 100px; object-fit: cover; border: 1px solid #ddd; border-radius: 4px;';
+                        img.style.cssText = 'width: 100px; height: 100px; object-fit: cover; border: 2px solid #ddd; border-radius: 6px; background: #f5f5f5;';
 
                         const label = document.createElement('div');
-                        label.style.cssText = 'font-size: 12px; text-align: center; margin-top: 4px; word-break: break-word;';
+                        label.style.cssText = 'font-size: 11px; text-align: center; max-width: 100px; word-break: break-all; color: #666;';
                         label.textContent = file.name;
 
                         div.appendChild(img);
                         div.appendChild(label);
-                        preview.appendChild(div);
+                        previewContainer.appendChild(div);
                     };
 
                     reader.readAsDataURL(file);
                 }
+
+                preview.appendChild(previewContainer);
             });
 
             // Load trophies when trophy management tab is shown
