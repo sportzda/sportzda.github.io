@@ -57,8 +57,11 @@ test.describe('Staff Dashboard Tests', () => {
             // Navigate to bat-knocking tab to trigger the display
             await page.click('text=Bat Knocking');
 
-            // Wait for order card to appear - with longer timeout for API response
-            await page.waitForSelector('.order-card', { timeout: 10000 });
+            // Wait for the service to switch and data to load
+            await page.waitForTimeout(2000);
+
+            // Wait for order cards to be visible
+            await expect(page.locator('.order-card')).toBeVisible({ timeout: 5000 });
 
             // Check that the order card shows the cost
             const orderCard = page.locator('.order-card').first();
@@ -128,8 +131,8 @@ test.describe('Staff Dashboard Tests', () => {
             // Navigate to bat-knocking tab
             await page.click('text=Bat Knocking');
 
-            // Wait for order card to appear - with longer timeout for API response
-            await page.waitForSelector('.order-card', { timeout: 10000 });
+            // Wait for order cards to be visible
+            await expect(page.locator('.order-card')).toBeVisible({ timeout: 5000 });
 
             // Check that the order card shows cost
             const orderCard = page.locator('.order-card').first();
@@ -262,9 +265,8 @@ test.describe('Staff Dashboard Tests', () => {
             // Navigate to bat-knocking and click View Details
             await page.click('text=Bat Knocking');
 
-            // Wait for order card to appear
-            await page.waitForSelector('.order-card', { timeout: 10000 });
-            await page.waitForTimeout(500); // Let card fully render
+            // Wait for order cards to be visible
+            await expect(page.locator('.order-card')).toBeVisible({ timeout: 5000 });
 
             await page.click('button:has-text("View Details")');
             await page.waitForTimeout(500); // Let modal appear
@@ -335,9 +337,8 @@ test.describe('Staff Dashboard Tests', () => {
             // Navigate to bat-knocking and click View Details
             await page.click('text=Bat Knocking');
 
-            // Wait for order card to appear
-            await page.waitForSelector('.order-card', { timeout: 10000 });
-            await page.waitForTimeout(500); // Let card fully render
+            // Wait for order cards to be visible
+            await expect(page.locator('.order-card')).toBeVisible({ timeout: 5000 });
 
             await page.click('button:has-text("View Details")');
             await page.waitForTimeout(500); // Let modal appear
