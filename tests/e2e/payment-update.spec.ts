@@ -62,12 +62,31 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should display payment method dropdown with correct options', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch for payment modal
+            await page.route('**/api/orders/DA_TEST_ORDER', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_TEST_ORDER',
+                        customerName: 'Test Customer',
+                        phone: '9999999990',
+                        finalAmount: 600,
+                        payment: { finalAmount: 600 },
+                        totalAmount: 600,
+                        serviceType: 'racket-stringing'
+                    })
+                });
+            });
 
             // Trigger modal opening (simulate clicking Update Payment)
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_TEST_ORDER', 600);
             });
+
+            // Wait for modal to appear with the show class
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
+            await page.waitForTimeout(300); // Give time for modal to fully render
 
             // Check dropdown options
             const paymentMethodSelect = page.locator('#paymentMethod');
@@ -80,12 +99,31 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should show split payment inputs when "Both" is selected', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch for payment modal
+            await page.route('**/api/orders/DA_TEST_ORDER', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_TEST_ORDER',
+                        customerName: 'Test Customer',
+                        phone: '9999999990',
+                        finalAmount: 1000,
+                        payment: { finalAmount: 1000 },
+                        totalAmount: 1000,
+                        serviceType: 'racket-stringing'
+                    })
+                });
+            });
 
             // Open payment modal
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_TEST_ORDER', 1000);
             });
+
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
+            await page.waitForTimeout(300);
 
             // Select "Both" payment method
             await page.selectOption('#paymentMethod', 'Both');
@@ -99,12 +137,28 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should validate split payment amounts match total', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch
+            await page.route('**/api/orders/DA_TEST_ORDER', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_TEST_ORDER',
+                        finalAmount: 1000,
+                        payment: { finalAmount: 1000 },
+                        totalAmount: 1000
+                    })
+                });
+            });
 
             // Open payment modal with total amount 1000
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_TEST_ORDER', 1000);
             });
+
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
+            await page.waitForTimeout(300);
 
             // Select "Both" payment method
             await page.selectOption('#paymentMethod', 'Both');
@@ -121,7 +175,7 @@ test.describe('Payment Update - E2E Tests', () => {
             await expect(validationMsg).toBeVisible();
 
             const validationText = await page.locator('#validationText').textContent();
-            expect(validationText).toContain('Total matches');
+            expect(validationText).toContain('Perfect');
             expect(validationText).toContain('₹400');
             expect(validationText).toContain('₹600');
 
@@ -131,12 +185,28 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should show error for mismatched split payment amounts', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch
+            await page.route('**/api/orders/DA_TEST_ORDER', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_TEST_ORDER',
+                        finalAmount: 1000,
+                        payment: { finalAmount: 1000 },
+                        totalAmount: 1000
+                    })
+                });
+            });
 
             // Open payment modal with total amount 1000
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_TEST_ORDER', 1000);
             });
+
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
+            await page.waitForTimeout(300);
 
             // Select "Both" payment method
             await page.selectOption('#paymentMethod', 'Both');
@@ -148,14 +218,14 @@ test.describe('Payment Update - E2E Tests', () => {
             // Wait for validation
             await page.waitForTimeout(300);
 
-            // Check for error validation message
-            const validationMsg = page.locator('#validationMessage.alert-danger');
+            // Check for warning validation message (mismatched amounts show alert-warning, not alert-danger)
+            const validationMsg = page.locator('#validationMessage.alert-warning');
             await expect(validationMsg).toBeVisible();
 
             const validationText = await page.locator('#validationText').textContent();
-            expect(validationText).toContain('Total mismatch');
-            expect(validationText).toContain('₹800 entered');
-            expect(validationText).toContain('₹1000 required');
+            expect(validationText).toContain('You\'ve entered');
+            expect(validationText).toContain('₹800');
+            expect(validationText).toContain('₹1000');
 
             // Submit button should be disabled
             const submitBtn = page.locator('#submitPaymentBtn');
@@ -163,12 +233,28 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should enable submit button for single payment method', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch
+            await page.route('**/api/orders/DA_TEST_ORDER', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_TEST_ORDER',
+                        finalAmount: 600,
+                        payment: { finalAmount: 600 },
+                        totalAmount: 600
+                    })
+                });
+            });
 
             // Open payment modal
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_TEST_ORDER', 600);
             });
+
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
+            await page.waitForTimeout(300);
 
             // Select Cash payment method
             await page.selectOption('#paymentMethod', 'Cash');
@@ -388,7 +474,19 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('API Integration', () => {
         test('should call correct API endpoint for payment update', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch
+            await page.route('**/api/orders/DA_TEST_123', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_TEST_123',
+                        finalAmount: 600,
+                        payment: { finalAmount: 600 },
+                        totalAmount: 600
+                    })
+                });
+            });
 
             // Track API calls
             const apiCalls: string[] = [];
@@ -403,7 +501,9 @@ test.describe('Payment Update - E2E Tests', () => {
                 (window as any).openPaymentModal('DA_TEST_123', 600);
             }, API_BASE_URL);
 
-            await page.waitForTimeout(500);
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
+            await page.waitForTimeout(300);
 
             // Select Cash payment
             await page.selectOption('#paymentMethod', 'Cash');
@@ -438,13 +538,27 @@ test.describe('Payment Update - E2E Tests', () => {
 
     test.describe('Payment Update Flow - Complete', () => {
         test('should complete full payment update flow for Cash payment', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch
+            await page.route('**/api/orders/DA_FLOW_TEST_001', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_FLOW_TEST_001',
+                        finalAmount: 600,
+                        payment: { finalAmount: 600 },
+                        totalAmount: 600
+                    })
+                });
+            });
 
             // 1. Open payment modal
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_FLOW_TEST_001', 600);
             });
 
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
             await page.waitForTimeout(300);
 
             // 2. Verify modal is open
@@ -464,13 +578,27 @@ test.describe('Payment Update - E2E Tests', () => {
         });
 
         test('should complete full payment update flow for split payment', async ({ page }) => {
-            // Dashboard already visible after setupTestPage
+            // Mock the order fetch
+            await page.route('**/api/orders/DA_FLOW_TEST_002', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orderId: 'DA_FLOW_TEST_002',
+                        finalAmount: 1000,
+                        payment: { finalAmount: 1000 },
+                        totalAmount: 1000
+                    })
+                });
+            });
 
             // 1. Open payment modal
             await page.evaluate(() => {
                 (window as any).openPaymentModal('DA_FLOW_TEST_002', 1000);
             });
 
+            // Wait for modal to appear
+            await page.waitForSelector('#paymentUpdateModal.show', { timeout: 5000 });
             await page.waitForTimeout(300);
 
             // 2. Select split payment

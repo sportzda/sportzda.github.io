@@ -229,6 +229,21 @@ test.describe('Badge Count Tests', () => {
 
     test.describe('Bat Knocking - Multiple Bats in Same Order', () => {
         test('should count individual bats, not orders - 2 bats in progress in 1 order', async ({ page }) => {
+            // Mock authentication to avoid login modal
+            await page.addInitScript(() => {
+                sessionStorage.setItem('staffAuthToken', 'test_token_123');
+                sessionStorage.setItem('staffUser', 'teststaff');
+            });
+
+            // Mock auth verification
+            await page.route('**/api/staff/verify', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({ success: true })
+                });
+            });
+
             await page.route('**/api/orders*', async (route) => {
                 await route.fulfill({
                     status: 200,
@@ -268,11 +283,21 @@ test.describe('Badge Count Tests', () => {
             });
 
             await page.goto('/staff-dashboard.html');
-            await page.waitForSelector('.dashboard-content', { timeout: 5000 });
+            await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(1000); // Let dashboard load orders
 
             // Switch to bat-knocking tab
             await page.click('text=Bat Knocking');
+
+            // Wait for order cards to render first, then badges should update
+            await page.waitForSelector('.order-card', { timeout: 10000 });
             await page.waitForTimeout(500);
+
+            // Wait for badges to update - they should change from initial state
+            await page.waitForFunction(() => {
+                const badge = document.querySelector('#inProgressCount');
+                return badge && badge.textContent === '2';
+            }, { timeout: 10000 });
 
             // Check In Progress badge count - should be 2 (not 1)
             const inProgressBadge = page.locator('#inProgressCount');
@@ -280,6 +305,21 @@ test.describe('Badge Count Tests', () => {
         });
 
         test('should count bats correctly across multiple orders', async ({ page }) => {
+            // Mock authentication to avoid login modal
+            await page.addInitScript(() => {
+                sessionStorage.setItem('staffAuthToken', 'test_token_123');
+                sessionStorage.setItem('staffUser', 'teststaff');
+            });
+
+            // Mock auth verification
+            await page.route('**/api/staff/verify', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({ success: true })
+                });
+            });
+
             await page.route('**/api/orders*', async (route) => {
                 await route.fulfill({
                     status: 200,
@@ -318,11 +358,22 @@ test.describe('Badge Count Tests', () => {
             });
 
             await page.goto('/staff-dashboard.html');
-            await page.waitForSelector('.dashboard-content', { timeout: 5000 });
+            await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(1000); // Let dashboard load orders
 
-            // Switch to bat-knocking
+            // Switch to bat-knocking tab
             await page.click('text=Bat Knocking');
+
+            // Wait for order cards to render first
+            await page.waitForSelector('.order-card', { timeout: 10000 });
             await page.waitForTimeout(500);
+
+            // Wait for badges to update
+            await page.waitForFunction(() => {
+                const received = document.querySelector('#receivedCount');
+                const inProgress = document.querySelector('#inProgressCount');
+                return received && inProgress && received.textContent === '1' && inProgress.textContent === '2';
+            }, { timeout: 10000 });
 
             // Received: 1, In Progress: 2, Completed: 1
             await expect(page.locator('#receivedCount')).toHaveText('1');

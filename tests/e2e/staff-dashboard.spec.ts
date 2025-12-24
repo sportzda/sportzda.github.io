@@ -38,7 +38,8 @@ test.describe('Staff Dashboard Tests', () => {
                                         batModel: 'MRF Grand',
                                         cost: 10000,
                                         threading: 'none',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     }
                                 ]
                             }
@@ -51,10 +52,13 @@ test.describe('Staff Dashboard Tests', () => {
 
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(500); // Let render complete
 
             // Navigate to bat-knocking tab to trigger the display
             await page.click('text=Bat Knocking');
-            await page.waitForTimeout(500); // Wait for render
+
+            // Wait for order card to appear - with longer timeout for API response
+            await page.waitForSelector('.order-card', { timeout: 10000 });
 
             // Check that the order card shows the cost
             const orderCard = page.locator('.order-card').first();
@@ -105,7 +109,8 @@ test.describe('Staff Dashboard Tests', () => {
                                         batModel: 'SS TON',
                                         cost: 15000,
                                         threading: 'both',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     }
                                 ]
                             }
@@ -118,10 +123,13 @@ test.describe('Staff Dashboard Tests', () => {
 
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(500);
 
             // Navigate to bat-knocking tab
             await page.click('text=Bat Knocking');
-            await page.waitForTimeout(500);
+
+            // Wait for order card to appear - with longer timeout for API response
+            await page.waitForSelector('.order-card', { timeout: 10000 });
 
             // Check that the order card shows cost
             const orderCard = page.locator('.order-card').first();
@@ -170,7 +178,8 @@ test.describe('Staff Dashboard Tests', () => {
                                         batModel: 'MRF Grand',
                                         cost: 10000,
                                         threading: 'top',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     }
                                 ]
                             }
@@ -183,10 +192,14 @@ test.describe('Staff Dashboard Tests', () => {
 
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(500);
 
             // Navigate to bat-knocking tab
             await page.click('text=Bat Knocking');
-            await page.waitForTimeout(500);
+
+            // Wait for order cards and metadata to appear
+            await page.waitForSelector('.order-card', { timeout: 10000 });
+            await page.waitForSelector('.item-meta', { timeout: 10000 });
 
             // Check that the threading text is displayed with 'Threading' prefix
             const itemMeta = page.locator('.item-meta').first();
@@ -230,7 +243,8 @@ test.describe('Staff Dashboard Tests', () => {
                                         batModel: 'MRF Grand',
                                         cost: 10000,
                                         threading: 'none',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     }
                                 ]
                             }
@@ -243,16 +257,17 @@ test.describe('Staff Dashboard Tests', () => {
 
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(500);
 
             // Navigate to bat-knocking and click View Details
             await page.click('text=Bat Knocking');
-            await page.waitForTimeout(500);
 
             // Wait for order card to appear
-            await page.waitForSelector('.order-card', { timeout: 5000 });
+            await page.waitForSelector('.order-card', { timeout: 10000 });
+            await page.waitForTimeout(500); // Let card fully render
 
             await page.click('button:has-text("View Details")');
-            await page.waitForTimeout(300);
+            await page.waitForTimeout(500); // Let modal appear
 
             // Check that Threading row is NOT in the modal
             const modal = page.locator('[role="dialog"]').first();
@@ -301,7 +316,8 @@ test.describe('Staff Dashboard Tests', () => {
                                         batModel: 'SS TON',
                                         cost: 15000,
                                         threading: 'both',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     }
                                 ]
                             }
@@ -314,16 +330,17 @@ test.describe('Staff Dashboard Tests', () => {
 
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(500);
 
             // Navigate to bat-knocking and click View Details
             await page.click('text=Bat Knocking');
-            await page.waitForTimeout(500);
 
             // Wait for order card to appear
-            await page.waitForSelector('.order-card', { timeout: 5000 });
+            await page.waitForSelector('.order-card', { timeout: 10000 });
+            await page.waitForTimeout(500); // Let card fully render
 
             await page.click('button:has-text("View Details")');
-            await page.waitForTimeout(300);
+            await page.waitForTimeout(500); // Let modal appear
 
             // Check that Threading row IS in the modal with correct value
             const modal = page.locator('[role="dialog"]').first();
@@ -373,19 +390,22 @@ test.describe('Staff Dashboard Tests', () => {
                                         batModel: 'MRF Grand',
                                         cost: 10000,
                                         threading: 'none',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     },
                                     {
                                         batModel: 'SS TON',
                                         cost: 15000,
                                         threading: 'top',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     },
                                     {
                                         batModel: 'SG KLR',
                                         cost: 20000,
                                         threading: 'both',
-                                        qty: 1
+                                        qty: 1,
+                                        status: 0 // received
                                     }
                                 ]
                             }
@@ -398,10 +418,14 @@ test.describe('Staff Dashboard Tests', () => {
 
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            await page.waitForTimeout(500);
 
             // Navigate to bat-knocking tab
             await page.click('text=Bat Knocking');
-            await page.waitForTimeout(500);
+
+            // Wait for order cards to appear
+            await page.waitForSelector('.order-card', { timeout: 10000 });
+            await page.waitForTimeout(500); // Let all cards render
 
             // Get all order cards from the active "Received" tab only
             const cards = await page.locator('#received .order-card').all();

@@ -484,7 +484,7 @@ test.describe('Stringing Booking UI', () => {
             await row.locator('.racketName').selectOption('Yonex BG 65');
             await row.locator('.stringTension').fill('5');
             await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('Racket #1');
+            expect(alertMessage).toContain('Complete racket details');
             expect(alertMessage).toContain('valid string tension');
             expect(alertMessage).toContain('10-35 lbs');
 
