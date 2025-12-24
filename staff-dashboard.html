@@ -2763,9 +2763,9 @@
             window.openPaymentModal = async function (orderId, totalAmount) {
                 try {
                     showLoadingOverlay('Loading order details...');
-                    
+
                     console.log(`[${orderId}] Fetching complete order from API...`);
-                    
+
                     // Fetch complete order from API to get full payment details
                     const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`);
 
@@ -2779,17 +2779,17 @@
 
                     const orderData = await response.json();
                     console.log(`[${orderId}] Order data received:`, JSON.stringify(orderData));
-                    
+
                     const order = orderData.order || orderData;
 
                     // Extract finalAmount from payment object - IMPORTANT: check all possible locations
                     let finalAmount = 0;
-                    
+
                     // Try payment.finalAmount first (most reliable)
                     if (order.payment && order.payment.finalAmount) {
                         finalAmount = order.payment.finalAmount;
                         console.log(`[${orderId}] Found finalAmount in payment.finalAmount:`, finalAmount);
-                    } 
+                    }
                     // Try order.finalAmount second
                     else if (order.finalAmount) {
                         finalAmount = order.finalAmount;
@@ -2828,7 +2828,7 @@
                     // Show modal
                     modal.classList.add('show');
                     document.body.classList.add('modal-open');
-                    
+
                     hideLoadingOverlay();
                     console.log(`[${orderId}] ✅ Payment modal opened successfully with finalAmount: ${finalAmount}`);
                 } catch (error) {
@@ -2861,10 +2861,10 @@
                     splitInputs.style.display = 'none';
                     validationMsg.style.display = 'block';
                     validationMsg.className = 'alert alert-info';
-                    
+
                     const methodLabel = method === 'Cash' ? 'cash' : 'card';
                     validationText.innerHTML = `💡 You'll pay ₹${finalAmount} via ${methodLabel}. This is the full order amount.`;
-                    
+
                     submitBtn.disabled = false;
                 } else {
                     splitInputs.style.display = 'none';
