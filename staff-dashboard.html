@@ -2320,6 +2320,14 @@
                 };
 
                 const statusValue = statusMap[status];
+
+                // Refresh orders from API before populating
+                try {
+                    await fetchAllOrders();
+                } catch (err) {
+                    console.error('Failed to refresh orders:', err);
+                }
+
                 populateTabFromCache(status, statusValue);
             }
 
@@ -2811,14 +2819,9 @@
                                         (Payment Pending)
                                     </span>
                                 </div>
-                                <div class="payment-method-selector">
-                                    <select id="payment-method-${order.orderId}" class="form-select">
-                                        <option value="">-- Select Payment Method --</option>
-                                        <option value="Cash">Cash</option>
-                                        <option value="AX" selected>Axis Bank (AX)</option>
-                                    </select>
-                                    <button class="btn-update-payment" onclick="updatePaymentMethod('${order.orderId}')">
-                                        <i class="bi bi-check-circle"></i> Update
+                                <div style="display: flex; justify-content: flex-end; margin-top: 0.75rem;">
+                                    <button class="btn btn-sm btn-primary" onclick="openPaymentModal('${order.orderId}')">
+                                        <i class="bi bi-currency-rupee"></i> Update Payment
                                     </button>
                                 </div>
                             </div>
@@ -3244,24 +3247,82 @@
             });
 
             // Payment Update Modal Functions
-            window.openPaymentModal = function (orderId, totalAmount) {
-                const modal = document.getElementById('paymentUpdateModal');
+            window.openPaymentModal = async function (orderId, totalAmount) {
+                try {
+                    showLoadingOverlay('Loading order details...');
 
-                // Populate modal fields
-                document.getElementById('paymentOrderId').value = orderId;
-                document.getElementById('paymentTotalAmount').value = totalAmount;
+                    console.log(`[${orderId}] Fetching complete order from API...`);
 
-                // Reset form
-                document.getElementById('paymentMethod').value = '';
-                document.getElementById('cashAmount').value = '';
-                document.getElementById('axAmount').value = '';
-                document.getElementById('splitPaymentInputs').style.display = 'none';
-                document.getElementById('validationMessage').style.display = 'none';
-                document.getElementById('submitPaymentBtn').disabled = true;
+                    // Fetch complete order from API to get full payment details
+                    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`);
 
-                // Show modal
-                modal.classList.add('show');
-                document.body.classList.add('modal-open');
+                    console.log(`[${orderId}] API response status:`, response.status);
+
+                    if (!response.ok) {
+                        const errorData = await response.text();
+                        console.error(`[${orderId}] API error response:`, errorData);
+                        throw new Error(`Failed to fetch order (${response.status})`);
+                    }
+
+                    const orderData = await response.json();
+                    console.log(`[${orderId}] Order data received:`, JSON.stringify(orderData));
+
+                    const order = orderData.order || orderData;
+
+                    // Extract finalAmount from payment object - IMPORTANT: check all possible locations
+                    let finalAmount = 0;
+
+                    // Try payment.finalAmount first (most reliable)
+                    if (order.payment && order.payment.finalAmount) {
+                        finalAmount = order.payment.finalAmount;
+                        console.log(`[${orderId}] Found finalAmount in payment.finalAmount:`, finalAmount);
+                    }
+                    // Try order.finalAmount second
+                    else if (order.finalAmount) {
+                        finalAmount = order.finalAmount;
+                        console.log(`[${orderId}] Found finalAmount in order.finalAmount:`, finalAmount);
+                    }
+                    // Fall back to totalAmount last
+                    else if (order.totalAmount) {
+                        finalAmount = order.totalAmount;
+                        console.log(`[${orderId}] Found finalAmount in order.totalAmount:`, finalAmount);
+                    }
+
+                    console.log(`[${orderId}] Final extracted amount:`, finalAmount);
+                    console.log(`[${orderId}] Full payment object:`, JSON.stringify(order.payment));
+
+                    if (!finalAmount || finalAmount <= 0) {
+                        throw new Error(`Could not determine order amount. payment.finalAmount: ${order.payment?.finalAmount}, finalAmount: ${order.finalAmount}, totalAmount: ${order.totalAmount}`);
+                    }
+
+                    // Store order data on the modal for later access
+                    const modal = document.getElementById('paymentUpdateModal');
+                    modal.dataset.currentOrderId = order.orderId;
+                    modal.dataset.currentFinalAmount = finalAmount;
+
+                    // Populate modal fields
+                    document.getElementById('paymentOrderId').value = order.orderId;
+                    document.getElementById('paymentTotalAmount').value = finalAmount;
+
+                    // Reset form
+                    document.getElementById('paymentMethod').value = '';
+                    document.getElementById('cashAmount').value = '';
+                    document.getElementById('axAmount').value = '';
+                    document.getElementById('splitPaymentInputs').style.display = 'none';
+                    document.getElementById('validationMessage').style.display = 'none';
+                    document.getElementById('submitPaymentBtn').disabled = true;
+
+                    // Show modal
+                    modal.classList.add('show');
+                    document.body.classList.add('modal-open');
+
+                    hideLoadingOverlay();
+                    console.log(`[${orderId}] ✅ Payment modal opened successfully with finalAmount: ${finalAmount}`);
+                } catch (error) {
+                    hideLoadingOverlay();
+                    console.error('❌ Error opening payment modal:', error);
+                    showToast(`Failed to load order: ${error.message}`, 'error');
+                }
             };
 
             window.closePaymentModal = function () {
@@ -3273,27 +3334,39 @@
             window.handlePaymentMethodChange = function () {
                 const method = document.getElementById('paymentMethod').value;
                 const splitInputs = document.getElementById('splitPaymentInputs');
+                const validationMsg = document.getElementById('validationMessage');
+                const validationText = document.getElementById('validationText');
                 const submitBtn = document.getElementById('submitPaymentBtn');
+                const modal = document.getElementById('paymentUpdateModal');
+                const finalAmount = parseInt(modal.dataset.currentFinalAmount) || 0;
 
                 if (method === 'Both') {
                     splitInputs.style.display = 'block';
                     submitBtn.disabled = true; // Will be enabled by validation
+                    validationMsg.style.display = 'none';
                 } else if (method === 'Cash' || method === 'AX') {
                     splitInputs.style.display = 'none';
+                    validationMsg.style.display = 'block';
+                    validationMsg.className = 'alert alert-info';
+
+                    const methodLabel = method === 'Cash' ? 'cash' : 'card';
+                    validationText.innerHTML = `💡 You'll pay ₹${finalAmount} via ${methodLabel}. This is the full order amount.`;
+
                     submitBtn.disabled = false;
                 } else {
                     splitInputs.style.display = 'none';
+                    validationMsg.style.display = 'none';
                     submitBtn.disabled = true;
                 }
 
                 // Reset split amounts
                 document.getElementById('cashAmount').value = '';
                 document.getElementById('axAmount').value = '';
-                document.getElementById('validationMessage').style.display = 'none';
             };
 
             window.validateSplitPayment = function () {
-                const totalAmount = parseFloat(document.getElementById('paymentTotalAmount').value) || 0;
+                const modal = document.getElementById('paymentUpdateModal');
+                const finalAmount = parseInt(modal.dataset.currentFinalAmount) || 0;
                 const cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
                 const axAmount = parseFloat(document.getElementById('axAmount').value) || 0;
 
@@ -3310,20 +3383,28 @@
 
                 validationMsg.style.display = 'block';
 
-                if (sum === totalAmount) {
+                if (sum === finalAmount) {
                     validationMsg.className = 'alert alert-success';
-                    validationText.innerHTML = `✓ Total matches: ₹${cashAmount} (Cash) + ₹${axAmount} (AX) = ₹${sum}`;
+                    validationText.innerHTML = `✓ Perfect! ₹${cashAmount} (Cash) + ₹${axAmount} (Card) = ₹${sum}`;
                     submitBtn.disabled = false;
+                } else if (sum < finalAmount) {
+                    validationMsg.className = 'alert alert-warning';
+                    const remaining = finalAmount - sum;
+                    validationText.innerHTML = `⚠ You've entered ₹${sum}, but the order total is ₹${finalAmount}. You still need to collect ₹${remaining}.`;
+                    submitBtn.disabled = true;
                 } else {
-                    validationMsg.className = 'alert alert-danger';
-                    validationText.innerHTML = `⚠ Total mismatch: ₹${sum} entered but ₹${totalAmount} required. ${sum < totalAmount ? 'Add ₹' + (totalAmount - sum) + ' more.' : 'Reduce by ₹' + (sum - totalAmount) + '.'}`;
+                    validationMsg.className = 'alert alert-warning';
+                    const excess = sum - finalAmount;
+                    validationText.innerHTML = `⚠ You've entered ₹${sum}, but the order total is only ₹${finalAmount}. Please reduce by ₹${excess}.`;
                     submitBtn.disabled = true;
                 }
             };
 
             window.submitPaymentUpdate = async function () {
+                const modal = document.getElementById('paymentUpdateModal');
                 const orderId = document.getElementById('paymentOrderId').value;
                 const totalAmount = parseFloat(document.getElementById('paymentTotalAmount').value);
+                const finalAmount = parseInt(modal.dataset.currentFinalAmount) || 0;
                 const paymentMethod = document.getElementById('paymentMethod').value;
 
                 let cashAmount = 0;
@@ -3333,11 +3414,23 @@
                 if (paymentMethod === 'Both') {
                     cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
                     axAmount = parseFloat(document.getElementById('axAmount').value) || 0;
-                    finalPaymentMethod = 'Cash+AX';  // Change "Both" to "Cash+AX"
+                    finalPaymentMethod = 'Cash+AX';
                 } else if (paymentMethod === 'Cash') {
                     cashAmount = totalAmount;
                 } else if (paymentMethod === 'AX') {
                     axAmount = totalAmount;
+                }
+
+                // Validate total payment equals finalAmount
+                const collectedAmount = cashAmount + axAmount;
+                if (collectedAmount !== finalAmount) {
+                    const difference = finalAmount - collectedAmount;
+                    if (difference > 0) {
+                        showToast(`Incomplete payment. Order total is ₹${finalAmount}. You're short by ₹${difference}.`, 'error');
+                    } else {
+                        showToast(`Excess payment. Order total is ₹${finalAmount}. You've collected ₹${collectedAmount}.`, 'error');
+                    }
+                    return;
                 }
 
                 // Disable button during submission
@@ -3349,7 +3442,7 @@
                 try {
                     const payload = {
                         paymentMethod: finalPaymentMethod,
-                        totalAmount
+                        totalAmount: finalAmount
                     };
 
                     if (paymentMethod === 'Both') {
@@ -3376,6 +3469,12 @@
 
                         // Refresh the current tab to show updated data
                         loadTabData(currentStatus);
+
+                        // Also refresh pending payments if visible
+                        const pendingPaymentsTab = document.getElementById('pending-payments-tab');
+                        if (pendingPaymentsTab && pendingPaymentsTab.classList.contains('active')) {
+                            await loadPendingPayments();
+                        }
                     } else {
                         const errorData = await response.json();
                         showToast(errorData.error || 'Failed to update payment', 'error');

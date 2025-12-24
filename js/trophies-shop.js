@@ -3,46 +3,52 @@
  * Handles product filtering, cart management, and checkout
  */
 
-// Product Database - Will be loaded from API
-let products = [];
+// Product Database
+const products = [
+    // Cricket Trophies
+    { id: 1, name: 'Golden Cricket Trophy', sport: 'cricket', type: 'trophy', price: 2500, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
+    { id: 2, name: 'Cricket Champions Cup', sport: 'cricket', type: 'cup', price: 3200, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
+    { id: 3, name: 'Cricket Winner Medal', sport: 'cricket', type: 'medal', price: 450, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 4, name: 'Cricket Shield Award', sport: 'cricket', type: 'shield', price: 1800, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
+    { id: 5, name: 'Cricket Excellence Plaque', sport: 'cricket', type: 'plaque', price: 1200, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
 
-// Get backend URL (auto-detect local vs production)
-function getBackendUrl() {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return 'http://localhost:3000';
-    }
-    return 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
-}
+    // Football Trophies
+    { id: 6, name: 'Football Champion Trophy', sport: 'football', type: 'trophy', price: 2800, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
+    { id: 7, name: 'Golden Football Cup', sport: 'football', type: 'cup', price: 3500, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
+    { id: 8, name: 'Football Star Medal', sport: 'football', type: 'medal', price: 500, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 9, name: 'Football Victory Shield', sport: 'football', type: 'shield', price: 1900, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
+    { id: 10, name: 'Football Legend Plaque', sport: 'football', type: 'plaque', price: 1300, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
 
-// Fetch trophies from MongoDB via backend API
-async function loadTrophiesFromAPI() {
-    try {
-        const apiUrl = getBackendUrl() + '/api/trophies';
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+    // Basketball Trophies
+    { id: 11, name: 'Basketball Elite Trophy', sport: 'basketball', type: 'trophy', price: 2600, image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400' },
+    { id: 12, name: 'Basketball MVP Cup', sport: 'basketball', type: 'cup', price: 3300, image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400' },
+    { id: 13, name: 'Basketball Achievement Medal', sport: 'basketball', type: 'medal', price: 480, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 14, name: 'Basketball Honor Shield', sport: 'basketball', type: 'shield', price: 1750, image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400' },
 
-        if (data.trophies && Array.isArray(data.trophies)) {
-            products = data.trophies.map((trophy, index) => ({
-                id: trophy._id || index,
-                name: trophy.name,
-                sport: trophy.category?.toLowerCase() || 'general',
-                type: 'trophy', // Default type since API stores in category
-                price: trophy.price,
-                image: trophy.images && trophy.images.length > 0 ? trophy.images[0] : '/img/placeholder-trophy.png',
-                images: trophy.images || [], // Store all images
-                description: trophy.description,
-                size: trophy.size,
-                customizable: trophy.customizable,
-                available: trophy.available
-            }));
-            console.log('Loaded trophies from API:', products);
-        }
-    } catch (error) {
-        console.error('Error loading trophies from API:', error);
-        // Fallback: if API fails, use empty array (will show no products)
-        products = [];
-    }
-}
+    // Badminton Trophies
+    { id: 15, name: 'Badminton Winner Trophy', sport: 'badminton', type: 'trophy', price: 2400, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
+    { id: 16, name: 'Badminton Champions Cup', sport: 'badminton', type: 'cup', price: 3000, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
+    { id: 17, name: 'Badminton Gold Medal', sport: 'badminton', type: 'medal', price: 420, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 18, name: 'Badminton Victory Shield', sport: 'badminton', type: 'shield', price: 1650, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
+
+    // Karate Trophies
+    { id: 19, name: 'Karate Black Belt Trophy', sport: 'karate', type: 'trophy', price: 2700, image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400' },
+    { id: 20, name: 'Karate Master Cup', sport: 'karate', type: 'cup', price: 3400, image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400' },
+    { id: 21, name: 'Karate Excellence Medal', sport: 'karate', type: 'medal', price: 520, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 22, name: 'Karate Honor Plaque', sport: 'karate', type: 'plaque', price: 1400, image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400' },
+
+    // Running Trophies
+    { id: 23, name: 'Marathon Trophy', sport: 'running', type: 'trophy', price: 2300, image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400' },
+    { id: 24, name: 'Running Champion Medal', sport: 'running', type: 'medal', price: 400, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 25, name: 'Sprint Victory Cup', sport: 'running', type: 'cup', price: 2900, image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400' },
+
+    // Tennis Trophies
+    { id: 26, name: 'Tennis Grand Slam Trophy', sport: 'tennis', type: 'trophy', price: 2900, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
+    { id: 27, name: 'Tennis Champion Cup', sport: 'tennis', type: 'cup', price: 3600, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
+    { id: 28, name: 'Tennis Winner Medal', sport: 'tennis', type: 'medal', price: 470, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
+    { id: 29, name: 'Tennis Excellence Shield', sport: 'tennis', type: 'shield', price: 1850, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
+    { id: 30, name: 'Tennis Legend Plaque', sport: 'tennis', type: 'plaque', price: 1350, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
+];
 
 // State Management
 let cart = JSON.parse(localStorage.getItem('dasportz_cart')) || [];
@@ -52,156 +58,7 @@ let currentFilters = {
 };
 
 // Initialize
-
-// Trophy Admin Add Form Logic
-function setupTrophyAdminForm() {
-    const adminSection = document.getElementById('trophyAdminSection');
-    const addForm = document.getElementById('addTrophyForm');
-    const statusDiv = document.getElementById('addTrophyStatus');
-    const imagesInput = document.getElementById('trophyImagesInput');
-    const imagePreview = document.getElementById('trophyImagePreview');
-
-    // Check if staff user (check localStorage or sessionStorage)
-    const isStaff = checkStaffStatus();
-    if (isStaff && adminSection) {
-        adminSection.style.display = 'block';
-    }
-
-    // Image preview handler
-    if (imagesInput) {
-        imagesInput.addEventListener('change', function (e) {
-            imagePreview.innerHTML = '';
-            const files = e.target.files;
-
-            if (files.length > 0) {
-                const previewContainer = document.createElement('div');
-                previewContainer.className = 'row g-3 mb-3';
-
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-
-                    // Validate file type
-                    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-                    if (!validTypes.includes(file.type)) {
-                        showStatus(`Invalid file type: ${file.name}. Only JPEG, PNG, WEBP, GIF allowed.`, 'danger');
-                        continue;
-                    }
-
-                    // Validate file size (5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        showStatus(`File too large: ${file.name}. Max 5MB per image.`, 'danger');
-                        continue;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        const col = document.createElement('div');
-                        col.className = 'col-md-6 col-lg-4';
-                        col.innerHTML = `
-                            <div class="card border-0 shadow-sm overflow-hidden">
-                                <img src="${event.target.result}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="${file.name}">
-                                <div class="card-body p-2">
-                                    <small class="text-muted d-block text-truncate">${file.name}</small>
-                                    <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
-                                </div>
-                            </div>
-                        `;
-                        previewContainer.appendChild(col);
-                    };
-                    reader.readAsDataURL(file);
-                }
-
-                imagePreview.appendChild(previewContainer);
-            }
-        });
-    }
-
-    // Form submission
-    if (addForm) {
-        addForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            // Validate required fields
-            const name = addForm.querySelector('input[name="name"]').value.trim();
-            const price = addForm.querySelector('input[name="price"]').value;
-            const size = addForm.querySelector('input[name="size"]').value.trim();
-
-            if (!name || !price || !size) {
-                showStatus('Please fill in all required fields (Name, Price, Size).', 'danger');
-                return;
-            }
-
-            // Create FormData
-            const formData = new FormData(addForm);
-
-            // Get images and append to FormData
-            const images = imagesInput.files;
-            for (let i = 0; i < images.length; i++) {
-                formData.append('images', images[i]);
-            }
-
-            try {
-                showStatus('Uploading trophy...', 'info');
-                const apiUrl = getBackendUrl() + '/api/trophies';
-                const res = await fetch(apiUrl, {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
-
-                const data = await res.json();
-
-                if (res.ok && data.trophy) {
-                    showStatus('Trophy added successfully! ID: ' + data.trophy._id, 'success');
-                    addForm.reset();
-                    imagePreview.innerHTML = '';
-
-                    // Reload products after 2 seconds
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                } else {
-                    showStatus(data.error || data.message || 'Failed to add trophy.', 'danger');
-                }
-            } catch (err) {
-                showStatus('Error: ' + err.message, 'danger');
-                console.error('Trophy upload error:', err);
-            }
-        });
-    }
-
-    function showStatus(message, type) {
-        statusDiv.textContent = message;
-        statusDiv.className = `alert alert-${type}`;
-        statusDiv.classList.remove('d-none');
-
-        if (type === 'success') {
-            setTimeout(() => {
-                statusDiv.classList.add('d-none');
-            }, 5000);
-        }
-    }
-}
-
-function checkStaffStatus() {
-    // Check if user is logged in as staff
-    // This checks sessionStorage/localStorage for staff token or status
-    const staffUser = sessionStorage.getItem('staffUser') || localStorage.getItem('staffUser');
-    return !!staffUser;
-}
-
-function getBackendUrl() {
-    // Auto-detect backend URL
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return 'http://localhost:3000';
-    }
-    return 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-    // Load trophies from API first
-    await loadTrophiesFromAPI();
-
+document.addEventListener('DOMContentLoaded', () => {
     initializeFilters();
     displayProducts();
     updateCartUI();
@@ -301,15 +158,11 @@ function displayProducts() {
             col.className = 'col-lg-3 col-md-4 col-sm-6';
             col.style.animationDelay = `${index * 0.1}s`;
 
-            const isSoldOut = !product.inventory || product.inventory <= 0;
-            const soldOutClass = isSoldOut ? 'sold-out' : '';
-            const buttonDisabled = isSoldOut ? 'disabled' : '';
-
             col.innerHTML = `
-                <div class="product-card ${soldOutClass}" onclick="showProductImage('${product.id}')" style="cursor: pointer;">
+                <div class="product-card" onclick="showProductImage(${product.id})" style="cursor: pointer;">
                     <div class="product-image">
+                        <span class="product-badge">${capitalizeFirst(product.type)}</span>
                         <img src="${product.image}" alt="${product.name}">
-                        ${isSoldOut ? '<div class="sold-out-badge"><span>Sold Out</span></div>' : ''}
                     </div>
                     <div class="product-body">
                         <div class="product-title">${product.name}</div>
@@ -318,11 +171,11 @@ function displayProducts() {
                         </div>
                         <div class="product-price">₹${product.price.toLocaleString('en-IN')}</div>
                         <div class="product-actions" onclick="event.stopPropagation();">
-                            <button class="btn-buy-now ${buttonDisabled}" onclick="showCustomizationModal('${product.id}', 'buy')" title="Buy Now" ${buttonDisabled}>
-                                <i class="bi bi-bag-check"></i>Buy
+                            <button class="btn-buy-now" onclick="showCustomizationModal(${product.id}, 'buy')">
+                                Buy Now
                             </button>
-                            <button class="btn-add-cart ${buttonDisabled}" onclick="showCustomizationModal('${product.id}', 'add')" title="Add to Cart" ${buttonDisabled}>
-                                <i class="bi bi-cart-plus"></i>Cart
+                            <button class="btn-add-cart" onclick="showCustomizationModal(${product.id}, 'add')">
+                                Add to Cart
                             </button>
                         </div>
                     </div>
@@ -401,9 +254,6 @@ function updateCartUI() {
     cartTotal.textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
     modalTotal.textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
 
-    // Update checkout amounts if modal is open
-    updateCheckoutAmounts();
-
     // Update cart body
     if (cart.length === 0) {
         cartBody.innerHTML = `
@@ -438,7 +288,7 @@ function updateCartUI() {
                         </button>
                     </div>
                 </div>
-                <button class="cart-item-remove" onclick="removeFromCart('${item.id}', ${JSON.stringify(item.customization).replace(/"/g, '&quot;')})">
+                <button class="cart-item-remove" onclick="removeFromCart(${item.id}, ${JSON.stringify(item.customization).replace(/"/g, '&quot;')})">
                     <i class="bi bi-trash"></i>
                 </button>
             </div>
@@ -573,10 +423,6 @@ function confirmCustomization() {
     }
 }
 
-// Store current product for image navigation
-let currentProductImage = null;
-let currentImageIndex = 0;
-
 /**
  * Show product image in modal
  */
@@ -584,28 +430,14 @@ function showProductImage(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    // Store current product and reset image index
-    currentProductImage = product;
-    currentImageIndex = 0;
-
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const modalProductName = document.getElementById('modalProductName');
     const modalProductDetails = document.getElementById('modalProductDetails');
 
-    // Get all images or fallback to single image
-    const images = product.images && product.images.length > 0 ? product.images : [product.image];
-
-    // Display first image
-    modalImage.src = images[0];
+    modalImage.src = product.image;
     modalProductName.textContent = product.name;
     modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${capitalizeFirst(product.type)} | ₹${product.price.toLocaleString('en-IN')}`;
-
-    // Update image counter
-    updateImageCounter();
-
-    // Show/hide navigation buttons based on image count
-    updateNavigationButtons();
 
     // Reset customization section
     document.getElementById('customizationSection').style.display = 'none';
@@ -630,110 +462,6 @@ function showProductImage(productId) {
 
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
-
-    // Add keyboard navigation support
-    if (window.imageModalKeyListener) {
-        document.removeEventListener('keydown', window.imageModalKeyListener);
-    }
-
-    window.imageModalKeyListener = (e) => {
-        if (document.getElementById('imageModal').classList.contains('show')) {
-            if (e.key === 'ArrowLeft') {
-                previousImage();
-            } else if (e.key === 'ArrowRight') {
-                nextImage();
-            } else if (e.key === 'Escape') {
-                closeImageModal();
-            }
-        }
-    };
-
-    document.addEventListener('keydown', window.imageModalKeyListener);
-}
-
-/**
- * Navigate to previous image
- */
-function previousImage() {
-    if (!currentProductImage) return;
-
-    const images = currentProductImage.images && currentProductImage.images.length > 0
-        ? currentProductImage.images
-        : [currentProductImage.image];
-
-    if (currentImageIndex > 0) {
-        currentImageIndex--;
-        updateModalImage(images);
-    }
-}
-
-/**
- * Navigate to next image
- */
-function nextImage() {
-    if (!currentProductImage) return;
-
-    const images = currentProductImage.images && currentProductImage.images.length > 0
-        ? currentProductImage.images
-        : [currentProductImage.image];
-
-    if (currentImageIndex < images.length - 1) {
-        currentImageIndex++;
-        updateModalImage(images);
-    }
-}
-
-/**
- * Update modal image display
- */
-function updateModalImage(images) {
-    const modalImage = document.getElementById('modalImage');
-    modalImage.src = images[currentImageIndex];
-    updateImageCounter();
-    updateNavigationButtons();
-}
-
-/**
- * Update image counter text
- */
-function updateImageCounter() {
-    if (!currentProductImage) return;
-
-    const images = currentProductImage.images && currentProductImage.images.length > 0
-        ? currentProductImage.images
-        : [currentProductImage.image];
-
-    const counter = document.getElementById('imageCounter');
-    counter.textContent = `${currentImageIndex + 1} of ${images.length}`;
-}
-
-/**
- * Update navigation button states
- */
-function updateNavigationButtons() {
-    if (!currentProductImage) return;
-
-    const images = currentProductImage.images && currentProductImage.images.length > 0
-        ? currentProductImage.images
-        : [currentProductImage.image];
-
-    const prevBtn = document.getElementById('imagePrevBtn');
-    const nextBtn = document.getElementById('imageNextBtn');
-
-    // Show/hide buttons based on image count
-    if (images.length <= 1) {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-        document.getElementById('imageCounter').style.display = 'none';
-    } else {
-        prevBtn.style.display = 'flex';
-        nextBtn.style.display = 'flex';
-        document.getElementById('imageCounter').style.display = 'block';
-
-        // Disable buttons at boundaries
-        prevBtn.disabled = currentImageIndex === 0;
-        nextBtn.disabled = currentImageIndex === images.length - 1;
-    }
 }
 
 /**
@@ -743,16 +471,6 @@ function closeImageModal() {
     const modal = document.getElementById('imageModal');
     modal.classList.remove('show');
     document.body.style.overflow = 'auto';
-
-    // Clean up keyboard listener
-    if (window.imageModalKeyListener) {
-        document.removeEventListener('keydown', window.imageModalKeyListener);
-        window.imageModalKeyListener = null;
-    }
-
-    // Reset current product
-    currentProductImage = null;
-    currentImageIndex = 0;
 }
 
 /**
@@ -852,38 +570,6 @@ function setupEventListeners() {
         });
     });
 
-    // Payment Amount Selection (Full vs 50-50)
-    document.querySelectorAll('.payment-amount-option input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            document.querySelectorAll('.payment-amount-option').forEach(o => o.classList.remove('selected'));
-            this.closest('.payment-amount-option').classList.add('selected');
-            updateCheckoutAmounts();
-        });
-    });
-
-    // Delivery Option Selection (Pickup vs Delivery)
-    document.querySelectorAll('.delivery-option input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function () {
-            document.querySelectorAll('.delivery-option').forEach(o => o.classList.remove('selected'));
-            this.closest('.delivery-option').classList.add('selected');
-            updateDeliveryOption();
-        });
-    });
-
-    // Initialize first payment amount option as selected
-    if (document.getElementById('paymentFull')) {
-        document.getElementById('paymentFull').checked = true;
-        document.getElementById('paymentFull').closest('.payment-amount-option').classList.add('selected');
-        updateCheckoutAmounts();
-    }
-
-    // Initialize first delivery option as selected
-    if (document.getElementById('deliveryPickup')) {
-        document.getElementById('deliveryPickup').checked = true;
-        document.getElementById('deliveryPickup').closest('.delivery-option').classList.add('selected');
-        updateDeliveryOption();
-    }
-
     // Checkout Form
     document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
 }
@@ -894,70 +580,6 @@ function setupEventListeners() {
 function closeCart() {
     document.getElementById('cartSidebar').classList.remove('open');
     document.getElementById('cartOverlay').classList.remove('show');
-}
-
-/**
- * Update checkout amounts based on payment amount option
- */
-function updateCheckoutAmounts() {
-    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const selectedAmount = document.querySelector('input[name="paymentAmount"]:checked');
-    const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked');
-    
-    if (!selectedAmount) return;
-
-    // Delivery charges will be calculated by porter based on location
-    const subtotal = totalAmount;
-
-    const fullAmountDisplay = document.getElementById('fullAmountDisplay');
-    const advanceAmountDisplay = document.getElementById('advanceAmountDisplay');
-    const dueAmountDisplay = document.getElementById('dueAmountDisplay');
-    const modalTotal = document.getElementById('modalTotal');
-
-    if (selectedAmount.value === 'full') {
-        fullAmountDisplay.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
-        modalTotal.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
-    } else {
-        const advanceAmount = Math.ceil(subtotal / 2);
-        const dueAmount = subtotal - advanceAmount;
-        advanceAmountDisplay.textContent = `₹${advanceAmount.toLocaleString('en-IN')}`;
-        dueAmountDisplay.textContent = `₹${dueAmount.toLocaleString('en-IN')}`;
-        modalTotal.textContent = `₹${advanceAmount.toLocaleString('en-IN')}`;
-    }
-}
-
-/**
- * Update delivery option and address field requirements
- */
-function updateDeliveryOption() {
-    const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked');
-    const addressFieldWrapper = document.getElementById('addressFieldWrapper');
-    const deliveryAddress = document.getElementById('deliveryAddress');
-    const addressRequired = document.getElementById('addressRequired');
-    const addressHint = document.getElementById('addressHint');
-    const deliveryNoteHint = document.getElementById('deliveryNoteHint');
-    const addressLabel = document.getElementById('addressLabel');
-
-    if (deliveryOption && deliveryOption.value === 'delivery') {
-        // Delivery selected - show address field and make it required
-        addressFieldWrapper.style.display = 'block';
-        deliveryAddress.setAttribute('required', 'required');
-        addressRequired.textContent = '*';
-        addressHint.textContent = 'Required for home delivery';
-        deliveryNoteHint.style.display = 'block';
-        addressLabel.innerHTML = 'Delivery Address <span id="addressRequired">*</span>';
-    } else {
-        // Pickup selected - hide address field and make it optional
-        addressFieldWrapper.style.display = 'none';
-        deliveryAddress.removeAttribute('required');
-        addressRequired.textContent = '';
-        addressHint.textContent = 'Not required for pickup';
-        deliveryNoteHint.style.display = 'none';
-        addressLabel.innerHTML = 'Delivery Address (Optional)';
-    }
-
-    // Update checkout amounts
-    updateCheckoutAmounts();
 }
 
 /**
@@ -972,88 +594,25 @@ function handleCheckout(e) {
         return;
     }
 
-    const selectedAmount = document.querySelector('input[name="paymentAmount"]:checked');
-    if (!selectedAmount) {
-        alert('Please select payment amount');
-        return;
-    }
-
-    const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked');
-    if (!deliveryOption) {
-        alert('Please select delivery option');
-        return;
-    }
-
-    const deliveryAddress = document.getElementById('deliveryAddress');
-    if (deliveryOption.value === 'delivery' && !deliveryAddress.value.trim()) {
-        alert('Please enter your delivery address');
-        return;
-    }
-
     const paymentMethod = selectedPayment.dataset.payment;
-    const paymentAmount = selectedAmount.value;
     const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    // Delivery charges will be collected by porter based on location
-    const subtotal = totalAmount;
-    
-    let amountToProcess = subtotal;
-    let paymentDescription = `Order Total: ₹${totalAmount.toLocaleString('en-IN')}`;
-    
-    if (deliveryOption.value === 'delivery') {
-        paymentDescription += `\nDelivery: Charges as per location (to be collected by porter)`;
-    }
-    paymentDescription += `\nPayment Amount: ₹${subtotal.toLocaleString('en-IN')}`;
-    
-    if (paymentAmount === 'half') {
-        amountToProcess = Math.ceil(subtotal / 2);
-        const dueAmount = subtotal - amountToProcess;
-        paymentDescription += `\nAdvance (50%): ₹${amountToProcess.toLocaleString('en-IN')}\nDue on Pickup/Dispatch: ₹${dueAmount.toLocaleString('en-IN')}`;
-    }
 
     // Prepare order data
     const orderData = {
         items: cart,
-        productTotal: totalAmount,
-        total: subtotal,
-        deliveryOption: deliveryOption.value,
-        deliveryAddress: deliveryAddress.value || null,
-        deliveryCharges: deliveryOption.value === 'delivery' ? 'To be calculated by porter' : null,
-        paymentAmount: paymentAmount,
-        advanceAmount: paymentAmount === 'half' ? amountToProcess : null,
-        dueAmount: paymentAmount === 'half' ? (subtotal - amountToProcess) : null,
+        total: totalAmount,
         paymentMethod: paymentMethod,
         timestamp: new Date().toISOString()
     };
 
-    // Decrease inventory for each item in cart
-    const inventoryUpdates = cart.map(item => ({
-        trophyId: item.id,
-        quantity: item.quantity
-    }));
-
-    // Send inventory updates to backend
-    Promise.all(inventoryUpdates.map(update => 
-        fetch(`${getBackendUrl()}/api/trophies/${update.trophyId}/decrease-inventory`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ quantity: update.quantity })
-        }).catch(err => console.warn('Failed to update inventory:', err))
-    ));
-
     if (paymentMethod === 'online') {
         // Redirect to payment page (you can integrate Razorpay or other gateway)
-        alert(`Redirecting to online payment gateway...\n${paymentDescription}`);
+        alert(`Redirecting to online payment gateway...\nAmount: ₹${totalAmount.toLocaleString('en-IN')}`);
         // In production, you would redirect to payment-success.html or similar
         window.location.href = 'payment-success.html';
     } else {
-        // Pay At Outlet
-        const deliveryInfo = deliveryOption.value === 'delivery' 
-            ? `\nDelivery Address: ${deliveryAddress.value}`
-            : '\nPickup from our store';
-        
-        const message = `Order placed successfully!\nPayment Method: Pay At Outlet\n${paymentDescription}${deliveryInfo}\n\nWe'll contact you shortly!`;
-        
-        alert(message);
+        // Cash on Delivery
+        alert(`Order placed successfully!\nPayment Method: Cash on Delivery\nTotal: ₹${totalAmount.toLocaleString('en-IN')}\n\nWe'll contact you shortly!`);
 
         // Clear cart
         cart = [];
@@ -1130,5 +689,3 @@ window.quickView = quickView;
 window.showProductImage = showProductImage;
 window.closeImageModal = closeImageModal;
 window.toggleCustomization = toggleCustomization;
-window.previousImage = previousImage;
-window.nextImage = nextImage;

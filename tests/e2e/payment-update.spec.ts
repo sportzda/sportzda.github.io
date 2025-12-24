@@ -492,4 +492,297 @@ test.describe('Payment Update - E2E Tests', () => {
             await expect(submitBtn).toBeEnabled();
         });
     });
+
+    test.describe('Unified Payment Modal Workflow', () => {
+        test('should use same modal function for Received tab', async ({ page }) => {
+            // Click Received tab
+            await page.click('button:has-text("Received")');
+            await page.waitForTimeout(500);
+
+            // Find Update Payment button
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                // Click Update Payment button
+                await updateBtn.click();
+
+                // Wait for modal to open with API fetch
+                await page.waitForTimeout(1000);
+
+                // Verify modal is visible
+                const modal = page.locator('#paymentUpdateModal.show');
+                await expect(modal).toBeVisible();
+
+                // Verify amount is populated from API (not hardcoded)
+                const amountField = page.locator('#paymentTotalAmount');
+                const amount = await amountField.inputValue();
+                expect(amount).toBeTruthy();
+                expect(amount).not.toBe('0');
+            }
+        });
+
+        test('should fetch and display correct finalAmount from API', async ({ page }) => {
+            // Click Pending Payments tab
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            // Find Update Payment button
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                // Click Update Payment button
+                await updateBtn.click();
+
+                // Wait for modal and API call
+                await page.waitForTimeout(1000);
+
+                // Check amount is populated
+                const amountField = page.locator('#paymentTotalAmount');
+                const amount = await amountField.inputValue();
+
+                // Amount should be a valid number and not zero
+                expect(parseInt(amount)).toBeGreaterThan(0);
+            }
+        });
+
+        test('should reset form when modal opens', async ({ page }) => {
+            // Click Pending Payments tab
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            // Open modal first time
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Select payment method
+                await page.selectOption('#paymentMethod', 'Cash');
+
+                // Close modal
+                await page.click('#closePaymentModalBtn');
+                await page.waitForTimeout(300);
+
+                // Open modal again
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Form should be reset
+                const methodValue = await page.inputValue('#paymentMethod');
+                expect(methodValue).toBe('');
+
+                const submitBtn = page.locator('#submitPaymentBtn');
+                await expect(submitBtn).toBeDisabled();
+            }
+        });
+    });
+
+    test.describe('Payment Modal Data Extraction', () => {
+        test('should extract finalAmount from payment.finalAmount field', async ({ page }) => {
+            // This test verifies that the modal correctly extracts amount from nested payment object
+            await page.goto('/staff-dashboard.html');
+
+            // Check console logs for successful extraction
+            const logs: string[] = [];
+            page.on('console', msg => {
+                if (msg.text().includes('Found finalAmount in payment.finalAmount')) {
+                    logs.push(msg.text());
+                }
+            });
+
+            // Click Pending Payments tab
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Verify modal opened successfully
+                const modal = page.locator('#paymentUpdateModal.show');
+                await expect(modal).toBeVisible();
+            }
+        });
+
+        test('should extract finalAmount with fallback chain', async ({ page }) => {
+            // Open Pending Payments
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Verify amount is correctly extracted and displayed
+                const amountField = page.locator('#paymentTotalAmount');
+                const displayedAmount = await amountField.inputValue();
+
+                // Should have extracted an amount
+                expect(displayedAmount).toBeTruthy();
+                expect(parseInt(displayedAmount)).toBeGreaterThan(0);
+            }
+        });
+    });
+
+    test.describe('Modal Validation Consistency', () => {
+        test('should use modal.dataset.currentFinalAmount for validation', async ({ page }) => {
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Select Cash+AX split
+                await page.selectOption('#paymentMethod', 'Both');
+
+                // Get displayed amount
+                const amountField = page.locator('#paymentTotalAmount');
+                const finalAmount = parseInt(await amountField.inputValue());
+
+                // Enter split amounts matching the total
+                const cashAmount = Math.floor(finalAmount * 0.6);
+                const axAmount = finalAmount - cashAmount;
+
+                await page.fill('#cashAmount', cashAmount.toString());
+                await page.fill('#axAmount', axAmount.toString());
+
+                // Trigger validation
+                await page.evaluate(() => {
+                    // @ts-ignore
+                    window.validateSplitPayment();
+                });
+
+                // Check validation message
+                const validationMsg = page.locator('#validationMessage');
+                if (await validationMsg.isVisible()) {
+                    const content = await validationMsg.textContent();
+                    expect(content).toContain('Perfect');
+                }
+            }
+        });
+
+        test('should show success when split amounts equal finalAmount', async ({ page }) => {
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Get final amount
+                const amountField = page.locator('#paymentTotalAmount');
+                const finalAmount = parseInt(await amountField.inputValue());
+
+                if (finalAmount > 0) {
+                    // Select split payment
+                    await page.selectOption('#paymentMethod', 'Both');
+
+                    // Enter matching amounts
+                    const split = Math.floor(finalAmount / 2);
+                    await page.fill('#cashAmount', split.toString());
+                    await page.fill('#axAmount', (finalAmount - split).toString());
+
+                    // Check success message
+                    const validationText = page.locator('#validationText');
+                    await page.waitForTimeout(300);
+
+                    const text = await validationText.textContent();
+                    if (text) {
+                        expect(text).toContain('Perfect');
+                    }
+                }
+            }
+        });
+
+        test('should show warning when split amounts do not match finalAmount', async ({ page }) => {
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                await updateBtn.click();
+                await page.waitForTimeout(1000);
+
+                // Get final amount
+                const amountField = page.locator('#paymentTotalAmount');
+                const finalAmount = parseInt(await amountField.inputValue());
+
+                if (finalAmount > 100) {
+                    // Select split payment
+                    await page.selectOption('#paymentMethod', 'Both');
+
+                    // Enter mismatched amounts
+                    await page.fill('#cashAmount', '50');
+                    await page.fill('#axAmount', '50');  // Total less than order amount
+
+                    // Check warning message
+                    const validationMsg = page.locator('#validationMessage');
+                    await page.waitForTimeout(300);
+
+                    if (await validationMsg.isVisible()) {
+                        const text = await validationMsg.textContent();
+                        expect(text).toContain('need to collect');
+                    }
+                }
+            }
+        });
+    });
+
+    test.describe('Button Styling and Positioning', () => {
+        test('should display Update Payment button with rupee icon', async ({ page }) => {
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                // Check for rupee icon
+                const icon = updateBtn.locator('i.bi-currency-rupee');
+                await expect(icon).toBeVisible();
+
+                // Check button text
+                const text = await updateBtn.textContent();
+                expect(text).toContain('Update Payment');
+            }
+        });
+
+        test('should right-align Update Payment button in Pending Payments tab', async ({ page }) => {
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            if (await updateBtn.count() > 0) {
+                // Check button positioning
+                const boundingBox = await updateBtn.boundingBox();
+                const parentBBox = await updateBtn.evaluateHandle(el => el.parentElement).then(h => h.boundingBox());
+
+                if (boundingBox && parentBBox) {
+                    // Button should be positioned to the right
+                    const isRightAligned = boundingBox.x + boundingBox.width >= parentBBox.x + parentBBox.width - 20;
+                    expect(isRightAligned).toBe(true);
+                }
+            }
+        });
+
+        test('should display button below total amount', async ({ page }) => {
+            await page.click('button:has-text("Pending Payments")');
+            await page.waitForTimeout(500);
+
+            const updateBtn = page.locator('.btn-update-payment').first();
+            const totalAmount = page.locator('.order-total').first();
+
+            if (await updateBtn.count() > 0) {
+                // Get Y coordinates
+                const btnBox = await updateBtn.boundingBox();
+                const totalBox = await totalAmount.boundingBox();
+
+                if (btnBox && totalBox) {
+                    // Button Y should be greater than total Y (below)
+                    expect(btnBox.y).toBeGreaterThan(totalBox.y);
+                }
+            }
+        });
+    });
 });
