@@ -484,7 +484,8 @@ test.describe('Stringing Booking UI', () => {
             await row.locator('.racketName').selectOption('Yonex BG 65');
             await row.locator('.stringTension').fill('5');
             await page.locator('#confirmButton').click();
-            expect(alertMessage).toContain('Complete racket details');
+            // Alert should mention tension validation
+            expect(alertMessage).toContain('valid string tension');
 
             // Fix tension - this should allow the form to proceed to payment
             await row.locator('.stringTension').fill('24');
