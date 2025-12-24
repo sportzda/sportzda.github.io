@@ -185,15 +185,33 @@
                         reader.onload = function (event) {
                             const col = document.createElement('div');
                             col.className = 'col-md-6 col-lg-4';
-                            col.innerHTML = `
-                                <div class="card border-0 shadow-sm overflow-hidden">
-                                    <img src="${event.target.result}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="${file.name}">
-                                    <div class="card-body p-2">
-                                        <small class="text-muted d-block text-truncate">${file.name}</small>
-                                        <small class="text-muted">${(file.size / 1024).toFixed(2)} KB</small>
-                                    </div>
-                                </div>
-                            `;
+
+                            const card = document.createElement('div');
+                            card.className = 'card border-0 shadow-sm overflow-hidden';
+
+                            const img = document.createElement('img');
+                            img.src = event.target.result;
+                            img.className = 'card-img-top';
+                            img.style.height = '150px';
+                            img.style.objectFit = 'cover';
+                            img.alt = file.name;
+
+                            const cardBody = document.createElement('div');
+                            cardBody.className = 'card-body p-2';
+
+                            const fileName = document.createElement('small');
+                            fileName.className = 'text-muted d-block text-truncate';
+                            fileName.textContent = file.name;
+
+                            const fileSize = document.createElement('small');
+                            fileSize.className = 'text-muted';
+                            fileSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
+
+                            cardBody.appendChild(fileName);
+                            cardBody.appendChild(fileSize);
+                            card.appendChild(img);
+                            card.appendChild(cardBody);
+                            col.appendChild(card);
                             previewContainer.appendChild(col);
                         };
                         reader.readAsDataURL(file);
