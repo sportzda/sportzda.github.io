@@ -58,7 +58,7 @@ jobs:
           MONGO_DATABASE: test_dasportz
           JWT_SECRET: test-jwt-secret-key-for-testing-only
           STAFF_USERNAME: staff
-          STAFF_PASSWORD: dasportz2025
+          STAFF_PASSWORD: ${{ secrets.TEST_STAFF_PASSWORD || 'test-password-123' }}
           TWILIO_ACCOUNT_SID: test_account_sid
           TWILIO_AUTH_TOKEN: test_auth_token
           TWILIO_WHATSAPP_FROM: +14155238886
@@ -88,7 +88,7 @@ jobs:
         env:
           API_BASE_URL: http://localhost:3000
           STAFF_USERNAME: staff
-          STAFF_PASSWORD: dasportz2025
+          STAFF_PASSWORD: ${{ secrets.TEST_STAFF_PASSWORD || 'test-password-123' }}
 
       - name: Stop backend server
         if: always()

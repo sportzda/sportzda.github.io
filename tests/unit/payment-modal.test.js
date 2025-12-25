@@ -13,7 +13,7 @@ test.describe('Payment Modal - Frontend Workflow', () => {
     test.beforeEach(async ({ context, page }) => {
         // Create a new context to isolate state
         await page.goto('about:blank');
-        
+
         // Setup HTML
         await page.setContent(`
             <div id="paymentUpdateModal" style="display: none;">
@@ -48,13 +48,13 @@ test.describe('Payment Modal - Frontend Workflow', () => {
                     finalAmount: 1500,  // Should be ignored
                     totalAmount: 1500   // Should be ignored
                 };
-                
-                let finalAmount = mockOrder.payment?.finalAmount || 
-                                 mockOrder.finalAmount || 
-                                 mockOrder.totalAmount || 0;
+
+                let finalAmount = mockOrder.payment?.finalAmount ||
+                    mockOrder.finalAmount ||
+                    mockOrder.totalAmount || 0;
                 return finalAmount;
             });
-            
+
             expect(result).toBe(1400);
         });
 
@@ -66,13 +66,13 @@ test.describe('Payment Modal - Frontend Workflow', () => {
                     totalAmount: 1200,
                     paymentStatus: 'unpaid'
                 };
-                
-                let finalAmount = mockOrder.payment?.finalAmount || 
-                                 mockOrder.finalAmount || 
-                                 mockOrder.totalAmount || 0;
+
+                let finalAmount = mockOrder.payment?.finalAmount ||
+                    mockOrder.finalAmount ||
+                    mockOrder.totalAmount || 0;
                 return finalAmount;
             });
-            
+
             expect(result).toBe(1200);
         });
 
@@ -83,13 +83,13 @@ test.describe('Payment Modal - Frontend Workflow', () => {
                     totalAmount: 800,  // Tertiary source
                     paymentStatus: 'unpaid'
                 };
-                
-                let finalAmount = mockOrder.payment?.finalAmount || 
-                                 mockOrder.finalAmount || 
-                                 mockOrder.totalAmount || 0;
+
+                let finalAmount = mockOrder.payment?.finalAmount ||
+                    mockOrder.finalAmount ||
+                    mockOrder.totalAmount || 0;
                 return finalAmount;
             });
-            
+
             expect(result).toBe(800);
         });
 
@@ -99,13 +99,13 @@ test.describe('Payment Modal - Frontend Workflow', () => {
                     orderId: 'DA_NO_AMOUNT',
                     paymentStatus: 'unpaid'
                 };
-                
-                let finalAmount = mockOrder.payment?.finalAmount || 
-                                 mockOrder.finalAmount || 
-                                 mockOrder.totalAmount || 0;
+
+                let finalAmount = mockOrder.payment?.finalAmount ||
+                    mockOrder.finalAmount ||
+                    mockOrder.totalAmount || 0;
                 return finalAmount;
             });
-            
+
             expect(result).toBe(0);
         });
     });
@@ -115,10 +115,10 @@ test.describe('Payment Modal - Frontend Workflow', () => {
             await page.evaluate(() => {
                 const modal = document.getElementById('paymentUpdateModal') as HTMLDivElement;
                 modal.dataset.currentFinalAmount = '1000';
-                
+
                 const method = 'Cash';
                 const submitBtn = document.getElementById('submitPaymentBtn') as HTMLButtonElement;
-                
+
                 if (method === 'Cash' || method === 'AX') {
                     submitBtn.disabled = false;
                 }
@@ -132,10 +132,10 @@ test.describe('Payment Modal - Frontend Workflow', () => {
             await page.evaluate(() => {
                 const modal = document.getElementById('paymentUpdateModal') as HTMLDivElement;
                 modal.dataset.currentFinalAmount = '1000';
-                
+
                 const method = 'AX';
                 const submitBtn = document.getElementById('submitPaymentBtn') as HTMLButtonElement;
-                
+
                 if (method === 'Cash' || method === 'AX') {
                     submitBtn.disabled = false;
                 }
@@ -150,7 +150,7 @@ test.describe('Payment Modal - Frontend Workflow', () => {
                 const method = 'Both';
                 const splitInputs = document.getElementById('splitPaymentInputs') as HTMLDivElement;
                 const submitBtn = document.getElementById('submitPaymentBtn') as HTMLButtonElement;
-                
+
                 if (method === 'Both') {
                     splitInputs.style.display = 'block';
                     submitBtn.disabled = true;
@@ -167,7 +167,7 @@ test.describe('Payment Modal - Frontend Workflow', () => {
             await page.evaluate(() => {
                 const method = '';
                 const submitBtn = document.getElementById('submitPaymentBtn') as HTMLButtonElement;
-                
+
                 if (!method) {
                     submitBtn.disabled = true;
                 }
@@ -208,7 +208,7 @@ test.describe('Payment Modal - Frontend Workflow', () => {
 
             const msgText = await page.locator('#validationText').textContent();
             expect(msgText).toContain('Perfect');
-            
+
             const disabled = await page.locator('#submitPaymentBtn').isDisabled();
             expect(disabled).toBe(false);
         });
@@ -243,7 +243,7 @@ test.describe('Payment Modal - Frontend Workflow', () => {
 
             const msgText = await page.locator('#validationText').textContent();
             expect(msgText).toContain('still need to collect');
-            
+
             const disabled = await page.locator('#submitPaymentBtn').isDisabled();
             expect(disabled).toBe(true);
         });
@@ -278,7 +278,7 @@ test.describe('Payment Modal - Frontend Workflow', () => {
 
             const msgText = await page.locator('#validationText').textContent();
             expect(msgText).toContain('reduce');
-            
+
             const disabled = await page.locator('#submitPaymentBtn').isDisabled();
             expect(disabled).toBe(true);
         });
@@ -347,10 +347,10 @@ test.describe('Payment Modal - Frontend Workflow', () => {
             await page.evaluate(() => {
                 const modal = document.getElementById('paymentUpdateModal') as HTMLElement;
                 (modal as any).dataset.currentFinalAmount = '1000';
-                
+
                 (document.getElementById('paymentOrderId') as HTMLInputElement).value = 'DA_TEST';
                 (document.getElementById('paymentTotalAmount') as HTMLInputElement).value = '1000';
-                
+
                 // Reset form
                 (document.getElementById('paymentMethod') as HTMLSelectElement).value = '';
                 (document.getElementById('cashAmount') as HTMLInputElement).value = '';

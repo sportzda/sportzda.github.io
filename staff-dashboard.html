@@ -1195,6 +1195,108 @@
         </div>
     </div>
 
+    <!-- Trophy Modal -->
+    <div class="modal fade" id="trophyModal" tabindex="-1" aria-labelledby="trophyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="trophyModalLabel">Add/Edit Trophy</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="trophyForm" enctype="multipart/form-data">
+                        <input type="hidden" id="trophyId" value="">
+                        <div id="trophyFormStatus" class="alert" style="display:none;" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="trophyName" class="form-label">Name *</label>
+                                    <input type="text" class="form-control" id="trophyName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="trophyPrice" class="form-label">Price (₹) *</label>
+                                    <input type="number" class="form-control" id="trophyPrice" min="0" step="0.01"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="trophyCategory" class="form-label">Category</label>
+                                    <select class="form-select" id="trophyCategory">
+                                        <option value="">Select category</option>
+                                        <option value="cricket">Cricket</option>
+                                        <option value="football">Football</option>
+                                        <option value="basketball">Basketball</option>
+                                        <option value="badminton">Badminton</option>
+                                        <option value="karate">Karate</option>
+                                        <option value="running">Running</option>
+                                        <option value="tennis">Tennis</option>
+                                        <option value="general">General</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="trophySize" class="form-label">Height (inches) *</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="trophySize" min="0" step="0.1"
+                                            placeholder="e.g., 12.5" required>
+                                        <span class="input-group-text">in</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="trophyDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="trophyDescription" rows="3"
+                                placeholder="Optional description"></textarea>
+                        </div>
+
+                        <!-- Image Upload Section -->
+                        <div class="mb-3">
+                            <label for="trophyImages" class="form-label">Trophy Images (Optional)</label>
+                            <input type="file" class="form-control" id="trophyImages" multiple
+                                accept="image/jpeg,image/png,image/webp,image/gif">
+                            <small class="text-muted d-block mt-2">
+                                <i class="bi bi-info-circle"></i> Upload up to 3 images (JPG, PNG, WEBP, GIF - Max 5MB
+                                each)
+                            </small>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div id="trophyImagePreview" class="mb-3"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="trophyAvailable">
+                                    <label class="form-check-label" for="trophyAvailable">Available for purchase</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="trophyCustomizable">
+                                    <label class="form-check-label" for="trophyCustomizable">Customizable</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveTrophyBtn">Save Trophy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Dashboard Content (hidden until authenticated) -->
     <div class="dashboard-content">
         <!-- Dashboard Header -->
@@ -1223,78 +1325,153 @@
         </div>
 
         <div class="container pb-5">
-            <!-- Service Selection Menu -->
-            <div class="service-menu">
-                <h5 class="mb-3"><i class="bi bi-list-ul"></i> Select Service</h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <button class="service-menu-btn active" data-service="racket-stringing">
-                        <i class="bi bi-bullseye"></i> Racket Stringing
-                    </button>
-                    <button class="service-menu-btn" data-service="bat-knocking">
-                        <i class="bi bi-hammer"></i> Bat Knocking
-                    </button>
-                    <button id="openQRScanBtn" class="service-menu-btn"
-                        style="background-color: #28a745; border-color: #28a745;">
-                        <i class="bi bi-qr-code"></i> Scan QR
-                    </button>
-                </div>
-            </div>
-
-            <!-- Status Tabs -->
-            <div class="status-tabs">
-                <ul class="nav nav-tabs" id="statusTabs" role="tablist">
+            <!-- Main Navigation Tabs -->
+            <div class="main-nav-tabs mb-4">
+                <ul class="nav nav-tabs" id="mainNavTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="received-tab" data-bs-toggle="tab"
-                            data-bs-target="#received" type="button" role="tab">
-                            <i class="bi bi-inbox"></i> Received
-                            <span class="badge bg-primary rounded-pill ms-2" id="receivedCount">0</span>
+                        <button class="nav-link active" id="select-service-tab" data-bs-toggle="tab"
+                            data-bs-target="#select-service" type="button" role="tab">
+                            <i class="bi bi-list-ul"></i> Select Service
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab" data-bs-target="#in-progress"
-                            type="button" role="tab">
-                            <i class="bi bi-gear"></i> In Progress
-                            <span class="badge bg-warning rounded-pill ms-2" id="inProgressCount">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed"
-                            type="button" role="tab">
-                            <i class="bi bi-check-circle"></i> Completed
-                            <span class="badge bg-success rounded-pill ms-2" id="completedCount">0</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pending-payments-tab" data-bs-toggle="tab"
-                            data-bs-target="#pending-payments" type="button" role="tab">
-                            <i class="bi bi-cash-coin"></i> Pending Payments
-                            <span class="badge bg-danger rounded-pill ms-2" id="pendingPaymentsCount">0</span>
+                        <button class="nav-link" id="trophy-management-main-tab" data-bs-toggle="tab"
+                            data-bs-target="#trophy-management-main" type="button" role="tab">
+                            <i class="bi bi-trophy"></i> Trophy Management
                         </button>
                     </li>
                 </ul>
-                <div class="tab-content" id="statusTabContent">
-                    <!-- Received Tab -->
-                    <div class="tab-pane fade show active" id="received" role="tabpanel">
-                        <div id="receivedContent"></div>
+                <div class="tab-content" id="mainNavTabContent">
+                    <!-- Select Service Tab -->
+                    <div class="tab-pane fade show active" id="select-service" role="tabpanel">
+                        <!-- Service Selection Menu -->
+                        <div class="service-menu">
+                            <h5 class="mb-3"><i class="bi bi-list-ul"></i> Select Service</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="service-menu-btn active" data-service="racket-stringing">
+                                    <i class="bi bi-bullseye"></i> Racket Stringing
+                                </button>
+                                <button class="service-menu-btn" data-service="bat-knocking">
+                                    <i class="bi bi-hammer"></i> Bat Knocking
+                                </button>
+                                <button id="openQRScanBtn" class="service-menu-btn"
+                                    style="background-color: #28a745; border-color: #28a745;">
+                                    <i class="bi bi-qr-code"></i> Scan QR
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Status Tabs -->
+                        <div class="status-tabs">
+                            <ul class="nav nav-tabs" id="statusTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="received-tab" data-bs-toggle="tab"
+                                        data-bs-target="#received" type="button" role="tab">
+                                        <i class="bi bi-inbox"></i> Received
+                                        <span class="badge bg-primary rounded-pill ms-2" id="receivedCount">0</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="in-progress-tab" data-bs-toggle="tab"
+                                        data-bs-target="#in-progress" type="button" role="tab">
+                                        <i class="bi bi-gear"></i> In Progress
+                                        <span class="badge bg-warning rounded-pill ms-2" id="inProgressCount">0</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab"
+                                        data-bs-target="#completed" type="button" role="tab">
+                                        <i class="bi bi-check-circle"></i> Completed
+                                        <span class="badge bg-success rounded-pill ms-2" id="completedCount">0</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="pending-payments-tab" data-bs-toggle="tab"
+                                        data-bs-target="#pending-payments" type="button" role="tab">
+                                        <i class="bi bi-cash-coin"></i> Pending Payments
+                                        <span class="badge bg-danger rounded-pill ms-2"
+                                            id="pendingPaymentsCount">0</span>
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="statusTabContent">
+                                <!-- Received Tab -->
+                                <div class="tab-pane fade show active" id="received" role="tabpanel">
+                                    <div id="receivedContent"></div>
+                                </div>
+
+                                <!-- In Progress Tab -->
+                                <div class="tab-pane fade" id="in-progress" role="tabpanel">
+                                    <div id="inProgressContent"></div>
+                                </div>
+
+                                <!-- Completed Tab -->
+                                <div class="tab-pane fade" id="completed" role="tabpanel">
+                                    <div id="completedContent"></div>
+                                </div>
+
+                                <!-- Pending Payments Tab -->
+                                <div class="tab-pane fade" id="pending-payments" role="tabpanel">
+                                    <div id="pendingPaymentsContent"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- In Progress Tab -->
-                    <div class="tab-pane fade" id="in-progress" role="tabpanel">
-                        <div id="inProgressContent"></div>
-                    </div>
+                    <!-- Trophy Management Tab -->
+                    <div class="tab-pane fade" id="trophy-management-main" role="tabpanel">
+                        <div id="trophyManagementContent">
+                            <!-- Trophy management content will go here -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h4 class="mb-0">Trophy Management</h4>
+                                        <button class="btn btn-primary" id="addTrophyBtn" data-bs-toggle="modal"
+                                            data-bs-target="#trophyModal">
+                                            <i class="bi bi-plus-circle"></i> Add Trophy
+                                        </button>
+                                    </div>
 
-                    <!-- Completed Tab -->
-                    <div class="tab-pane fade" id="completed" role="tabpanel">
-                        <div id="completedContent"></div>
-                    </div>
-
-                    <!-- Pending Payments Tab -->
-                    <div class="tab-pane fade" id="pending-payments" role="tabpanel">
-                        <div id="pendingPaymentsContent"></div>
+                                    <!-- Trophies Table -->
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped" id="trophiesTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Image</th>
+                                                            <th>Name</th>
+                                                            <th>Description</th>
+                                                            <th>Price</th>
+                                                            <th>Category</th>
+                                                            <th>Size</th>
+                                                            <th>Available</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="trophiesTableBody">
+                                                        <!-- Trophies will be loaded here -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="card-title">Custom Orders</h5>
+                        <p class="card-text">Handle custom trophy orders and engraving.</p>
+                        <button class="btn btn-primary">Manage Orders</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
     </div>
 
     <!-- FOOTER -->
@@ -1399,6 +1576,326 @@
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
     <script>
+        // Global helper functions (outside DOMContentLoaded)
+        // Get API base URL
+        function getAPIBaseURL() {
+            return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000'
+                : 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
+        }
+
+        // Toast notification (global)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast-notification toast-${type}`;
+
+            const icon = type === 'success' ? 'check-circle-fill' :
+                type === 'error' ? 'exclamation-circle-fill' :
+                    'info-circle-fill';
+
+            const iconElement = document.createElement('i');
+            iconElement.className = `bi bi-${icon}`;
+
+            const messageSpan = document.createElement('span');
+            messageSpan.textContent = message;
+
+            toast.appendChild(iconElement);
+            toast.appendChild(messageSpan);
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    if (container.contains(toast)) container.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+
+        // Loading overlay helpers (global)
+        function showLoadingOverlay(message = 'Processing...') {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) loadingMessage.textContent = message;
+            if (loadingOverlay) loadingOverlay.classList.add('show');
+        }
+
+        function hideLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.classList.remove('show');
+        }
+
+        // Logout function - can be called from anywhere
+        function performLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    // Clear from both storage types to be safe
+                    localStorage.removeItem('staffAuthToken');
+                    localStorage.removeItem('staffUser');
+                    localStorage.removeItem('staffRole');
+                    sessionStorage.removeItem('staffAuthToken');
+                    sessionStorage.removeItem('staffUser');
+                    sessionStorage.removeItem('staffRole');
+                    
+                    console.log('[AUTH] Logout successful - cleared all storage');
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 100);
+                } catch (err) {
+                    console.error('[AUTH] Error during logout:', err);
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        // Logout handler
+        function handleLogout() {
+            performLogout();
+        }
+
+        // Delete Trophy (global function)
+        async function deleteTrophy(id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                showLoadingOverlay('Deleting trophy...');
+
+                const API_BASE_URL = getAPIBaseURL();
+                const authToken = sessionStorage.getItem('staffAuthToken') || localStorage.getItem('staffAuthToken');
+
+                const response = await fetch(`${API_BASE_URL}/api/trophies/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    showToast('Session expired. Please login again.', 'error');
+                    sessionStorage.removeItem('staffAuthToken');
+                    localStorage.removeItem('staffAuthToken');
+                    sessionStorage.removeItem('staffRole');
+                    localStorage.removeItem('staffRole');
+                    location.reload();
+                    return;
+                }
+
+                if (response.ok) {
+                    showToast('Trophy deleted successfully!', 'success');
+                    // Reload trophies table
+                    loadTrophies();
+                } else {
+                    const error = await response.json();
+                    let errorMessage = error.error || 'Failed to delete trophy';
+                    
+                    if (response.status === 403 && error.error === 'admin_required') {
+                        errorMessage = 'Only admins can delete trophies. Please contact your administrator.';
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting trophy:', error);
+                showToast('Error deleting trophy', 'error');
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+
+        // Load Trophies (global function)
+        async function loadTrophies() {
+            try {
+                showLoadingOverlay('Loading trophies...');
+                const API_BASE_URL = getAPIBaseURL();
+                const authToken = sessionStorage.getItem('staffAuthToken') || localStorage.getItem('staffAuthToken');
+
+                const response = await fetch(`${API_BASE_URL}/api/trophies`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    showToast('Session expired. Please login again.', 'error');
+                    sessionStorage.removeItem('staffAuthToken');
+                    localStorage.removeItem('staffAuthToken');
+                    location.reload();
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.trophies) {
+                    displayTrophies(data.trophies);
+                } else {
+                    showToast('Failed to load trophies', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading trophies:', error);
+                showToast('Error loading trophies', 'error');
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+
+        // Save Trophy (global function)
+        async function saveTrophy() {
+            const form = document.getElementById('trophyForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const API_BASE_URL = getAPIBaseURL();
+            const authToken = sessionStorage.getItem('staffAuthToken') || localStorage.getItem('staffAuthToken');
+
+            const trophyId = document.getElementById('trophyId').value;
+            const isEdit = !!trophyId;
+            const statusDiv = document.getElementById('trophyFormStatus');
+
+            // Create FormData for file uploads
+            const formData = new FormData();
+            formData.append('name', document.getElementById('trophyName').value);
+            formData.append('price', document.getElementById('trophyPrice').value);
+            formData.append('category', document.getElementById('trophyCategory').value);
+            formData.append('size', document.getElementById('trophySize').value);
+            formData.append('description', document.getElementById('trophyDescription').value);
+            formData.append('available', document.getElementById('trophyAvailable').checked);
+            formData.append('customizable', document.getElementById('trophyCustomizable').checked);
+
+            // Handle image uploads
+            const imagesInput = document.getElementById('trophyImages');
+            let uploadCount = 0;
+            if (imagesInput && imagesInput.files.length > 0) {
+                // Validate images before upload
+                const images = imagesInput.files;
+                const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                console.log(`[Trophy Upload] Starting upload of ${images.length} images`);
+
+                for (let i = 0; i < images.length; i++) {
+                    console.log(`[Trophy Upload] Processing image ${i + 1}: ${images[i].name} (${images[i].size} bytes)`);
+
+                    if (!validTypes.includes(images[i].type)) {
+                        statusDiv.className = 'alert alert-danger';
+                        statusDiv.textContent = `Invalid image type: ${images[i].name}. Only JPG, PNG, WEBP, GIF allowed.`;
+                        statusDiv.style.display = 'block';
+                        return;
+                    }
+                    if (images[i].size > maxSize) {
+                        statusDiv.className = 'alert alert-danger';
+                        statusDiv.textContent = `Image too large: ${images[i].name}. Max 5MB per image.`;
+                        statusDiv.style.display = 'block';
+                        return;
+                    }
+                    console.log(`[Trophy Upload] Appending image ${i + 1} to FormData: ${images[i].name}`);
+                    formData.append('images', images[i]);
+                    uploadCount++;
+                }
+                console.log(`[Trophy Upload] Total images appended to FormData: ${uploadCount}`);
+            } else {
+                console.log('[Trophy Upload] No images selected');
+            }
+
+            try {
+                showLoadingOverlay(isEdit ? 'Updating trophy...' : 'Adding trophy...');
+                statusDiv.style.display = 'none';
+
+                const url = isEdit ? `${API_BASE_URL}/api/trophies/${trophyId}` : `${API_BASE_URL}/api/trophies`;
+                const method = isEdit ? 'PATCH' : 'POST';
+
+                console.log(`[Trophy Upload] Sending ${method} request to ${url}`);
+                console.log(`[Trophy Upload] FormData contains ${uploadCount} images`);
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                        // DO NOT set Content-Type for FormData - browser will set it with boundary
+                    },
+                    body: formData
+                });
+
+                console.log(`[Trophy Upload] Response status: ${response.status}`);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(`[Trophy Upload] Success! Trophy saved with ${result.trophy?.images?.length || 0} images`);
+                    showToast(`Trophy ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
+
+                    // Close modal and reload trophies
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('trophyModal'));
+                    modal.hide();
+
+                    loadTrophies();
+                } else {
+                    const error = await response.json();
+                    let errorMessage = error.message || error.error || `Failed to ${isEdit ? 'update' : 'add'} trophy`;
+                    
+                    if (response.status === 403 && error.error === 'admin_required') {
+                        errorMessage = 'Only admins can manage trophies. Please contact your administrator.';
+                    }
+                    
+                    statusDiv.className = 'alert alert-danger';
+                    statusDiv.textContent = errorMessage;
+                    statusDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error saving trophy:', error);
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.textContent = `Error ${isEdit ? 'updating' : 'adding'} trophy`;
+                statusDiv.style.display = 'block';
+            } finally {
+                hideLoadingOverlay();
+            }
+        }
+        function displayTrophies(trophies) {
+            const tbody = document.getElementById('trophiesTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (trophies.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No trophies found</td></tr>';
+                return;
+            }
+
+            trophies.forEach(trophy => {
+                const row = document.createElement('tr');
+                const firstImage = trophy.images && trophy.images.length > 0 ? trophy.images[0] : '/img/placeholder-trophy.png';
+                const imageCount = trophy.images ? trophy.images.length : 0;
+
+                row.innerHTML = `
+                    <td>
+                        <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                        ${imageCount > 1 ? `<small class="text-muted d-block">+${imageCount - 1} more</small>` : ''}
+                    </td>
+                    <td>${trophy.name}</td>
+                    <td>${trophy.description || 'N/A'}</td>
+                    <td>₹${trophy.price}</td>
+                    <td>${trophy.category || 'N/A'}</td>
+                    <td>${trophy.size} inches</td>
+                    <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editTrophy('${trophy._id}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteTrophy('${trophy._id}', '${trophy.name}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         // Dashboard Application
         document.addEventListener('DOMContentLoaded', function () {
             // Configuration - Auto-detect environment
@@ -1425,19 +1922,6 @@
             // Get appropriate storage (localStorage for Android app, sessionStorage for browsers)
             function getStorage() {
                 return isAndroidWebView() ? localStorage : sessionStorage;
-            }
-
-            // Loading Overlay Helper Functions
-            function showLoadingOverlay(message = 'Processing...') {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                const loadingMessage = document.getElementById('loadingMessage');
-                if (loadingMessage) loadingMessage.textContent = message;
-                if (loadingOverlay) loadingOverlay.classList.add('show');
-            }
-
-            function hideLoadingOverlay() {
-                const loadingOverlay = document.getElementById('loadingOverlay');
-                if (loadingOverlay) loadingOverlay.classList.remove('show');
             }
 
             // DOM elements
@@ -1475,6 +1959,7 @@
                 const storage = getStorage();
                 authToken = storage.getItem('staffAuthToken');
                 const username = storage.getItem('staffUser');
+                const role = storage.getItem('staffRole');
 
                 console.log(`[AUTH] Running in ${isAndroidWebView() ? 'Android WebView' : 'Browser'} - using ${isAndroidWebView() ? 'localStorage' : 'sessionStorage'}`);
 
@@ -1489,19 +1974,21 @@
 
                         if (response.ok) {
                             isAuthenticated = true;
-                            showDashboard(username);
+                            showDashboard(username, role);
                             return true;
                         } else {
                             // Token invalid or expired, clear and show login
                             console.log('Token verification failed with status:', response.status);
                             storage.removeItem('staffAuthToken');
                             storage.removeItem('staffUser');
+                            storage.removeItem('staffRole');
                             authToken = null;
                         }
                     } catch (err) {
                         console.error('Token verification failed:', err);
                         storage.removeItem('staffAuthToken');
                         storage.removeItem('staffUser');
+                        storage.removeItem('staffRole');
                         authToken = null;
                     }
                 } else {
@@ -1524,45 +2011,23 @@
                 unlockScroll();
             }
 
-            // Toast notification system
-            function showToast(message, type = 'success') {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `toast-notification toast-${type}`;
-
-                const icon = type === 'success' ? 'check-circle-fill' :
-                    type === 'error' ? 'exclamation-circle-fill' :
-                        'info-circle-fill';
-
-                // Create elements safely to prevent XSS
-                const iconElement = document.createElement('i');
-                iconElement.className = `bi bi-${icon}`;
-
-                const messageSpan = document.createElement('span');
-                messageSpan.textContent = message; // Use textContent to escape HTML
-
-                toast.appendChild(iconElement);
-                toast.appendChild(messageSpan);
-
-                container.appendChild(toast);
-
-                // Auto-dismiss after 4 seconds
-                setTimeout(() => {
-                    toast.classList.add('fade-out');
-                    setTimeout(() => {
-                        container.removeChild(toast);
-                    }, 300);
-                }, 4000);
-            }
-
-            // Show dashboard
-            function showDashboard(username) {
+            // DOM elements
+            function showDashboard(username, role = 'staff') {
                 hideLoginModal();
                 dashboardContent.classList.add('show');
                 // Safely set username to prevent XSS - create elements separately
                 staffUsername.innerHTML = '<i class="bi bi-person-circle"></i> ';
                 const usernameText = document.createTextNode(username || 'Staff');
                 staffUsername.appendChild(usernameText);
+                
+                // Show/hide trophy management tab based on role
+                const trophyTab = document.getElementById('trophy-management-main-tab');
+                if (role === 'admin') {
+                    if (trophyTab) trophyTab.style.display = 'block';
+                } else {
+                    if (trophyTab) trophyTab.style.display = 'none';
+                }
+                
                 updateLastUpdated();
                 loadDashboardData();
             }
@@ -1591,16 +2056,17 @@
 
                     if (response.ok && data.success) {
                         const storage = getStorage();
-                        // Store token - localStorage for Android app, sessionStorage for browser
+                        // Store token and user info - localStorage for Android app, sessionStorage for browser
                         authToken = data.token;
                         storage.setItem('staffAuthToken', data.token);
                         storage.setItem('staffUser', username);
+                        storage.setItem('staffRole', data.staff.role);  // Store role for authorization checks
                         isAuthenticated = true;
                         loginError.classList.remove('show');
 
                         console.log(`[AUTH] Login successful - stored in ${isAndroidWebView() ? 'localStorage (persistent)' : 'sessionStorage (session only)'}`);
 
-                        showDashboard(username);
+                        showDashboard(username, data.staff.role);  // Pass role to showDashboard
                     } else {
                         // Show error message
                         loginError.textContent = data.message || 'Invalid username or password';
@@ -1626,25 +2092,30 @@
             // Logout button
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                if (confirm('Are you sure you want to logout?')) {
-                    const storage = getStorage();
-                    storage.removeItem('staffAuthToken');
-                    storage.removeItem('staffUser');
-                    authToken = null;
-                    isAuthenticated = false;
-                    console.log(`[AUTH] Logged out - cleared ${isAndroidWebView() ? 'localStorage' : 'sessionStorage'}`);
-                    window.location.href = 'index.html';
-                }
+                e.stopPropagation();
+                performLogout();
             });
 
             // Service menu buttons
             const serviceButtons = document.querySelectorAll('.service-menu-btn:not(#openQRScanBtn)');
+            const statusTabs = document.querySelector('.status-tabs');
+            const trophyManagementSection = document.getElementById('trophyManagementSection');
+
             serviceButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     serviceButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentService = btn.dataset.service;
-                    loadDashboardData();
+
+                    // Show/hide sections based on service
+                    if (currentService === 'trophy-management') {
+                        statusTabs.style.display = 'none';
+                        trophyManagementSection.style.display = 'block';
+                    } else {
+                        statusTabs.style.display = 'block';
+                        trophyManagementSection.style.display = 'none';
+                        loadDashboardData();
+                    }
                 });
             });
 
@@ -1653,6 +2124,22 @@
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const targetId = btn.dataset.bsTarget.replace('#', '');
+
+                    // Handle main navigation tabs
+                    if (targetId === 'select-service') {
+                        // Main navigation tab - no special handling needed
+                        return;
+                    }
+
+                    if (targetId === 'trophy-management-main') {
+                        // Load trophies for trophy management tab
+                        if (isAuthenticated) {
+                            loadTrophies();
+                        }
+                        return;
+                    }
+
+                    // Handle status tabs within select service
                     currentStatus = targetId;
                     loadTabData(targetId);
                 });
@@ -2763,9 +3250,9 @@
             window.openPaymentModal = async function (orderId, totalAmount) {
                 try {
                     showLoadingOverlay('Loading order details...');
-                    
+
                     console.log(`[${orderId}] Fetching complete order from API...`);
-                    
+
                     // Fetch complete order from API to get full payment details
                     const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`);
 
@@ -2779,17 +3266,17 @@
 
                     const orderData = await response.json();
                     console.log(`[${orderId}] Order data received:`, JSON.stringify(orderData));
-                    
+
                     const order = orderData.order || orderData;
 
                     // Extract finalAmount from payment object - IMPORTANT: check all possible locations
                     let finalAmount = 0;
-                    
+
                     // Try payment.finalAmount first (most reliable)
                     if (order.payment && order.payment.finalAmount) {
                         finalAmount = order.payment.finalAmount;
                         console.log(`[${orderId}] Found finalAmount in payment.finalAmount:`, finalAmount);
-                    } 
+                    }
                     // Try order.finalAmount second
                     else if (order.finalAmount) {
                         finalAmount = order.finalAmount;
@@ -2828,7 +3315,7 @@
                     // Show modal
                     modal.classList.add('show');
                     document.body.classList.add('modal-open');
-                    
+
                     hideLoadingOverlay();
                     console.log(`[${orderId}] ✅ Payment modal opened successfully with finalAmount: ${finalAmount}`);
                 } catch (error) {
@@ -2861,10 +3348,10 @@
                     splitInputs.style.display = 'none';
                     validationMsg.style.display = 'block';
                     validationMsg.className = 'alert alert-info';
-                    
+
                     const methodLabel = method === 'Cash' ? 'cash' : 'card';
                     validationText.innerHTML = `💡 You'll pay ₹${finalAmount} via ${methodLabel}. This is the full order amount.`;
-                    
+
                     submitBtn.disabled = false;
                 } else {
                     splitInputs.style.display = 'none';
@@ -3953,6 +4440,186 @@
             if (typeof window !== 'undefined') {
                 window.fetchAvailableRackets = fetchAvailableRackets;
             }
+
+            // Trophy Management Functions
+            async function loadTrophies() {
+                try {
+                    showLoadingOverlay('Loading trophies...');
+                    const response = await fetch(`${API_BASE_URL}/api/trophies`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.status === 401) {
+                        showToast('Session expired. Please login again.', 'error');
+                        sessionStorage.removeItem('staffAuthToken');
+                        location.reload();
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (data.trophies) {
+                        displayTrophies(data.trophies);
+                    } else {
+                        showToast('Failed to load trophies', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error loading trophies:', error);
+                    showToast('Error loading trophies', 'error');
+                } finally {
+                    hideLoadingOverlay();
+                }
+            }
+
+            function displayTrophies(trophies) {
+                const tbody = document.getElementById('trophiesTableBody');
+                tbody.innerHTML = '';
+
+                if (trophies.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No trophies found</td></tr>';
+                    return;
+                }
+
+                trophies.forEach(trophy => {
+                    const row = document.createElement('tr');
+                    // Show first image or placeholder
+                    const firstImage = trophy.images && trophy.images.length > 0 ? trophy.images[0] : '/img/placeholder-trophy.png';
+                    const imageCount = trophy.images ? trophy.images.length : 0;
+
+                    row.innerHTML = `
+                        <td>
+                            <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                            ${imageCount > 1 ? `<small class="text-muted d-block">+${imageCount - 1} more</small>` : ''}
+                        </td>
+                        <td>${trophy.name}</td>
+                        <td>${trophy.description || 'N/A'}</td>
+                        <td>₹${trophy.price}</td>
+                        <td>${trophy.category || 'N/A'}</td>
+                        <td>${trophy.size} inches</td>
+                        <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editTrophy('${trophy._id}')">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTrophy('${trophy._id}', '${trophy.name}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            function resetTrophyForm() {
+                document.getElementById('trophyId').value = '';
+                document.getElementById('trophyName').value = '';
+                document.getElementById('trophyPrice').value = '';
+                document.getElementById('trophyCategory').value = '';
+                document.getElementById('trophySize').value = '';
+                document.getElementById('trophyDescription').value = '';
+                document.getElementById('trophyAvailable').checked = true;
+                document.getElementById('trophyCustomizable').checked = false;
+                document.getElementById('trophyImages').value = '';
+                document.getElementById('trophyImagePreview').innerHTML = '';
+                document.getElementById('trophyFormStatus').style.display = 'none';
+                document.getElementById('trophyModalLabel').textContent = 'Add Trophy';
+            }
+
+            function editTrophy(id) {
+                // For now, we'll load the trophy data from the API since the table display is simplified
+                // In a real implementation, you might want to cache the full trophy data
+                fetch(`${API_BASE_URL}/api/trophies`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const trophy = data.trophies.find(t => t._id === id);
+                        if (trophy) {
+                            document.getElementById('trophyId').value = trophy._id;
+                            document.getElementById('trophyName').value = trophy.name;
+                            document.getElementById('trophyPrice').value = trophy.price;
+                            document.getElementById('trophyCategory').value = trophy.category || '';
+                            document.getElementById('trophySize').value = trophy.size;
+                            document.getElementById('trophyDescription').value = trophy.description || '';
+                            document.getElementById('trophyAvailable').checked = trophy.available;
+                            document.getElementById('trophyCustomizable').checked = trophy.customizable || false;
+
+                            document.getElementById('trophyModalLabel').textContent = 'Edit Trophy';
+
+                            // Show modal
+                            const modal = new bootstrap.Modal(document.getElementById('trophyModal'));
+                            modal.show();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading trophy for edit:', error);
+                        showToast('Error loading trophy data', 'error');
+                    });
+            }
+
+            // Trophy Management Event Listeners
+            document.getElementById('addTrophyBtn').addEventListener('click', resetTrophyForm);
+            document.getElementById('saveTrophyBtn').addEventListener('click', saveTrophy);
+
+            // Handle image preview for trophy form
+            document.getElementById('trophyImages').addEventListener('change', function (e) {
+                const preview = document.getElementById('trophyImagePreview');
+                preview.innerHTML = ''; // Clear previous previews
+                const files = e.target.files;
+                const maxImages = 3;
+
+                if (files.length === 0) {
+                    return;
+                }
+
+                // Check max 3 images
+                if (files.length > maxImages) {
+                    const statusDiv = document.getElementById('trophyFormStatus');
+                    statusDiv.className = 'alert alert-warning';
+                    statusDiv.textContent = `Maximum ${maxImages} images allowed. Only the first ${maxImages} will be uploaded.`;
+                    statusDiv.style.display = 'block';
+                }
+
+                // Create a container for preview images
+                const previewContainer = document.createElement('div');
+                previewContainer.style.cssText = 'display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;';
+
+                for (let i = 0; i < Math.min(files.length, maxImages); i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 5px;';
+
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.style.cssText = 'width: 100px; height: 100px; object-fit: cover; border: 2px solid #ddd; border-radius: 6px; background: #f5f5f5;';
+
+                        const label = document.createElement('div');
+                        label.style.cssText = 'font-size: 11px; text-align: center; max-width: 100px; word-break: break-all; color: #666;';
+                        label.textContent = file.name;
+
+                        div.appendChild(img);
+                        div.appendChild(label);
+                        previewContainer.appendChild(div);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+
+                preview.appendChild(previewContainer);
+            });
+
+            // Load trophies when trophy management tab is shown
+            document.querySelector('[data-bs-target="#trophy-management-main"]').addEventListener('shown.bs.tab', function () {
+                if (isAuthenticated) {
+                    loadTrophies();
+                }
+            });
 
             // Initialize
             checkAuth();

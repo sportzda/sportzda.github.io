@@ -334,9 +334,11 @@ test.describe('Bat Knocking UI Tests', () => {
                 const threadingBottom = row.locator('.threading-bottom');
                 const threadingBoth = row.locator('.threading-both');
 
-                // Check top and bottom
-                await threadingTop.check();
-                await threadingBottom.check();
+                // Scroll into view and check top and bottom
+                await threadingTop.scrollIntoViewIfNeeded();
+                await threadingTop.click();
+                await threadingBottom.scrollIntoViewIfNeeded();
+                await threadingBottom.click();
                 await expect(threadingTop).toBeChecked();
                 await expect(threadingBottom).toBeChecked();
 
