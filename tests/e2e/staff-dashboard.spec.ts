@@ -7,39 +7,43 @@ const STAFF_PASSWORD = process.env.STAFF_PASSWORD || 'dasportz2025';
 test.describe('Staff Dashboard Tests', () => {
     // Setup: Login before tests
     test.beforeEach(async ({ page }) => {
+        // Set up mock auth BEFORE loading page so sessionStorage is available on DOMContentLoaded
+        await page.addInitScript(() => {
+            sessionStorage.setItem('staffAuthToken', 'test_token_123');
+            sessionStorage.setItem('staffUser', 'teststaff');
+        });
+
+        // Mock authentication API
+        await page.route('**/api/staff/verify', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({ success: true, staff: { username: 'teststaff', role: 'staff' } })
+            });
+        });
+
+        // Mock the orders API to return test data
+        await page.route('**/api/orders*', async (route) => {
+            await route.fulfill({
+                status: 200,
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    orders: []  // Empty for now, tests can add their own expectations
+                })
+            });
+        });
+
+        // Now load the page - auth will be pre-loaded in sessionStorage
         await page.goto('/staff-dashboard.html');
         await page.waitForLoadState('domcontentloaded');
 
-        // Check if login is needed
-        const loginVisible = await page.locator('#loginModal').isVisible().catch(() => false);
-        if (loginVisible) {
-            // Try real backend login
-            await page.fill('#username', STAFF_USERNAME);
-            await page.fill('#password', STAFF_PASSWORD);
-            await page.click('button:has-text("Login")');
-
-            // Wait for dashboard
-            try {
-                await page.waitForSelector('.dashboard-content', { timeout: 10000 });
-            } catch (e) {
-                // Fallback: mock auth if backend unavailable
-                await page.addInitScript(() => {
-                    sessionStorage.setItem('staffAuthToken', 'test_token_123');
-                    sessionStorage.setItem('staffUser', 'teststaff');
-                });
-                await page.reload();
-                await page.waitForLoadState('domcontentloaded');
-            }
-        }
+        // Wait for dashboard to become visible (after checkAuth succeeds)
+        await page.waitForSelector('.dashboard-content.show', { timeout: 10000 });
     });
 
     test.describe('Bat-Knocking Order Display', () => {
         test('Should not display threading when threading is "none"', async ({ page }) => {
-            // Use real backend - no mocking
-            await page.goto('/staff-dashboard.html');
-
-            // Wait for dashboard to load
-            await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
+            // Dashboard already loaded and authenticated in beforeEach
             await page.waitForTimeout(500); // Let render complete
 
             // Navigate to bat-knocking tab to trigger the display
@@ -61,9 +65,7 @@ test.describe('Staff Dashboard Tests', () => {
         });
 
         test('Should display threading text when threading is present', async ({ page }) => {
-            // Use real backend - orders will be fetched from API
-            await page.goto('/staff-dashboard.html');
-
+            // Dashboard already loaded and authenticated in beforeEach
             // Wait for dashboard to load
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
             await page.waitForTimeout(500);
@@ -84,9 +86,7 @@ test.describe('Staff Dashboard Tests', () => {
         });
 
         test('Should show different threading types correctly', async ({ page }) => {
-            // Real backend integration test - orders loaded from API
-            await page.goto('/staff-dashboard.html');
-
+            // Dashboard already loaded and authenticated in beforeEach
             // Wait for dashboard
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
             await page.waitForTimeout(500);
@@ -105,8 +105,7 @@ test.describe('Staff Dashboard Tests', () => {
         });
 
         test('Should not show threading field in View Details modal when threading is "none"', async ({ page }) => {
-            // Real backend integration test
-            await page.goto('/staff-dashboard.html');
+            // Dashboard already loaded and authenticated in beforeEach
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
             await page.waitForTimeout(500);
 
@@ -132,8 +131,7 @@ test.describe('Staff Dashboard Tests', () => {
         });
 
         test('Should show threading field in View Details modal when threading is present', async ({ page }) => {
-            // Real backend integration test
-            await page.goto('/staff-dashboard.html');
+            // Dashboard already loaded and authenticated in beforeEach
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
             await page.waitForTimeout(500);
 
@@ -159,8 +157,7 @@ test.describe('Staff Dashboard Tests', () => {
         });
 
         test('Should display multiple bat cards with different threading states', async ({ page }) => {
-            // Real backend integration test
-            await page.goto('/staff-dashboard.html');
+            // Dashboard already loaded and authenticated in beforeEach
             await page.waitForSelector('.dashboard-content.show', { timeout: 5000 });
             await page.waitForTimeout(500);
 
