@@ -14,7 +14,8 @@
     <title>Badminton Racket Stringing Service | Yonex, Li-Ning | DA SPORTZ</title>
     <meta name="description"
         content="Professional badminton racket stringing service in India. Premium strings from Yonex, Li-Ning, Hundred & more. Expert stringing, same-day service available. Competitive pricing." />
-    <meta name="keywords" content="badminton racket stringing, racket stringing service, yonex stringing, li-ning stringing, badminton strings, professional stringing, racket restring, badminton equipment, DA SPORTZ" />
+    <meta name="keywords"
+        content="badminton racket stringing, racket stringing service, yonex stringing, li-ning stringing, badminton strings, professional stringing, racket restring, badminton equipment, DA SPORTZ" />
     <link rel="canonical" href="https://dasportz.com/stringing-booking.html" />
 
     <!-- Favicon -->
@@ -883,7 +884,9 @@
     <script src="https://static.zohocdn.com/zpay/zpay-js/v1/zpayments.js"></script>
     <script>
         (function () {
-            const BACKEND_BASE = 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
+            const BACKEND_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000'
+                : 'https://kg7kg65ok2hvfox6l4gtniqhsi0ckmox.lambda-url.ap-south-1.on.aws';
 
             // ---------- IMPORTANT: put your Zoho widget/API key here ----------
             // You can also change code to receive this from your server as zpayConfig.otherOptions.api_key

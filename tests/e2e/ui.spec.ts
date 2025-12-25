@@ -1,11 +1,25 @@
 import { test, expect, Page, Route, Dialog } from '@playwright/test';
 
 // Helper to extract BACKEND_BASE from inline script in stringing-booking.html
+// Handles both simple string assignment and ternary expression formats
 async function getBackendBase(page: Page): Promise<string> {
     const html = await page.content();
-    const match = html.match(/const\s+BACKEND_BASE\s*=\s*['\"]([^'\"]+)['\"]/);
-    if (!match) throw new Error('Could not find BACKEND_BASE in HTML');
-    return match[1];
+    
+    // First try simple string assignment: const BACKEND_BASE = 'url'
+    const simpleMatch = html.match(/const\s+BACKEND_BASE\s*=\s*['\"]([^'\"]+)['\"]/);
+    if (simpleMatch) return simpleMatch[1];
+    
+    // Try ternary expression format: const BACKEND_BASE = condition ? 'url1' : 'url2'
+    // In tests, we're running on localhost, so extract the localhost URL
+    const ternaryMatch = html.match(/const\s+BACKEND_BASE\s*=\s*[^?]+\?\s*['\"]([^'\"]+)['\"]\s*:\s*['\"]([^'\"]+)['\"]/);
+    if (ternaryMatch) {
+        // Check if we're on localhost - return the first URL (localhost), otherwise production URL
+        const currentUrl = page.url();
+        const isLocalhost = currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1');
+        return isLocalhost ? ternaryMatch[1] : ternaryMatch[2];
+    }
+    
+    throw new Error('Could not find BACKEND_BASE in HTML');
 }
 
 test.describe('Stringing Booking UI', () => {
