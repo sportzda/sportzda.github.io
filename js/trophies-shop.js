@@ -3,51 +3,29 @@
  * Handles product filtering, cart management, and checkout
  */
 
-// Product Database
-const products = [
+// Backend API Configuration
+const BACKEND_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : 'https://dasportz-backend.online';
+const ZOHO_WIDGET_API_KEY = '1003.b03980822c145cb80d00b97288514519.783c4164ef793ebfbe77bf1098160aad';
+
+// Product Database - will be loaded from API
+let products = [];
+
+// Default fallback products (used if API fails)
+const DEFAULT_PRODUCTS = [
     // Cricket Trophies
     { id: 1, name: 'Golden Cricket Trophy', sport: 'cricket', type: 'trophy', price: 2500, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
     { id: 2, name: 'Cricket Champions Cup', sport: 'cricket', type: 'cup', price: 3200, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
     { id: 3, name: 'Cricket Winner Medal', sport: 'cricket', type: 'medal', price: 450, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 4, name: 'Cricket Shield Award', sport: 'cricket', type: 'shield', price: 1800, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
-    { id: 5, name: 'Cricket Excellence Plaque', sport: 'cricket', type: 'plaque', price: 1200, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
-
     // Football Trophies
     { id: 6, name: 'Football Champion Trophy', sport: 'football', type: 'trophy', price: 2800, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
     { id: 7, name: 'Golden Football Cup', sport: 'football', type: 'cup', price: 3500, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
     { id: 8, name: 'Football Star Medal', sport: 'football', type: 'medal', price: 500, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 9, name: 'Football Victory Shield', sport: 'football', type: 'shield', price: 1900, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
-    { id: 10, name: 'Football Legend Plaque', sport: 'football', type: 'plaque', price: 1300, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
-
-    // Basketball Trophies
-    { id: 11, name: 'Basketball Elite Trophy', sport: 'basketball', type: 'trophy', price: 2600, image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400' },
-    { id: 12, name: 'Basketball MVP Cup', sport: 'basketball', type: 'cup', price: 3300, image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400' },
-    { id: 13, name: 'Basketball Achievement Medal', sport: 'basketball', type: 'medal', price: 480, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 14, name: 'Basketball Honor Shield', sport: 'basketball', type: 'shield', price: 1750, image: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400' },
-
     // Badminton Trophies
     { id: 15, name: 'Badminton Winner Trophy', sport: 'badminton', type: 'trophy', price: 2400, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
     { id: 16, name: 'Badminton Champions Cup', sport: 'badminton', type: 'cup', price: 3000, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
     { id: 17, name: 'Badminton Gold Medal', sport: 'badminton', type: 'medal', price: 420, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 18, name: 'Badminton Victory Shield', sport: 'badminton', type: 'shield', price: 1650, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
-
-    // Karate Trophies
-    { id: 19, name: 'Karate Black Belt Trophy', sport: 'karate', type: 'trophy', price: 2700, image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400' },
-    { id: 20, name: 'Karate Master Cup', sport: 'karate', type: 'cup', price: 3400, image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400' },
-    { id: 21, name: 'Karate Excellence Medal', sport: 'karate', type: 'medal', price: 520, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 22, name: 'Karate Honor Plaque', sport: 'karate', type: 'plaque', price: 1400, image: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400' },
-
-    // Running Trophies
-    { id: 23, name: 'Marathon Trophy', sport: 'running', type: 'trophy', price: 2300, image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400' },
-    { id: 24, name: 'Running Champion Medal', sport: 'running', type: 'medal', price: 400, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 25, name: 'Sprint Victory Cup', sport: 'running', type: 'cup', price: 2900, image: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400' },
-
-    // Tennis Trophies
-    { id: 26, name: 'Tennis Grand Slam Trophy', sport: 'tennis', type: 'trophy', price: 2900, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
-    { id: 27, name: 'Tennis Champion Cup', sport: 'tennis', type: 'cup', price: 3600, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
-    { id: 28, name: 'Tennis Winner Medal', sport: 'tennis', type: 'medal', price: 470, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    { id: 29, name: 'Tennis Excellence Shield', sport: 'tennis', type: 'shield', price: 1850, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
-    { id: 30, name: 'Tennis Legend Plaque', sport: 'tennis', type: 'plaque', price: 1350, image: 'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400' },
 ];
 
 // State Management
@@ -58,13 +36,58 @@ let currentFilters = {
 };
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initializeFilters();
+    await loadProducts();
     displayProducts();
     updateCartUI();
     setupEventListeners();
     setupCustomizationModalHandlers();
 });
+
+/**
+ * Load products from backend API
+ */
+async function loadProducts() {
+    const grid = document.getElementById('productsGrid');
+    const loading = document.getElementById('loading');
+
+    try {
+        loading.style.display = 'flex';
+        if (grid) grid.innerHTML = '';
+
+        const response = await fetch(`${BACKEND_BASE}/api/trophies`);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.trophies && data.trophies.length > 0) {
+            // Map backend trophy format to frontend product format
+            products = data.trophies.map(trophy => ({
+                id: trophy._id || trophy.id,
+                name: trophy.name,
+                sport: trophy.category || trophy.sport || 'general',
+                type: trophy.size || trophy.type || 'trophy',
+                price: trophy.price,
+                image: trophy.imageUrl || trophy.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400',
+                customizable: trophy.customizable !== false,
+                available: trophy.available !== false,
+                description: trophy.description || ''
+            })).filter(p => p.available);
+            console.log(`Loaded ${products.length} products from API`);
+        } else {
+            console.warn('No products from API, using fallback');
+            products = DEFAULT_PRODUCTS;
+        }
+    } catch (error) {
+        console.error('Failed to load products from API:', error);
+        products = DEFAULT_PRODUCTS;
+        showToast('Loading demo products (API unavailable)');
+    } finally {
+        loading.style.display = 'none';
+    }
+}
 
 /**
  * Setup handlers for customization modal
@@ -158,10 +181,12 @@ function displayProducts() {
             col.className = 'col-lg-3 col-md-4 col-sm-6';
             col.style.animationDelay = `${index * 0.1}s`;
 
+            // Use string quotes for product.id to handle MongoDB ObjectIds
+            const pid = typeof product.id === 'string' ? `'${product.id}'` : product.id;
+
             col.innerHTML = `
-                <div class="product-card" onclick="showProductImage(${product.id})" style="cursor: pointer;">
+                <div class="product-card" onclick="showProductImage(${pid})" style="cursor: pointer;">
                     <div class="product-image">
-                        <span class="product-badge">${capitalizeFirst(product.type)}</span>
                         <img src="${product.image}" alt="${product.name}">
                     </div>
                     <div class="product-body">
@@ -171,11 +196,11 @@ function displayProducts() {
                         </div>
                         <div class="product-price">₹${product.price.toLocaleString('en-IN')}</div>
                         <div class="product-actions" onclick="event.stopPropagation();">
-                            <button class="btn-buy-now" onclick="showCustomizationModal(${product.id}, 'buy')">
-                                Buy Now
+                            <button class="btn-buy-now" onclick="showCustomizationModal(${pid}, 'buy')">
+                                Buy
                             </button>
-                            <button class="btn-add-cart" onclick="showCustomizationModal(${product.id}, 'add')">
-                                Add to Cart
+                            <button class="btn-add-cart" onclick="showCustomizationModal(${pid}, 'add')">
+                                Cart
                             </button>
                         </div>
                     </div>
@@ -235,6 +260,9 @@ function buyNow(productId, customization = null) {
     document.getElementById('cartOverlay').classList.add('show');
 }
 
+// Store applied coupon globally
+let appliedCoupon = null;
+
 /**
  * Update Cart UI
  */
@@ -243,7 +271,6 @@ function updateCartUI() {
     const cartBody = document.getElementById('cartBody');
     const cartFooter = document.getElementById('cartFooter');
     const cartTotal = document.getElementById('cartTotal');
-    const modalTotal = document.getElementById('modalTotal');
 
     // Update cart count
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -252,7 +279,9 @@ function updateCartUI() {
     // Calculate total price
     const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     cartTotal.textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
-    modalTotal.textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
+
+    // Update checkout modal totals
+    updateCheckoutTotals();
 
     // Update cart body
     if (cart.length === 0) {
@@ -265,7 +294,7 @@ function updateCartUI() {
         `;
         cartFooter.classList.add('d-none');
     } else {
-        cartBody.innerHTML = cart.map(item => `
+        cartBody.innerHTML = cart.map((item, index) => `
             <div class="cart-item">
                 <img src="${item.image}" alt="${item.name}" class="cart-item-image">
                 <div class="cart-item-details">
@@ -279,22 +308,50 @@ function updateCartUI() {
                     ` : ''}
                     <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
                     <div class="cart-item-qty">
-                        <button class="qty-btn" onclick="updateQuantity(${item.id}, -1, ${JSON.stringify(item.customization).replace(/"/g, '&quot;')})">
+                        <button class="qty-btn" onclick="updateQuantityByIndex(${index}, -1)">
                             <i class="bi bi-dash"></i>
                         </button>
                         <span class="fw-semibold">${item.quantity}</span>
-                        <button class="qty-btn" onclick="updateQuantity(${item.id}, 1, ${JSON.stringify(item.customization).replace(/"/g, '&quot;')})">
+                        <button class="qty-btn" onclick="updateQuantityByIndex(${index}, 1)">
                             <i class="bi bi-plus"></i>
                         </button>
                     </div>
                 </div>
-                <button class="cart-item-remove" onclick="removeFromCart(${item.id}, ${JSON.stringify(item.customization).replace(/"/g, '&quot;')})">
+                <button class="cart-item-remove" onclick="removeFromCartByIndex(${index})">
                     <i class="bi bi-trash"></i>
                 </button>
             </div>
         `).join('');
         cartFooter.classList.remove('d-none');
     }
+}
+
+/**
+ * Update item quantity by cart index
+ */
+function updateQuantityByIndex(index, change) {
+    if (index < 0 || index >= cart.length) return;
+
+    cart[index].quantity += change;
+
+    if (cart[index].quantity <= 0) {
+        removeFromCartByIndex(index);
+        return;
+    }
+
+    localStorage.setItem('dasportz_cart', JSON.stringify(cart));
+    updateCartUI();
+}
+
+/**
+ * Remove item from cart by index
+ */
+function removeFromCartByIndex(index) {
+    if (index < 0 || index >= cart.length) return;
+    cart.splice(index, 1);
+    localStorage.setItem('dasportz_cart', JSON.stringify(cart));
+    updateCartUI();
+    showToast('Item removed from cart');
 }
 
 /**
@@ -562,16 +619,100 @@ function setupEventListeners() {
     document.getElementById('cartClose').addEventListener('click', closeCart);
     document.getElementById('cartOverlay').addEventListener('click', closeCart);
 
-    // Payment Method Selection
+    // Payment Amount Selection (Full/50% Advance)
     document.querySelectorAll('.payment-option').forEach(option => {
         option.addEventListener('click', function () {
             document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
             this.classList.add('selected');
+            updateAdvancePaymentDisplay();
         });
     });
 
     // Checkout Form
     document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+}
+
+/**
+ * Select payment method (Online/Cash)
+ */
+function selectPaymentMethod(element) {
+    document.querySelectorAll('.payment-method-option').forEach(o => o.classList.remove('selected'));
+    element.classList.add('selected');
+
+    const method = element.dataset.method;
+    const paymentAmountSection = document.getElementById('paymentAmountSection');
+    const payNowBtn = document.getElementById('payNowBtn');
+
+    if (method === 'cash') {
+        // Hide advance payment options for cash
+        paymentAmountSection.style.display = 'none';
+        payNowBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Place Order';
+    } else {
+        paymentAmountSection.style.display = 'block';
+        payNowBtn.innerHTML = '<i class="bi bi-credit-card me-2"></i>Pay Now';
+    }
+
+    updateAdvancePaymentDisplay();
+}
+
+/**
+ * Select delivery option
+ */
+function selectDeliveryOption(element) {
+    document.querySelectorAll('.delivery-option').forEach(o => o.classList.remove('selected'));
+    element.classList.add('selected');
+
+    const deliveryType = element.dataset.delivery;
+    const addressSection = document.getElementById('addressSection');
+    const addressInput = document.getElementById('deliveryAddress');
+
+    if (deliveryType === 'porter') {
+        addressSection.style.display = 'block';
+        addressInput.setAttribute('required', 'required');
+    } else {
+        addressSection.style.display = 'none';
+        addressInput.removeAttribute('required');
+    }
+}
+
+/**
+ * Update advance payment display based on selected payment option
+ */
+function updateAdvancePaymentDisplay() {
+    const selectedPaymentMethod = document.querySelector('.payment-method-option.selected');
+    const selectedPayment = document.querySelector('.payment-option.selected');
+    const advanceRow = document.getElementById('advancePaymentRow');
+    const balanceNote = document.getElementById('balanceNote');
+    const advanceAmount = document.getElementById('advanceAmount');
+
+    if (!advanceRow) return;
+
+    // If cash payment is selected, hide advance payment options
+    if (selectedPaymentMethod?.dataset.method === 'cash') {
+        advanceRow.style.display = 'none';
+        balanceNote.style.display = 'none';
+        return;
+    }
+
+    if (!selectedPayment) return;
+
+    const paymentType = selectedPayment.dataset.payment;
+
+    // Calculate total
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const bulkDiscount = subtotal >= 500 ? Math.round(subtotal * 0.10) : 0;
+    const couponDiscount = appliedCoupon ? appliedCoupon.discount : 0;
+    const finalTotal = Math.max(0, subtotal - bulkDiscount - couponDiscount);
+
+    if (paymentType === 'advance') {
+        const advance = Math.ceil(finalTotal / 2);
+        advanceRow.style.display = 'flex';
+        balanceNote.style.display = 'block';
+        advanceAmount.textContent = `₹${advance.toLocaleString('en-IN')}`;
+    } else {
+        advanceRow.style.display = 'none';
+        balanceNote.style.display = 'none';
+    }
 }
 
 /**
@@ -583,50 +724,282 @@ function closeCart() {
 }
 
 /**
- * Handle Checkout
+ * Set button loading state
  */
-function handleCheckout(e) {
-    e.preventDefault();
+function setButtonLoading(loading, text = 'Processing...') {
+    const btn = document.getElementById('payNowBtn');
+    if (!btn) return;
 
-    const selectedPayment = document.querySelector('.payment-option.selected');
-    if (!selectedPayment) {
+    if (loading) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>${text}`;
+    } else {
+        btn.disabled = false;
+        // Check if cash payment method is selected
+        const selectedMethod = document.querySelector('.payment-method-option.selected');
+        if (selectedMethod?.dataset.method === 'cash') {
+            btn.innerHTML = `<i class="bi bi-check-circle me-2"></i>Place Order`;
+        } else {
+            btn.innerHTML = `<i class="bi bi-credit-card me-2"></i>Pay Now`;
+        }
+    }
+}
+
+/**
+ * Handle Checkout - Integrates with backend and Zoho payment
+ */
+async function handleCheckout(e) {
+    e.preventDefault();
+    console.log('handleCheckout called');
+
+    const selectedPaymentMethod = document.querySelector('.payment-method-option.selected');
+    const selectedPaymentAmount = document.querySelector('.payment-option.selected');
+    const selectedDelivery = document.querySelector('.delivery-option.selected');
+    const customerName = document.getElementById('customerName')?.value?.trim();
+    const customerPhone = document.getElementById('customerPhone')?.value?.trim();
+
+    console.log('Validation check:', {
+        selectedPaymentMethod: selectedPaymentMethod?.dataset?.method,
+        selectedPaymentAmount: selectedPaymentAmount?.dataset?.payment,
+        selectedDelivery: selectedDelivery?.dataset?.delivery,
+        customerName,
+        customerPhone,
+        cartLength: cart.length
+    });
+
+    // Validation
+    if (!customerName) {
+        alert('Please enter your name');
+        document.getElementById('customerName')?.focus();
+        return;
+    }
+
+    if (!customerPhone || !/^\d{10}$/.test(customerPhone)) {
+        alert('Please enter a valid 10-digit phone number');
+        document.getElementById('customerPhone')?.focus();
+        return;
+    }
+
+    if (!selectedPaymentMethod) {
         alert('Please select a payment method');
         return;
     }
 
-    const paymentMethod = selectedPayment.dataset.payment;
-    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    if (!selectedDelivery) {
+        alert('Please select a delivery option');
+        return;
+    }
 
-    // Prepare order data
-    const orderData = {
-        items: cart,
-        total: totalAmount,
-        paymentMethod: paymentMethod,
-        timestamp: new Date().toISOString()
+    const paymentMethod = selectedPaymentMethod.dataset.method; // 'online' or 'cash'
+    const deliveryType = selectedDelivery.dataset.delivery;
+    const deliveryAddress = document.getElementById('deliveryAddress')?.value?.trim();
+
+    if (deliveryType === 'porter' && !deliveryAddress) {
+        alert('Please enter your delivery address');
+        document.getElementById('deliveryAddress')?.focus();
+        return;
+    }
+
+    if (cart.length === 0) {
+        alert('Your cart is empty');
+        return;
+    }
+
+    // For online payments, get the payment amount selection (full/advance)
+    // For cash payments, always full payment (no advance option)
+    const isCashPayment = paymentMethod === 'cash';
+    const isAdvancePayment = !isCashPayment && selectedPaymentAmount?.dataset.payment === 'advance';
+
+    // Prepare trophy details for backend
+    const trophyDetails = cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        sport: item.sport,
+        type: item.type,
+        price: item.price,
+        quantity: item.quantity,
+        customization: item.customization
+    }));
+
+    // Build payload for backend
+    const payload = {
+        serviceType: 'trophies',
+        customerName: customerName,
+        phone: customerPhone,
+        trophyDetails: trophyDetails,
+        deliveryType: deliveryType,
+        deliveryAddress: deliveryType === 'porter' ? deliveryAddress : null,
+        advancePayment: isAdvancePayment,
+        couponCode: appliedCoupon ? appliedCoupon.code : null,
+        paymentMethod: isCashPayment ? 'payatoutlet' : 'online',
+        store: 'online'
     };
 
-    if (paymentMethod === 'online') {
-        // Redirect to payment page (you can integrate Razorpay or other gateway)
-        alert(`Redirecting to online payment gateway...\nAmount: ₹${totalAmount.toLocaleString('en-IN')}`);
-        // In production, you would redirect to payment-success.html or similar
-        window.location.href = 'payment-success.html';
-    } else {
-        // Cash on Delivery
-        alert(`Order placed successfully!\nPayment Method: Cash on Delivery\nTotal: ₹${totalAmount.toLocaleString('en-IN')}\n\nWe'll contact you shortly!`);
+    console.log('Checkout payload:', JSON.stringify(payload, null, 2));
+    console.log('BACKEND_BASE:', BACKEND_BASE);
 
-        // Clear cart
-        cart = [];
-        localStorage.setItem('dasportz_cart', JSON.stringify(cart));
-        updateCartUI();
-        closeCart();
+    try {
+        setButtonLoading(true, 'Creating order...');
 
-        // Close modal
-        bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
+        console.log('Making fetch request to:', `${BACKEND_BASE}/api/create-order`);
 
-        // Redirect to order confirmation
-        setTimeout(() => {
-            window.location.href = 'order-accepted.html';
-        }, 1500);
+        // Call backend to create order
+        const createResp = await fetch(`${BACKEND_BASE}/api/create-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        console.log('Fetch response status:', createResp.status);
+
+        const createData = await createResp.json().catch(() => ({}));
+        console.log('create-order response:', createData);
+
+        if (!createData || !createData.success) {
+            setButtonLoading(false);
+            console.error('create-order failed', createData);
+            alert('Failed to create order. ' + (createData?.message || 'Please try again.'));
+            return;
+        }
+
+        // Get order data from response
+        const resp = createData.data || createData;
+        const orderId = resp.order_id;
+
+        // CASH PAYMENT FLOW - redirect to order accepted page
+        if (isCashPayment) {
+            // Clear cart on success
+            cart = [];
+            localStorage.setItem('dasportz_cart', JSON.stringify(cart));
+
+            const order = createData.order || resp;
+            const amount = order.amount || resp.amount || 0;
+            const params = new URLSearchParams({
+                oid: orderId,
+                amount: amount.toString(),
+                name: customerName,
+                store: 'online',
+                service: 'trophies'
+            });
+            window.location.href = `/order-accepted.html?${params.toString()}`;
+            return;
+        }
+
+        // ONLINE PAYMENT FLOW - use Zoho payment widget
+        const paymentsSessionId = resp.payments_session_id;
+        const amount = resp.amount;
+
+        if (!paymentsSessionId) {
+            setButtonLoading(false);
+            console.error('Missing payments_session_id from server', createData);
+            alert('Payment session creation failed. Please try again.');
+            return;
+        }
+
+        // Get Zoho config
+        const zpayConfig = resp.zpayConfig || { account_id: '60044148024', domain: 'IN' };
+        const apiKey = ZOHO_WIDGET_API_KEY;
+
+        if (!zpayConfig.account_id || !apiKey) {
+            setButtonLoading(false);
+            console.error('Missing zpay config', zpayConfig);
+            alert('Payment configuration missing. Please contact support.');
+            return;
+        }
+
+        // Instantiate Zoho Payment widget
+        const instance = new window.ZPayments({
+            account_id: String(zpayConfig.account_id),
+            domain: String(zpayConfig.domain || 'IN'),
+            otherOptions: {
+                api_key: apiKey
+            }
+        });
+
+        // Prepare widget options
+        const widgetOptions = {
+            amount: (Number(amount) || 0).toString(),
+            currency_code: 'INR',
+            payments_session_id: String(paymentsSessionId),
+            currency_symbol: '₹',
+            business: 'DA SPORTZ',
+            description: 'Trophies & Awards',
+            address: {
+                name: customerName,
+                email: customerPhone + '@dasportz.com',
+                phone: customerPhone
+            }
+        };
+
+        setButtonLoading(true, 'Opening checkout...');
+
+        let widgetResponse;
+        try {
+            widgetResponse = await instance.requestPaymentMethod(widgetOptions);
+        } catch (widgetErr) {
+            setButtonLoading(false);
+            if (widgetErr && widgetErr.code === 'widget_closed') {
+                console.warn('Widget closed by user');
+                alert('Payment cancelled.');
+            } else if (widgetErr && widgetErr.code === 'invalid_payment_session') {
+                console.warn('Payment session invalid/expired');
+                alert('Payment session expired. Please try again.');
+            } else {
+                console.error('Widget error', widgetErr);
+                alert('Payment failed or was cancelled. Please try again.');
+            }
+            return;
+        } finally {
+            try { await instance.close(); } catch (_) { }
+        }
+
+        // Get payment ID from response
+        const paymentId = widgetResponse?.payment_id || widgetResponse?.payment?.payment_id || widgetResponse?.paymentId;
+        if (!paymentId) {
+            setButtonLoading(false);
+            console.error('No payment_id returned from widget', widgetResponse);
+            alert('Payment could not be confirmed. Please contact support.');
+            return;
+        }
+
+        // Verify payment with backend
+        setButtonLoading(true, 'Verifying payment...');
+        const verifyResp = await fetch(`${BACKEND_BASE}/api/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ payment_id: paymentId })
+        });
+
+        const verifyData = await verifyResp.json().catch(() => ({}));
+        if (verifyData && verifyData.success) {
+            // Clear cart on success
+            cart = [];
+            localStorage.setItem('dasportz_cart', JSON.stringify(cart));
+
+            // Build success redirect params
+            const params = new URLSearchParams({
+                pid: paymentId,
+                amount: amount.toString(),
+                name: customerName,
+                oid: orderId,
+                service: 'trophies'
+            });
+
+            if (isAdvancePayment && resp.balanceAmount) {
+                params.append('balance', resp.balanceAmount.toString());
+            }
+
+            window.location.href = `/payment-success.html?${params.toString()}`;
+        } else {
+            setButtonLoading(false);
+            console.error('Payment verification failed', verifyData);
+            alert('Payment verification failed. If amount was deducted, please contact support with Order ID: ' + orderId);
+        }
+
+    } catch (error) {
+        setButtonLoading(false);
+        console.error('Checkout error:', error);
+        alert('An error occurred. Please try again.');
     }
 }
 
@@ -666,6 +1039,130 @@ function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+/**
+ * Update checkout modal totals with discounts
+ */
+function updateCheckoutTotals() {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    // Calculate bulk discount (10% if subtotal >= 500)
+    const bulkDiscountEligible = subtotal >= 500;
+    const bulkDiscount = bulkDiscountEligible ? Math.round(subtotal * 0.10) : 0;
+
+    // Get coupon discount
+    const couponDiscount = appliedCoupon ? appliedCoupon.discount : 0;
+
+    // Calculate final total
+    const finalTotal = Math.max(0, subtotal - bulkDiscount - couponDiscount);
+
+    // Update UI elements
+    const subtotalEl = document.getElementById('subtotalAmount');
+    const bulkDiscountBadge = document.getElementById('bulkDiscountBadge');
+    const bulkDiscountRow = document.getElementById('bulkDiscountRow');
+    const bulkDiscountAmount = document.getElementById('bulkDiscountAmount');
+    const couponDiscountRow = document.getElementById('couponDiscountRow');
+    const couponDiscountAmount = document.getElementById('couponDiscountAmount');
+    const modalTotal = document.getElementById('modalTotal');
+
+    if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+
+    if (bulkDiscountBadge && bulkDiscountRow && bulkDiscountAmount) {
+        if (bulkDiscountEligible) {
+            bulkDiscountBadge.style.display = 'block';
+            bulkDiscountRow.style.display = 'flex';
+            bulkDiscountAmount.textContent = `-₹${bulkDiscount.toLocaleString('en-IN')}`;
+        } else {
+            bulkDiscountBadge.style.display = 'none';
+            bulkDiscountRow.style.display = 'none';
+        }
+    }
+
+    if (couponDiscountRow && couponDiscountAmount) {
+        if (couponDiscount > 0) {
+            couponDiscountRow.style.display = 'flex';
+            couponDiscountAmount.textContent = `-₹${couponDiscount.toLocaleString('en-IN')}`;
+        } else {
+            couponDiscountRow.style.display = 'none';
+        }
+    }
+
+    if (modalTotal) modalTotal.textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
+
+    // Update advance payment display
+    updateAdvancePaymentDisplay();
+}
+
+/**
+ * Validate and apply coupon code
+ */
+function applyCoupon() {
+    const couponInput = document.getElementById('couponInput');
+    const code = couponInput.value.trim().toUpperCase();
+
+    if (!code) {
+        showToast('Please enter a coupon code');
+        return;
+    }
+
+    // Validate coupon format: DA followed by numbers
+    const couponRegex = /^DA(\d+)$/;
+    const match = code.match(couponRegex);
+
+    if (!match) {
+        showToast('Invalid coupon format. Use DA followed by amount (e.g., DA50)');
+        couponInput.classList.add('is-invalid');
+        setTimeout(() => couponInput.classList.remove('is-invalid'), 2000);
+        return;
+    }
+
+    const discountAmount = parseInt(match[1], 10);
+
+    // Validate discount amount
+    if (isNaN(discountAmount) || discountAmount === 0) {
+        showToast('Invalid discount amount');
+        return;
+    }
+
+    if (discountAmount % 50 !== 0) {
+        showToast('Discount must be a multiple of 50');
+        return;
+    }
+
+    if (discountAmount > 500) {
+        showToast('Maximum discount is ₹500');
+        return;
+    }
+
+    // Apply coupon
+    appliedCoupon = {
+        code: code,
+        discount: discountAmount
+    };
+
+    // Update UI
+    document.getElementById('couponInputArea').style.display = 'none';
+    document.getElementById('couponAppliedArea').style.display = 'block';
+    document.getElementById('appliedCouponCode').textContent = code;
+
+    updateCheckoutTotals();
+    showToast(`Coupon applied! ₹${discountAmount} off`);
+}
+
+/**
+ * Remove applied coupon
+ */
+function removeCoupon() {
+    appliedCoupon = null;
+
+    // Reset UI
+    document.getElementById('couponInputArea').style.display = 'block';
+    document.getElementById('couponAppliedArea').style.display = 'none';
+    document.getElementById('couponInput').value = '';
+
+    updateCheckoutTotals();
+    showToast('Coupon removed');
+}
+
 // Add animations
 const style = document.createElement('style');
 style.textContent = `
@@ -684,8 +1181,18 @@ document.head.appendChild(style);
 window.addToCart = addToCart;
 window.buyNow = buyNow;
 window.updateQuantity = updateQuantity;
+window.updateQuantityByIndex = updateQuantityByIndex;
 window.removeFromCart = removeFromCart;
+window.removeFromCartByIndex = removeFromCartByIndex;
 window.quickView = quickView;
 window.showProductImage = showProductImage;
 window.closeImageModal = closeImageModal;
 window.toggleCustomization = toggleCustomization;
+window.applyCoupon = applyCoupon;
+window.removeCoupon = removeCoupon;
+window.closeCart = closeCart;
+window.selectDeliveryOption = selectDeliveryOption;
+window.selectPaymentMethod = selectPaymentMethod;
+window.handleCheckout = handleCheckout;
+window.loadProducts = loadProducts;
+window.refreshProducts = async () => { await loadProducts(); displayProducts(); };

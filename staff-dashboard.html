@@ -1023,6 +1023,56 @@
                 cursor: default;
             }
         }
+
+        /* Existing Trophy Images Styling */
+        .existing-trophy-image-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .existing-trophy-image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .existing-trophy-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .existing-trophy-image-card:hover .existing-trophy-image-overlay {
+            opacity: 1;
+        }
+
+        .delete-trophy-image-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .delete-trophy-image-btn:hover {
+            background: #c82333;
+        }
     </style>
 </head>
 
@@ -1268,6 +1318,12 @@
                                 <i class="bi bi-info-circle"></i> Upload up to 3 images (JPG, PNG, WEBP, GIF - Max 5MB
                                 each)
                             </small>
+                        </div>
+
+                        <!-- Existing Images Section (for editing) -->
+                        <div id="existingTrophyImagesSection" style="display: none;" class="mb-4">
+                            <label class="form-label fw-semibold">Existing Images</label>
+                            <div id="existingTrophyImagesList" class="row g-3"></div>
                         </div>
 
                         <!-- Image Preview -->
@@ -1745,6 +1801,84 @@
         }
 
         // Save Trophy (global function)
+        // State for trophy image management during editing
+        let trophyEditingId = null;
+        let trophyExistingImages = [];
+        let trophyImagesToDelete = [];
+
+        /**
+         * Display existing trophy images with delete option
+         */
+        function displayExistingTrophyImages() {
+            const existingSection = document.getElementById('existingTrophyImagesSection');
+            const existingList = document.getElementById('existingTrophyImagesList');
+
+            if (!existingSection || !existingList) {
+                console.error('Missing HTML elements for existing trophy images');
+                return;
+            }
+
+            console.log('displayExistingTrophyImages - trophyExistingImages:', trophyExistingImages);
+            console.log('displayExistingTrophyImages - length:', trophyExistingImages.length);
+
+            if (!trophyExistingImages || trophyExistingImages.length === 0) {
+                existingSection.style.display = 'none';
+                existingList.innerHTML = '';
+                return;
+            }
+
+            existingSection.style.display = 'block';
+            existingList.innerHTML = '';
+
+            trophyExistingImages.forEach((imageUrl, index) => {
+                if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim() === '') {
+                    console.log('Skipping empty/invalid image at index', index);
+                    return;
+                }
+
+                console.log(`Creating image card ${index}:`, imageUrl.substring(0, 50) + '...');
+
+                const col = document.createElement('div');
+                col.className = 'col-sm-4';
+
+                const card = document.createElement('div');
+                card.className = 'existing-trophy-image-card';
+
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = `Trophy image ${index + 1}`;
+
+                const overlay = document.createElement('div');
+                overlay.className = 'existing-trophy-image-overlay';
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'delete-trophy-image-btn';
+                deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>Delete';
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    deleteTrophyExistingImage(index);
+                });
+
+                overlay.appendChild(deleteBtn);
+                card.appendChild(img);
+                card.appendChild(overlay);
+                col.appendChild(card);
+                existingList.appendChild(col);
+            });
+        }
+
+        /**
+         * Delete an existing trophy image
+         */
+        function deleteTrophyExistingImage(index) {
+            const imageUrl = trophyExistingImages[index];
+            trophyImagesToDelete.push(imageUrl);
+            trophyExistingImages.splice(index, 1);
+            displayExistingTrophyImages();
+        }
+
         async function saveTrophy() {
             const form = document.getElementById('trophyForm');
             if (!form.checkValidity()) {
@@ -1761,8 +1895,11 @@
 
             // Create FormData for file uploads
             const formData = new FormData();
-            formData.append('name', document.getElementById('trophyName').value);
-            formData.append('price', document.getElementById('trophyPrice').value);
+            const nameValue = document.getElementById('trophyName').value;
+            const priceValue = document.getElementById('trophyPrice').value;
+
+            formData.append('name', nameValue);
+            formData.append('price', priceValue);
             formData.append('category', document.getElementById('trophyCategory').value);
             formData.append('size', document.getElementById('trophySize').value);
             formData.append('description', document.getElementById('trophyDescription').value);
@@ -1802,6 +1939,18 @@
                 console.log(`[Trophy Upload] Total images appended to FormData: ${uploadCount}`);
             } else {
                 console.log('[Trophy Upload] No images selected');
+            }
+
+            // Handle image deletion (for edit mode)
+            if (isEdit && trophyImagesToDelete && trophyImagesToDelete.length > 0) {
+                console.log(`[Trophy Edit] Marking ${trophyImagesToDelete.length} images for deletion`);
+                formData.append('imagesToDelete', JSON.stringify(trophyImagesToDelete));
+            }
+
+            // Always send remaining images for edit mode
+            if (isEdit && trophyExistingImages && trophyExistingImages.length > 0) {
+                console.log(`[Trophy Edit] Sending ${trophyExistingImages.length} existing images`);
+                formData.append('existingImages', JSON.stringify(trophyExistingImages));
             }
 
             try {
@@ -1869,13 +2018,17 @@
 
             trophies.forEach(trophy => {
                 const row = document.createElement('tr');
-                const firstImage = trophy.images && trophy.images.length > 0 ? trophy.images[0] : '/img/placeholder-trophy.png';
-                const imageCount = trophy.images ? trophy.images.length : 0;
+                // Show first image from images array, fall back to imageUrl, then default
+                const images = trophy.images || (trophy.imageUrl ? [trophy.imageUrl] : []);
+                const firstImage = images[0] || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400';
+                const imageCount = images.length;
 
                 row.innerHTML = `
                     <td>
-                        <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
-                        ${imageCount > 1 ? `<small class="text-muted d-block">+${imageCount - 1} more</small>` : ''}
+                        <div style="position: relative; display: inline-block;">
+                            <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                            ${imageCount > 1 ? `<span class="badge bg-primary" style="position: absolute; bottom: -5px; right: -5px; font-size: 10px;">+${imageCount - 1}</span>` : ''}
+                        </div>
                     </td>
                     <td>${trophy.name}</td>
                     <td>${trophy.description || 'N/A'}</td>
@@ -2100,7 +2253,7 @@
             const serviceButtons = document.querySelectorAll('.service-menu-btn:not(#openQRScanBtn)');
             const statusTabs = document.querySelector('.status-tabs');
             const trophyManagementSection = document.getElementById('trophy-management-main');
-            
+
             console.log('Service buttons found:', serviceButtons.length);
             console.log('statusTabs element:', statusTabs);
             console.log('trophyManagementSection element:', trophyManagementSection);
@@ -2249,7 +2402,7 @@
             // Populate all tabs from cached orders
             function populateAllTabsFromCache() {
                 console.log('populateAllTabsFromCache called, currentService:', currentService, 'cache size:', allOrdersCache.length);
-                
+
                 // Clear all badge counts first to ensure fresh display
                 updateSingleBadgeCount('received', 0);
                 updateSingleBadgeCount('in-progress', 0);
@@ -4510,14 +4663,17 @@
 
                 trophies.forEach(trophy => {
                     const row = document.createElement('tr');
-                    // Show first image or placeholder
-                    const firstImage = trophy.images && trophy.images.length > 0 ? trophy.images[0] : '/img/placeholder-trophy.png';
-                    const imageCount = trophy.images ? trophy.images.length : 0;
+                    // Show first image from images array, fall back to imageUrl, then default
+                    const images = trophy.images || (trophy.imageUrl ? [trophy.imageUrl] : []);
+                    const firstImage = images[0] || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400';
+                    const imageCount = images.length;
 
                     row.innerHTML = `
                         <td>
-                            <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
-                            ${imageCount > 1 ? `<small class="text-muted d-block">+${imageCount - 1} more</small>` : ''}
+                            <div style="position: relative; display: inline-block;">
+                                <img src="${firstImage}" alt="${trophy.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                ${imageCount > 1 ? `<span class="badge bg-primary" style="position: absolute; bottom: -5px; right: -5px; font-size: 10px;">+${imageCount - 1}</span>` : ''}
+                            </div>
                         </td>
                         <td>${trophy.name}</td>
                         <td>${trophy.description || 'N/A'}</td>
@@ -4551,9 +4707,24 @@
                 document.getElementById('trophyImagePreview').innerHTML = '';
                 document.getElementById('trophyFormStatus').style.display = 'none';
                 document.getElementById('trophyModalLabel').textContent = 'Add Trophy';
+
+                // Reset trophy image state
+                trophyEditingId = null;
+                trophyExistingImages = [];
+                trophyImagesToDelete = [];
+                document.getElementById('existingTrophyImagesSection').style.display = 'none';
+                document.getElementById('existingTrophyImagesList').innerHTML = '';
             }
 
             function editTrophy(id) {
+                // Clear all image previews and sections first
+                document.getElementById('trophyImagePreview').innerHTML = '';
+                document.getElementById('trophyImages').value = '';
+                const existingSection = document.getElementById('existingTrophyImagesSection');
+                const existingList = document.getElementById('existingTrophyImagesList');
+                if (existingList) existingList.innerHTML = '';
+                if (existingSection) existingSection.style.display = 'none';
+
                 // For now, we'll load the trophy data from the API since the table display is simplified
                 // In a real implementation, you might want to cache the full trophy data
                 fetch(`${API_BASE_URL}/api/trophies`, {
@@ -4574,6 +4745,22 @@
                             document.getElementById('trophyAvailable').checked = trophy.available;
                             document.getElementById('trophyCustomizable').checked = trophy.customizable || false;
 
+                            // Display existing images
+                            trophyEditingId = trophy._id;
+
+                            // Build unique images list: prioritize images array, fallback to imageUrl
+                            let imagesToDisplay = [];
+                            if (trophy.images && Array.isArray(trophy.images) && trophy.images.length > 0) {
+                                imagesToDisplay = [...trophy.images];
+                            } else if (trophy.imageUrl) {
+                                imagesToDisplay = [trophy.imageUrl];
+                            }
+
+                            // Remove duplicates
+                            trophyExistingImages = [...new Set(imagesToDisplay)];
+                            trophyImagesToDelete = [];
+                            displayExistingTrophyImages();
+
                             document.getElementById('trophyModalLabel').textContent = 'Edit Trophy';
 
                             // Show modal
@@ -4587,9 +4774,22 @@
                     });
             }
 
+            // Expose editTrophy globally for onclick handlers (deleteTrophy is already global)
+            window.editTrophy = editTrophy;
+
             // Trophy Management Event Listeners
             document.getElementById('addTrophyBtn').addEventListener('click', resetTrophyForm);
             document.getElementById('saveTrophyBtn').addEventListener('click', saveTrophy);
+
+            // Reset trophy image state when modal is hidden
+            document.getElementById('trophyModal').addEventListener('hidden.bs.modal', function () {
+                trophyEditingId = null;
+                trophyExistingImages = [];
+                trophyImagesToDelete = [];
+                document.getElementById('trophyId').value = '';
+                document.getElementById('existingTrophyImagesSection').style.display = 'none';
+                document.getElementById('existingTrophyImagesList').innerHTML = '';
+            });
 
             // Handle image preview for trophy form
             document.getElementById('trophyImages').addEventListener('change', function (e) {
