@@ -656,12 +656,18 @@
 
                 // For edit mode, pass existing images and delete list
                 if (currentEditingId) {
+                    console.log('🔍 DEBUG: Edit mode detected');
+                    console.log('🔍 existingImages array:', existingImages);
+                    console.log('🔍 existingImages length:', existingImages.length);
+                    console.log('🔍 imagesToDelete:', imagesToDelete);
+
                     formData.append('existingImages', JSON.stringify(existingImages));
                     formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
-                    // If new images uploaded, replace; if not, append to existing
-                    if (images.length === 0) {
-                        formData.append('appendImages', 'true');
-                    }
+                    // Always append new images to existing ones during edit
+                    // (never replace all images unless user explicitly deletes them)
+                    formData.append('appendImages', 'true');
+
+                    console.log('✅ Sent to backend - appendImages: true, existingImages count:', existingImages.length);
                 }
 
                 try {
@@ -672,7 +678,16 @@
                         : `${getBackendUrl()}/api/trophies`;
 
                     console.log('Request:', method, apiUrl);
-                    console.log('FormData entries:', [...formData.entries()]);
+                    console.log('=== FormData Entries ===');
+                    console.log('New images files count:', images.length);
+                    for (const [key, value] of formData.entries()) {
+                        if (key === 'images') {
+                            console.log(`  ${key}: [File] ${value.name || value}`);
+                        } else {
+                            console.log(`  ${key}: ${value}`);
+                        }
+                    }
+                    console.log('========================');
 
                     const token = getToken();
                     const res = await fetch(apiUrl, {

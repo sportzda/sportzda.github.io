@@ -1516,7 +1516,7 @@
                             </div>
                         </div>
                         <h5 class="card-title">Custom Orders</h5>
-                        <p class="card-text">Handle custom trophy orders and engraving.</p>
+                        <p class="card-text">Handle custom trophy orders with text/logo stickers.</p>
                         <button class="btn btn-primary">Manage Orders</button>
                     </div>
                 </div>
@@ -1948,9 +1948,15 @@
             }
 
             // Always send remaining images for edit mode
-            if (isEdit && trophyExistingImages && trophyExistingImages.length > 0) {
-                console.log(`[Trophy Edit] Sending ${trophyExistingImages.length} existing images`);
-                formData.append('existingImages', JSON.stringify(trophyExistingImages));
+            if (isEdit) {
+                // Tell backend to append new images to existing ones (don't replace)
+                formData.append('appendImages', 'true');
+                if (trophyExistingImages && trophyExistingImages.length > 0) {
+                    console.log(`[Trophy Edit] Sending ${trophyExistingImages.length} existing images with appendImages=true`);
+                    formData.append('existingImages', JSON.stringify(trophyExistingImages));
+                } else {
+                    console.log(`[Trophy Edit] No existing images, will append new ones`);
+                }
             }
 
             try {
@@ -4736,6 +4742,12 @@
                     .then(data => {
                         const trophy = data.trophies.find(t => t._id === id);
                         if (trophy) {
+                            console.log('[Trophy Edit] Loaded trophy:', trophy.name);
+                            console.log('[Trophy Edit] Trophy.images:', trophy.images);
+                            console.log('[Trophy Edit] Trophy.imageUrl:', trophy.imageUrl);
+                            console.log('[Trophy Edit] Has images array?', Array.isArray(trophy.images));
+                            console.log('[Trophy Edit] Images array length:', trophy.images ? trophy.images.length : 'N/A');
+
                             document.getElementById('trophyId').value = trophy._id;
                             document.getElementById('trophyName').value = trophy.name;
                             document.getElementById('trophyPrice').value = trophy.price;
@@ -4752,13 +4764,18 @@
                             let imagesToDisplay = [];
                             if (trophy.images && Array.isArray(trophy.images) && trophy.images.length > 0) {
                                 imagesToDisplay = [...trophy.images];
+                                console.log('[Trophy Edit] Using images array with', imagesToDisplay.length, 'images');
                             } else if (trophy.imageUrl) {
                                 imagesToDisplay = [trophy.imageUrl];
+                                console.log('[Trophy Edit] Using imageUrl only - no images array');
+                            } else {
+                                console.log('[Trophy Edit] ⚠️ No images found at all!');
                             }
 
                             // Remove duplicates
                             trophyExistingImages = [...new Set(imagesToDisplay)];
                             trophyImagesToDelete = [];
+                            console.log('[Trophy Edit] Final trophyExistingImages count:', trophyExistingImages.length);
                             displayExistingTrophyImages();
 
                             document.getElementById('trophyModalLabel').textContent = 'Edit Trophy';

@@ -71,6 +71,7 @@ async function loadProducts() {
                 type: trophy.size || trophy.type || 'trophy',
                 price: trophy.price,
                 image: trophy.imageUrl || trophy.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400',
+                images: trophy.images && Array.isArray(trophy.images) ? trophy.images : (trophy.imageUrl ? [trophy.imageUrl] : []), // Store all images for badge display
                 customizable: trophy.customizable !== false,
                 available: trophy.available !== false,
                 description: trophy.description || ''
@@ -188,6 +189,9 @@ function displayProducts() {
                 <div class="product-card" onclick="showProductImage(${pid})" style="cursor: pointer;">
                     <div class="product-image">
                         <img src="${product.image}" alt="${product.name}">
+                        ${product.images && product.images.length > 1 ? `
+                            <span class="product-badge">+${product.images.length - 1}</span>
+                        ` : ''}
                     </div>
                     <div class="product-body">
                         <div class="product-title">${product.name}</div>
@@ -989,7 +993,7 @@ async function handleCheckout(e) {
                 params.append('balance', resp.balanceAmount.toString());
             }
 
-            window.location.href = `/payment-success.html?${params.toString()}`;
+            window.location.href = `/trophy-payment-success.html?${params.toString()}`;
         } else {
             setButtonLoading(false);
             console.error('Payment verification failed', verifyData);
