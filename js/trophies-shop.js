@@ -175,11 +175,11 @@ function displayProducts() {
             const inventoryBadgeClass = isSoldOut ? 'inventory-sold-out' : 'inventory-in-stock';
 
             col.innerHTML = `
-                <div class="product-card ${isSoldOut ? 'sold-out' : ''}" onclick="showProductImage(${pid})" style="cursor: pointer;">
-                    <div class="product-image">
+                <div class="product-card ${isSoldOut ? 'sold-out' : ''}" onclick="${isSoldOut ? "event.preventDefault(); showToast('This item is sold out', 'error'); return false;" : `showProductImage(${pid})`}" style="cursor: ${isSoldOut ? 'not-allowed' : 'pointer'}; ${isSoldOut ? 'pointer-events: none;' : ''}">
+                    <div class="product-image" style="position: relative;">
                         <img src="${product.image}" alt="${product.name}" ${isSoldOut ? 'style="opacity: 0.65;"' : ''}>
                         ${product.images && product.images.length > 1 ? `
-                            <span class="product-badge">+${product.images.length - 1}</span>
+                            <span class="product-badge"><i class="bi bi-images me-1"></i>+${product.images.length - 1}</span>
                         ` : ''}
                     </div>
                     <div class="product-body">
@@ -192,10 +192,10 @@ function displayProducts() {
                         </div>
                         <div class="product-price">₹${product.price.toLocaleString('en-IN')}</div>
                         <div class="product-actions" onclick="event.stopPropagation();">
-                            <button class="btn-buy-now" onclick="showCustomizationModal(${pid}, 'buy')" ${isSoldOut ? 'disabled' : ''}>
+                            <button class="btn-buy-now" onclick="showCustomizationModal(${pid}, 'buy')" ${isSoldOut ? 'disabled' : ''} title="${isSoldOut ? 'Out of stock' : ''}">
                                 Buy
                             </button>
-                            <button class="btn-add-cart" onclick="showCustomizationModal(${pid}, 'add')" ${isSoldOut ? 'disabled' : ''}>
+                            <button class="btn-add-cart" onclick="showCustomizationModal(${pid}, 'add')" ${isSoldOut ? 'disabled' : ''} title="${isSoldOut ? 'Out of stock' : ''}">
                                 Cart
                             </button>
                         </div>
@@ -503,15 +503,34 @@ function showProductImage(productId) {
     const soldOutBadge = document.getElementById('soldOutBadge');
     const buyNowBtn = document.getElementById('modalBuyNow');
     const addToCartBtn = document.getElementById('modalAddToCart');
+    const imageCarouselNav = document.getElementById('imageCarouselNav');
 
     const isSoldOut = product.inventory === 0;
 
-    modalImage.src = product.image;
+    // Setup image carousel
+    const allImages = product.images && product.images.length > 0 ? product.images : [product.image];
+    window.currentProductImages = allImages;
+    window.currentImageIndex = 0;
+
+    // Set initial image
+    modalImage.src = allImages[0];
     modalProductName.textContent = product.name;
-    
+
     // Format type to show "X inches" if it's numeric
     const typeDisplay = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
     modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay} | ₹${product.price.toLocaleString('en-IN')}`;
+
+    // Show/hide carousel navigation if multiple images
+    if (allImages.length > 1) {
+        imageCarouselNav.style.display = 'flex';
+        // Update image counter
+        const imageCounter = document.getElementById('imageCounter');
+        imageCounter.textContent = `1 / ${allImages.length}`;
+        imageCounter.style.display = 'block';
+    } else {
+        imageCarouselNav.style.display = 'none';
+        document.getElementById('imageCounter').style.display = 'none';
+    }
 
     // Show/hide SOLD OUT badge
     if (isSoldOut) {
@@ -521,70 +540,129 @@ function showProductImage(productId) {
     }
 
     // Reset customization section
-    document.getElementById('customizationSection').style.display = 'none';
     document.getElementById('customText').value = '';
     document.getElementById('customLogo').value = '';
     document.getElementById('logoPreview').style.display = 'none';
-    document.getElementById('toggleCustomizationBtn').innerHTML = '<i class="bi bi-palette"></i> Customize';
 
-    // Disable/enable buttons based on inventory
+    // Reset customization modal
+    document.getElementById('customPreviewImg').src = product.image;
+    document.getElementById('customPreviewName').textContent = product.name;
+    const typeDisplay2 = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
+    document.getElementById('customPreviewDetails').textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay2}`;
+
+    // Disable/enable buttons based on inventory - ensure proper disable state
     buyNowBtn.disabled = isSoldOut;
     addToCartBtn.disabled = isSoldOut;
 
     if (isSoldOut) {
         buyNowBtn.style.opacity = '0.5';
         buyNowBtn.style.cursor = 'not-allowed';
+        buyNowBtn.style.pointerEvents = 'none';
+        buyNowBtn.style.backgroundColor = '#ccc';
+        buyNowBtn.style.background = '#ccc';
+
         addToCartBtn.style.opacity = '0.5';
         addToCartBtn.style.cursor = 'not-allowed';
+        addToCartBtn.style.pointerEvents = 'none';
+        addToCartBtn.style.backgroundColor = '#ccc';
+        addToCartBtn.style.borderColor = '#ccc';
+        addToCartBtn.style.color = '#666';
     } else {
         buyNowBtn.style.opacity = '1';
         buyNowBtn.style.cursor = 'pointer';
+        buyNowBtn.style.pointerEvents = 'auto';
+        buyNowBtn.style.background = 'linear-gradient(135deg, var(--accent), #e64f00)';
+
         addToCartBtn.style.opacity = '1';
         addToCartBtn.style.cursor = 'pointer';
+        addToCartBtn.style.pointerEvents = 'auto';
+        addToCartBtn.style.background = 'transparent';
+        addToCartBtn.style.borderColor = 'var(--accent)';
+        addToCartBtn.style.color = 'var(--accent)';
     }
 
-    // Set up modal buttons
-    buyNowBtn.onclick = () => {
-        if (isSoldOut) return;
-        const customization = getCustomization();
-        closeImageModal();
-        buyNow(productId, customization);
-    };
+    // Store product ID and sold out state on buttons for use in handlers
+    buyNowBtn.dataset.productId = productId;
+    buyNowBtn.dataset.isSoldOut = isSoldOut;
+    addToCartBtn.dataset.productId = productId;
+    addToCartBtn.dataset.isSoldOut = isSoldOut;
 
-    addToCartBtn.onclick = () => {
-        if (isSoldOut) return;
-        const customization = getCustomization();
-        addToCart(productId, customization);
-        showToast('Added to cart!');
-        closeImageModal();
-    };
+    // Store current product ID for customization modal
+    window.currentCustomizationProductId = productId;
 
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
 }
 
 /**
- * Close image modal
+ * Navigate to previous image in carousel
  */
-function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('show');
-    document.body.style.overflow = 'auto';
+function previousImage() {
+    if (!window.currentProductImages || window.currentProductImages.length <= 1) return;
+
+    window.currentImageIndex = (window.currentImageIndex - 1 + window.currentProductImages.length) % window.currentProductImages.length;
+    updateCarouselImage();
+}
+
+/**
+ * Navigate to next image in carousel
+ */
+function nextImage() {
+    if (!window.currentProductImages || window.currentProductImages.length <= 1) return;
+
+    window.currentImageIndex = (window.currentImageIndex + 1) % window.currentProductImages.length;
+    updateCarouselImage();
+}
+
+/**
+ * Update the displayed carousel image
+ */
+function updateCarouselImage() {
+    const modalImage = document.getElementById('modalImage');
+    const imageCounter = document.getElementById('imageCounter');
+
+    if (window.currentProductImages && window.currentImageIndex < window.currentProductImages.length) {
+        modalImage.src = window.currentProductImages[window.currentImageIndex];
+        imageCounter.textContent = `${window.currentImageIndex + 1} / ${window.currentProductImages.length}`;
+        imageCounter.style.display = 'block';
+    }
 }
 
 /**
  * Toggle customization section
  */
 function toggleCustomization() {
-    const section = document.getElementById('customizationSection');
     const btn = document.getElementById('toggleCustomizationBtn');
+    if (btn.disabled) return;
 
-    if (section.style.display === 'none') {
-        section.style.display = 'block';
-        btn.innerHTML = '<i class="bi bi-x-circle"></i> Hide Customization';
-    } else {
-        section.style.display = 'none';
-        btn.innerHTML = '<i class="bi bi-palette"></i> Add Customization';
+    // Store action and close image modal first
+    window.pendingCustomizationAction = 'buy';
+    closeImageModal();
+
+    // Open the new customization modal
+    const customModal = new bootstrap.Modal(document.getElementById('customizationModalNew'));
+    customModal.show();
+}
+
+/**
+ * Apply customization and handle action
+ */
+function applyCustomization() {
+    const productId = window.currentCustomizationProductId;
+    const customization = getCustomization();
+
+    // Close customization modal
+    const customModal = bootstrap.Modal.getInstance(document.getElementById('customizationModalNew'));
+    customModal.hide();
+
+    // Determine which action to take based on button that was clicked
+    if (window.pendingCustomizationAction === 'buy') {
+        closeImageModal();
+        buyNow(productId, customization);
+    } else if (window.pendingCustomizationAction === 'add') {
+        addToCart(productId, customization);
+        showToast('Added to cart with customization!');
+        closeImageModal();
     }
 }
 
@@ -1212,19 +1290,42 @@ function removeCoupon() {
     showToast('Coupon removed');
 }
 
-// Add animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(400px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+/**
+ * Close image modal
+ */
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+/**
+ * Handle Buy Now button click in modal
+ */
+function handleModalBuyNow() {
+    const btn = document.getElementById('modalBuyNow');
+    if (btn.disabled || btn.dataset.isSoldOut === 'true') {
+        return;
     }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(400px); opacity: 0; }
+
+    const productId = btn.dataset.productId;
+    showCustomizationModal(productId, 'buy');
+    closeImageModal();
+}
+
+/**
+ * Handle Add to Cart button click in modal
+ */
+function handleModalAddToCart() {
+    const btn = document.getElementById('modalAddToCart');
+    if (btn.disabled || btn.dataset.isSoldOut === 'true') {
+        return;
     }
-`;
-document.head.appendChild(style);
+
+    const productId = btn.dataset.productId;
+    showCustomizationModal(productId, 'add');
+    closeImageModal();
+}
 
 // Make functions globally accessible
 window.addToCart = addToCart;
@@ -1236,7 +1337,10 @@ window.removeFromCartByIndex = removeFromCartByIndex;
 window.quickView = quickView;
 window.showProductImage = showProductImage;
 window.closeImageModal = closeImageModal;
+window.handleModalBuyNow = handleModalBuyNow;
+window.handleModalAddToCart = handleModalAddToCart;
 window.toggleCustomization = toggleCustomization;
+window.applyCustomization = applyCustomization;
 window.applyCoupon = applyCoupon;
 window.removeCoupon = removeCoupon;
 window.closeCart = closeCart;
