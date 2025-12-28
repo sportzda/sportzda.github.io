@@ -1013,14 +1013,22 @@ async function handleCheckout(e) {
 /**
  * Show toast notification
  */
-function showToast(message) {
+function showToast(message, type = 'success') {
     // Create toast element
     const toast = document.createElement('div');
+    
+    // Set color based on type
+    const bgColor = type === 'error' ? '#dc3545' : '#28a745';
+    const icon = type === 'error' ? 'exclamation-circle' : 'check-circle';
+    
+    // Error messages stay longer (5 seconds), success messages shorter (3 seconds)
+    const duration = type === 'error' ? 5000 : 3000;
+    
     toast.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #28a745;
+        background: ${bgColor};
         color: white;
         padding: 15px 25px;
         border-radius: 10px;
@@ -1028,15 +1036,16 @@ function showToast(message) {
         z-index: 10000;
         font-weight: 600;
         animation: slideIn 0.3s ease-out;
+        max-width: 350px;
     `;
-    toast.innerHTML = `<i class="bi bi-check-circle me-2"></i>${message}`;
+    toast.innerHTML = `<i class="bi bi-${icon} me-2"></i>${message}`;
 
     document.body.appendChild(toast);
 
     setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => toast.remove(), 300);
-    }, 2000);
+    }, duration);
 }
 
 /**
