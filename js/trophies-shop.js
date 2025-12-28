@@ -169,7 +169,7 @@ function displayProducts() {
             const pid = typeof product.id === 'string' ? `'${product.id}'` : product.id;
 
             // Check inventory
-            const inventory = product.inventory || 0;
+            const inventory = parseInt(product.inventory) || 0;
             const isSoldOut = inventory === 0;
             const inventoryDisplay = isSoldOut ? 'SOLD OUT' : `In Stock (${inventory})`;
             const inventoryBadgeClass = isSoldOut ? 'inventory-sold-out' : 'inventory-in-stock';
@@ -508,7 +508,10 @@ function showProductImage(productId) {
 
     modalImage.src = product.image;
     modalProductName.textContent = product.name;
-    modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${capitalizeFirst(product.type)} | ₹${product.price.toLocaleString('en-IN')}`;
+    
+    // Format type to show "X inches" if it's numeric
+    const typeDisplay = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
+    modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay} | ₹${product.price.toLocaleString('en-IN')}`;
 
     // Show/hide SOLD OUT badge
     if (isSoldOut) {
