@@ -819,15 +819,12 @@ async function handleCheckout(e) {
     const isCashPayment = paymentMethod === 'cash';
     const isAdvancePayment = !isCashPayment && selectedPaymentAmount?.dataset.payment === 'advance';
 
-    // Prepare trophy details for backend
+    // Prepare trophy details for backend (minimal fields for inventory reduction and order tracking)
     const trophyDetails = cart.map(item => ({
-        id: item.id,
-        name: item.name,
-        sport: item.sport,
-        type: item.type,
-        price: item.price,
-        quantity: item.quantity,
-        customization: item.customization
+        id: item.id,           // MongoDB _id for inventory lookup
+        name: item.name,       // For order display
+        price: item.price,     // For pricing
+        quantity: item.quantity  // For inventory reduction
     }));
 
     // Build payload for backend
