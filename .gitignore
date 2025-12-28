@@ -2,6 +2,10 @@
 node_modules/
 package-lock.json
 
+# Environment variables (local development)
+.env.local
+.env.*.local
+
 # Playwright outputs
 playwright-report/
 test-results/
