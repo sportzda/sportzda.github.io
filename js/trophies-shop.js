@@ -3,11 +3,9 @@
  * Handles product filtering, cart management, and checkout
  */
 
-// Backend API Configuration
-const BACKEND_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3000'
-    : 'https://dasportz-backend.online';
-const ZOHO_WIDGET_API_KEY = '1003.b03980822c145cb80d00b97288514519.783c4164ef793ebfbe77bf1098160aad';
+// Backend API Configuration (loaded from config.js)
+const BACKEND_BASE = window.CONFIG?.BACKEND_BASE || 'http://localhost:3000';
+const ZOHO_WIDGET_API_KEY = window.CONFIG?.ZOHO_WIDGET_API_KEY || '1003.b03980822c145cb80d00b97288514519.783c4164ef793ebfbe77bf1098160aad';
 
 // Product Database - will be loaded from API
 let products = [];
