@@ -1302,21 +1302,26 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="trophyDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="trophyDescription" rows="3"
-                                placeholder="Optional description"></textarea>
+                        <!-- Inventory Field -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="trophyInventory" class="form-label">Inventory *</label>
+                                    <input type="number" class="form-control" id="trophyInventory" min="0" value="0"
+                                        placeholder="e.g., 10" required>
+                                    <small class="text-muted d-block mt-1">Number of trophies in stock</small>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Image Upload Section -->
                         <div class="mb-3">
-                            <label for="trophyImages" class="form-label">Trophy Images (Optional)</label>
+                            <label for="trophyImages" class="form-label">Trophy Images *</label>
                             <input type="file" class="form-control" id="trophyImages" multiple
                                 accept="image/jpeg,image/png,image/webp,image/gif">
                             <small class="text-muted d-block mt-2">
-                                <i class="bi bi-info-circle"></i> Upload up to 3 images (JPG, PNG, WEBP, GIF - Max 5MB
-                                each)
+                                <i class="bi bi-info-circle"></i> At least one image is required. Upload up to 3 images
+                                (JPG, PNG, WEBP, GIF - Max 5MB each)
                             </small>
                         </div>
 
@@ -1497,10 +1502,10 @@
                                                         <tr>
                                                             <th>Image</th>
                                                             <th>Name</th>
-                                                            <th>Description</th>
                                                             <th>Price</th>
                                                             <th>Category</th>
                                                             <th>Size</th>
+                                                            <th>Inventory</th>
                                                             <th>Available</th>
                                                             <th>Actions</th>
                                                         </tr>
@@ -1893,22 +1898,56 @@
             const isEdit = !!trophyId;
             const statusDiv = document.getElementById('trophyFormStatus');
 
+            // Validate inventory field
+            const inventoryValue = document.getElementById('trophyInventory').value.trim();
+            if (!inventoryValue || parseInt(inventoryValue) < 0) {
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.textContent = 'Please enter a valid inventory number (0 or more).';
+                statusDiv.style.display = 'block';
+                return;
+            }
+
+            // Validate unique name (case-insensitive)
+            const nameValue = document.getElementById('trophyName').value.trim();
+            try {
+                showLoadingOverlay('Checking trophy name...');
+                const response = await fetch(`${API_BASE_URL}/api/trophies/check-name?name=${encodeURIComponent(nameValue)}&excludeId=${trophyId || ''}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                const result = await response.json();
+                hideLoadingOverlay();
+
+                if (!result.available) {
+                    statusDiv.className = 'alert alert-danger';
+                    statusDiv.textContent = `Trophy name "${nameValue}" already exists. Please use a different name.`;
+                    statusDiv.style.display = 'block';
+                    return;
+                }
+            } catch (error) {
+                hideLoadingOverlay();
+                console.error('Error checking trophy name:', error);
+                // Continue anyway - backend will catch duplicate
+            }
+
             // Create FormData for file uploads
             const formData = new FormData();
-            const nameValue = document.getElementById('trophyName').value;
             const priceValue = document.getElementById('trophyPrice').value;
 
             formData.append('name', nameValue);
             formData.append('price', priceValue);
             formData.append('category', document.getElementById('trophyCategory').value);
             formData.append('size', document.getElementById('trophySize').value);
-            formData.append('description', document.getElementById('trophyDescription').value);
+            formData.append('inventory', inventoryValue);
             formData.append('available', document.getElementById('trophyAvailable').checked);
             formData.append('customizable', document.getElementById('trophyCustomizable').checked);
 
             // Handle image uploads
             const imagesInput = document.getElementById('trophyImages');
             let uploadCount = 0;
+            const hasExistingImages = trophyExistingImages && trophyExistingImages.length > 0;
+
             if (imagesInput && imagesInput.files.length > 0) {
                 // Validate images before upload
                 const images = imagesInput.files;
@@ -1938,7 +1977,21 @@
                 }
                 console.log(`[Trophy Upload] Total images appended to FormData: ${uploadCount}`);
             } else {
-                console.log('[Trophy Upload] No images selected');
+                console.log('[Trophy Upload] No new images selected');
+                // For new trophy, require at least one image
+                if (!isEdit && !hasExistingImages) {
+                    statusDiv.className = 'alert alert-danger';
+                    statusDiv.textContent = 'Please upload at least one image for the trophy.';
+                    statusDiv.style.display = 'block';
+                    return;
+                }
+                // For existing trophy, must have at least one image total
+                if (isEdit && !hasExistingImages) {
+                    statusDiv.className = 'alert alert-danger';
+                    statusDiv.textContent = 'Trophy must have at least one image. Please upload an image.';
+                    statusDiv.style.display = 'block';
+                    return;
+                }
             }
 
             // Handle image deletion (for edit mode)
@@ -2037,10 +2090,10 @@
                         </div>
                     </td>
                     <td>${trophy.name}</td>
-                    <td>${trophy.description || 'N/A'}</td>
                     <td>₹${trophy.price}</td>
                     <td>${trophy.category || 'N/A'}</td>
                     <td>${trophy.size} inches</td>
+                    <td><span class="badge ${trophy.inventory > 0 ? 'bg-success' : 'bg-danger'}">${trophy.inventory || 0}</span></td>
                     <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary me-1" onclick="editTrophy('${trophy._id}')">
@@ -4706,7 +4759,7 @@
                 document.getElementById('trophyPrice').value = '';
                 document.getElementById('trophyCategory').value = '';
                 document.getElementById('trophySize').value = '';
-                document.getElementById('trophyDescription').value = '';
+                document.getElementById('trophyInventory').value = '0';
                 document.getElementById('trophyAvailable').checked = true;
                 document.getElementById('trophyCustomizable').checked = false;
                 document.getElementById('trophyImages').value = '';
@@ -4753,7 +4806,7 @@
                             document.getElementById('trophyPrice').value = trophy.price;
                             document.getElementById('trophyCategory').value = trophy.category || '';
                             document.getElementById('trophySize').value = trophy.size;
-                            document.getElementById('trophyDescription').value = trophy.description || '';
+                            document.getElementById('trophyInventory').value = trophy.inventory || 0;
                             document.getElementById('trophyAvailable').checked = trophy.available;
                             document.getElementById('trophyCustomizable').checked = trophy.customizable || false;
 
