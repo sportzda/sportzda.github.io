@@ -12,22 +12,6 @@ const ZOHO_WIDGET_API_KEY = '1003.b03980822c145cb80d00b97288514519.783c4164ef793
 // Product Database - will be loaded from API
 let products = [];
 
-// Default fallback products (used if API fails)
-const DEFAULT_PRODUCTS = [
-    // Cricket Trophies
-    { id: 1, name: 'Golden Cricket Trophy', sport: 'cricket', type: 'trophy', price: 2500, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
-    { id: 2, name: 'Cricket Champions Cup', sport: 'cricket', type: 'cup', price: 3200, image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400' },
-    { id: 3, name: 'Cricket Winner Medal', sport: 'cricket', type: 'medal', price: 450, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    // Football Trophies
-    { id: 6, name: 'Football Champion Trophy', sport: 'football', type: 'trophy', price: 2800, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
-    { id: 7, name: 'Golden Football Cup', sport: 'football', type: 'cup', price: 3500, image: 'https://images.unsplash.com/photo-1614632537423-1e6c2e926479?w=400' },
-    { id: 8, name: 'Football Star Medal', sport: 'football', type: 'medal', price: 500, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-    // Badminton Trophies
-    { id: 15, name: 'Badminton Winner Trophy', sport: 'badminton', type: 'trophy', price: 2400, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
-    { id: 16, name: 'Badminton Champions Cup', sport: 'badminton', type: 'cup', price: 3000, image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400' },
-    { id: 17, name: 'Badminton Gold Medal', sport: 'badminton', type: 'medal', price: 420, image: 'https://images.unsplash.com/photo-1611625764159-b5d356e33e88?w=400' },
-];
-
 // State Management
 let cart = JSON.parse(localStorage.getItem('dasportz_cart')) || [];
 let currentFilters = {
@@ -78,13 +62,13 @@ async function loadProducts() {
             })).filter(p => p.available);
             console.log(`Loaded ${products.length} products from API`);
         } else {
-            console.warn('No products from API, using fallback');
-            products = DEFAULT_PRODUCTS;
+            console.warn('No products from API');
+            products = [];
         }
     } catch (error) {
         console.error('Failed to load products from API:', error);
-        products = DEFAULT_PRODUCTS;
-        showToast('Loading demo products (API unavailable)');
+        products = [];
+        showToast('Unable to load products. Please try again later.', 'error');
     } finally {
         loading.style.display = 'none';
     }
