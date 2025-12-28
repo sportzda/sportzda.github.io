@@ -5,7 +5,7 @@
 
 // Backend API Configuration (loaded from config.js)
 const BACKEND_BASE = window.CONFIG?.BACKEND_BASE || 'http://localhost:3000';
-const ZOHO_WIDGET_API_KEY = window.CONFIG?.ZOHO_WIDGET_API_KEY || '1003.b03980822c145cb80d00b97288514519.783c4164ef793ebfbe77bf1098160aad';
+const ZOHO_WIDGET_API_KEY = window.CONFIG?.ZOHO_WIDGET_API_KEY;
 
 // Product Database - will be loaded from API
 let products = [];
