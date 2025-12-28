@@ -4735,10 +4735,10 @@
                             </div>
                         </td>
                         <td>${trophy.name}</td>
-                        <td>${trophy.description || 'N/A'}</td>
                         <td>₹${trophy.price}</td>
                         <td>${trophy.category || 'N/A'}</td>
                         <td>${trophy.size} inches</td>
+                        <td><span class="badge ${trophy.inventory > 0 ? 'bg-success' : 'bg-danger'}">${trophy.inventory || 0}</span></td>
                         <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary me-1" onclick="editTrophy('${trophy._id}')">
