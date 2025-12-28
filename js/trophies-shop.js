@@ -500,26 +500,56 @@ function showProductImage(productId) {
     const modalImage = document.getElementById('modalImage');
     const modalProductName = document.getElementById('modalProductName');
     const modalProductDetails = document.getElementById('modalProductDetails');
+    const soldOutBadge = document.getElementById('soldOutBadge');
+    const buyNowBtn = document.getElementById('modalBuyNow');
+    const addToCartBtn = document.getElementById('modalAddToCart');
+
+    const isSoldOut = product.inventory === 0;
 
     modalImage.src = product.image;
     modalProductName.textContent = product.name;
     modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${capitalizeFirst(product.type)} | ₹${product.price.toLocaleString('en-IN')}`;
+
+    // Show/hide SOLD OUT badge
+    if (isSoldOut) {
+        soldOutBadge.style.display = 'block';
+    } else {
+        soldOutBadge.style.display = 'none';
+    }
 
     // Reset customization section
     document.getElementById('customizationSection').style.display = 'none';
     document.getElementById('customText').value = '';
     document.getElementById('customLogo').value = '';
     document.getElementById('logoPreview').style.display = 'none';
-    document.getElementById('toggleCustomizationBtn').innerHTML = '<i class="bi bi-palette"></i> Add Customization';
+    document.getElementById('toggleCustomizationBtn').innerHTML = '<i class="bi bi-palette"></i> Customize';
+
+    // Disable/enable buttons based on inventory
+    buyNowBtn.disabled = isSoldOut;
+    addToCartBtn.disabled = isSoldOut;
+
+    if (isSoldOut) {
+        buyNowBtn.style.opacity = '0.5';
+        buyNowBtn.style.cursor = 'not-allowed';
+        addToCartBtn.style.opacity = '0.5';
+        addToCartBtn.style.cursor = 'not-allowed';
+    } else {
+        buyNowBtn.style.opacity = '1';
+        buyNowBtn.style.cursor = 'pointer';
+        addToCartBtn.style.opacity = '1';
+        addToCartBtn.style.cursor = 'pointer';
+    }
 
     // Set up modal buttons
-    document.getElementById('modalBuyNow').onclick = () => {
+    buyNowBtn.onclick = () => {
+        if (isSoldOut) return;
         const customization = getCustomization();
         closeImageModal();
         buyNow(productId, customization);
     };
 
-    document.getElementById('modalAddToCart').onclick = () => {
+    addToCartBtn.onclick = () => {
+        if (isSoldOut) return;
         const customization = getCustomization();
         addToCart(productId, customization);
         showToast('Added to cart!');
@@ -1016,14 +1046,14 @@ async function handleCheckout(e) {
 function showToast(message, type = 'success') {
     // Create toast element
     const toast = document.createElement('div');
-    
+
     // Set color based on type
     const bgColor = type === 'error' ? '#dc3545' : '#28a745';
     const icon = type === 'error' ? 'exclamation-circle' : 'check-circle';
-    
+
     // Error messages stay longer (5 seconds), success messages shorter (3 seconds)
     const duration = type === 'error' ? 5000 : 3000;
-    
+
     toast.style.cssText = `
         position: fixed;
         top: 20px;
