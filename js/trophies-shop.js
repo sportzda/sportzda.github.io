@@ -20,6 +20,7 @@ let currentFilters = {
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     initializeFilters();
+    initializeMobileFilters();
     await loadProducts();
     displayProducts();
     updateCartUI();
@@ -162,7 +163,7 @@ function displayProducts() {
         // Display products
         filtered.forEach((product, index) => {
             const col = document.createElement('div');
-            col.className = 'col-lg-3 col-md-4 col-sm-6';
+            col.className = 'col-lg-3 col-md-4 col-sm-6 col-6';
             col.style.animationDelay = `${index * 0.1}s`;
 
             // Use string quotes for product.id to handle MongoDB ObjectIds
@@ -313,7 +314,8 @@ function updateCartUI() {
                         <div class="text-muted small">
                             <i class="bi bi-palette"></i> Customized
                             ${item.customization.text ? `<br><small>Text: "${item.customization.text}"</small>` : ''}
-                            ${item.customization.logoName ? `<br><small>Logo: ${item.customization.logoName}</small>` : ''}
+                            ${item.customization.logoFileName ? `<br><small>Logo: ${item.customization.logoFileName}</small>` : ''}
+                            ${item.customization.logoUrl ? `<br><small><i class="bi bi-cloud-check-fill" style="color: green;"></i> Uploaded</small>` : ''}
                         </div>
                     ` : ''}
                     <div class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</div>
@@ -464,19 +466,78 @@ function skipCustomization() {
 }
 
 /**
+ * Upload customization logo to cloud storage
+ * Returns: { success: true, imageUrl: "s3-url" } or { success: false, message: "error" }
+ */
+async function uploadCustomizationLogo(logoFile) {
+    try {
+        if (!logoFile) {
+            return { success: true, imageUrl: null }; // No logo provided
+        }
+
+        console.log('Uploading customization logo:', logoFile.name);
+        const formData = new FormData();
+        formData.append('logo', logoFile);
+
+        const response = await fetch(`${window.CONFIG.BACKEND_BASE}/api/upload-trophy-customization`, {
+            method: 'POST',
+            body: formData
+            // Don't set Content-Type header - browser will set it with boundary
+        });
+
+        const data = await response.json();
+        console.log('Logo upload response:', data);
+
+        if (!response.ok || !data.success) {
+            return {
+                success: false,
+                message: data.message || 'Failed to upload logo'
+            };
+        }
+
+        return {
+            success: true,
+            imageUrl: data.imageUrl,
+            fileName: data.fileName
+        };
+    } catch (err) {
+        console.error('Error uploading customization logo:', err);
+        return {
+            success: false,
+            message: err.message || 'Network error uploading logo'
+        };
+    }
+}
+
+/**
  * Confirm and add with customization
  */
-function confirmCustomization() {
+async function confirmCustomization() {
     if (!pendingCustomizationAction) return;
 
     const customText = document.getElementById('customModalText').value.trim();
     const customLogoInput = document.getElementById('customModalLogo');
     const customLogo = customLogoInput.files[0];
 
-    // Create customization object
-    const customization = (customText || customLogo) ? {
+    // If there's a logo, upload it first
+    let logoUrl = null;
+    if (customLogo) {
+        showToast('Uploading logo...', 'info');
+        const uploadResult = await uploadCustomizationLogo(customLogo);
+
+        if (!uploadResult.success) {
+            showToast(uploadResult.message || 'Failed to upload logo', 'error');
+            return; // Don't proceed without successful logo upload
+        }
+        logoUrl = uploadResult.imageUrl;
+        console.log('Logo uploaded successfully:', logoUrl);
+    }
+
+    // Create customization object with uploaded logo URL
+    const customization = (customText || logoUrl) ? {
         text: customText || null,
-        logoName: customLogo ? customLogo.name : null
+        logoUrl: logoUrl || null,
+        logoFileName: customLogo ? customLogo.name : null
     } : null;
 
     const { productId, action } = pendingCustomizationAction;
@@ -931,13 +992,22 @@ async function handleCheckout(e) {
     const isCashPayment = paymentMethod === 'cash';
     const isAdvancePayment = !isCashPayment && selectedPaymentAmount?.dataset.payment === 'advance';
 
-    // Prepare trophy details for backend (minimal fields for inventory reduction and order tracking)
-    const trophyDetails = cart.map(item => ({
-        id: item.id,           // MongoDB _id for inventory lookup
-        name: item.name,       // For order display
-        price: item.price,     // For pricing
-        quantity: item.quantity  // For inventory reduction
-    }));
+    // Prepare trophy details for backend (include customization if present)
+    const trophyDetails = cart.map(item => {
+        const detail = {
+            id: item.id,           // MongoDB _id for inventory lookup
+            name: item.name,       // For order display
+            price: item.price,     // For pricing
+            quantity: item.quantity  // For inventory reduction
+        };
+
+        // Include customization if present (with uploaded logo URL)
+        if (item.customization) {
+            detail.customization = item.customization;
+        }
+
+        return detail;
+    });
 
     // Build payload for backend
     const payload = {
@@ -1326,6 +1396,63 @@ function handleModalAddToCart() {
     const productId = btn.dataset.productId;
     showCustomizationModal(productId, 'add');
     closeImageModal();
+}
+
+/**
+ * Mobile Filter Sidebar Management
+ */
+function initializeMobileFilters() {
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
+    const filterCloseBtn = document.getElementById('filterCloseBtn');
+    const filterSection = document.getElementById('filterSection');
+    const filterOverlay = document.getElementById('filterOverlay');
+
+    if (!filterToggleBtn) return; // Not on trophies page
+
+    // Show filter sidebar on mobile
+    filterToggleBtn.addEventListener('click', () => {
+        filterSection.classList.add('active');
+        filterOverlay.classList.add('active');
+        filterCloseBtn.style.display = 'block';
+    });
+
+    // Close filter sidebar
+    const closeFilters = () => {
+        filterSection.classList.remove('active');
+        filterOverlay.classList.remove('active');
+        filterCloseBtn.style.display = 'none';
+    };
+
+    if (filterCloseBtn) {
+        filterCloseBtn.addEventListener('click', closeFilters);
+    }
+
+    // Close filters when overlay is clicked
+    if (filterOverlay) {
+        filterOverlay.addEventListener('click', closeFilters);
+    }
+
+    // Close filters when a filter is clicked (on mobile)
+    const filterChips = document.querySelectorAll('.filter-chip');
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                closeFilters();
+            }
+        });
+    });
+
+    // Update filter button text on window resize
+    const updateFilterButtonText = () => {
+        if (window.innerWidth > 768) {
+            filterToggleBtn.style.display = 'none';
+        } else {
+            filterToggleBtn.style.display = 'block';
+        }
+    };
+
+    window.addEventListener('resize', updateFilterButtonText);
+    updateFilterButtonText();
 }
 
 // Make functions globally accessible
