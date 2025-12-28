@@ -864,7 +864,8 @@ async function handleCheckout(e) {
         if (!createData || !createData.success) {
             setButtonLoading(false);
             console.error('create-order failed', createData);
-            alert('Failed to create order. ' + (createData?.message || 'Please try again.'));
+            const errorMessage = createData?.message || 'Failed to create order. Please try again.';
+            showToast(errorMessage, 'error');
             return;
         }
 
