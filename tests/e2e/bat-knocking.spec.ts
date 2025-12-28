@@ -1,11 +1,19 @@
 import { test, expect, Page } from '@playwright/test';
 
 // Helper to extract BACKEND_BASE from inline script in bat-knocking.html
+// Now handles config.js pattern: const BACKEND_BASE = window.CONFIG?.BACKEND_BASE || 'http://localhost:3000'
 async function getBackendBase(page: Page): Promise<string> {
     const html = await page.content();
-    const match = html.match(/const\s+BACKEND_BASE\s*=\s*['\"]([^'\"]+)['\"]/);
-    if (!match) throw new Error('Could not find BACKEND_BASE in HTML');
-    return match[1];
+    
+    // Try new config pattern: const BACKEND_BASE = window.CONFIG?.BACKEND_BASE || 'fallback-url'
+    const configMatch = html.match(/const\s+BACKEND_BASE\s*=\s*window\.CONFIG\?\.[A-Z_]+\s*\|\|\s*['\"]([^'\"]+)['\"]/);
+    if (configMatch) return configMatch[1];
+    
+    // Fallback to old pattern for backwards compatibility
+    const oldMatch = html.match(/const\s+BACKEND_BASE\s*=\s*['\"]([^'\"]+)['\"]/);
+    if (oldMatch) return oldMatch[1];
+    
+    throw new Error('Could not find BACKEND_BASE in HTML');
 }
 
 test.describe('Bat Knocking UI Tests', () => {
