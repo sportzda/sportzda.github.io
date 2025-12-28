@@ -56,6 +56,7 @@ async function loadProducts() {
                 images: trophy.images && Array.isArray(trophy.images) ? trophy.images : (trophy.imageUrl ? [trophy.imageUrl] : []), // Store all images for badge display
                 customizable: trophy.customizable !== false,
                 available: trophy.available !== false,
+                inventory: trophy.inventory || 0,
                 description: trophy.description || ''
             })).filter(p => p.available);
             console.log(`Loaded ${products.length} products from API`);
@@ -167,10 +168,16 @@ function displayProducts() {
             // Use string quotes for product.id to handle MongoDB ObjectIds
             const pid = typeof product.id === 'string' ? `'${product.id}'` : product.id;
 
+            // Check inventory
+            const inventory = product.inventory || 0;
+            const isSoldOut = inventory === 0;
+            const inventoryDisplay = isSoldOut ? 'SOLD OUT' : `In Stock (${inventory})`;
+            const inventoryBadgeClass = isSoldOut ? 'inventory-sold-out' : 'inventory-in-stock';
+
             col.innerHTML = `
-                <div class="product-card" onclick="showProductImage(${pid})" style="cursor: pointer;">
+                <div class="product-card ${isSoldOut ? 'sold-out' : ''}" onclick="showProductImage(${pid})" style="cursor: pointer;">
                     <div class="product-image">
-                        <img src="${product.image}" alt="${product.name}">
+                        <img src="${product.image}" alt="${product.name}" ${isSoldOut ? 'style="opacity: 0.65;"' : ''}>
                         ${product.images && product.images.length > 1 ? `
                             <span class="product-badge">+${product.images.length - 1}</span>
                         ` : ''}
@@ -180,12 +187,15 @@ function displayProducts() {
                         <div class="product-category">
                             <i class="bi bi-tag me-1"></i>${capitalizeFirst(product.sport)}
                         </div>
+                        <div class="product-inventory ${inventoryBadgeClass}">
+                            <i class="bi ${isSoldOut ? 'bi-exclamation-circle' : 'bi-check-circle'} me-1"></i>${inventoryDisplay}
+                        </div>
                         <div class="product-price">₹${product.price.toLocaleString('en-IN')}</div>
                         <div class="product-actions" onclick="event.stopPropagation();">
-                            <button class="btn-buy-now" onclick="showCustomizationModal(${pid}, 'buy')">
+                            <button class="btn-buy-now" onclick="showCustomizationModal(${pid}, 'buy')" ${isSoldOut ? 'disabled' : ''}>
                                 Buy
                             </button>
-                            <button class="btn-add-cart" onclick="showCustomizationModal(${pid}, 'add')">
+                            <button class="btn-add-cart" onclick="showCustomizationModal(${pid}, 'add')" ${isSoldOut ? 'disabled' : ''}>
                                 Cart
                             </button>
                         </div>
@@ -203,7 +213,14 @@ function displayProducts() {
  */
 function addToCart(productId, customization = null) {
     const product = products.find(p => p.id === productId);
-    if (!product) return;
+    if (!product) return false;
+
+    // Check inventory
+    const inventory = product.inventory || 0;
+    if (inventory === 0) {
+        showToast(`"${product.name}" is currently out of stock`, 'error');
+        return false;
+    }
 
     // Check if product already in cart (without customization match)
     const existingItem = cart.find(item =>
@@ -212,6 +229,11 @@ function addToCart(productId, customization = null) {
     );
 
     if (existingItem) {
+        // Check if quantity would exceed inventory
+        if (existingItem.quantity + 1 > inventory) {
+            showToast(`Only ${inventory} "${product.name}" available`, 'error');
+            return false;
+        }
         existingItem.quantity++;
     } else {
         cart.push({
@@ -226,6 +248,7 @@ function addToCart(productId, customization = null) {
 
     // Update UI
     updateCartUI();
+    return true;
 }
 
 /**

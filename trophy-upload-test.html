@@ -164,6 +164,18 @@
                                         placeholder="Describe the trophy features..."></textarea>
                                 </div>
 
+                                <!-- Inventory Field -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Inventory *</label>
+                                        <input type="number" class="form-control" name="inventory" required min="0"
+                                            value="0" placeholder="e.g., 10">
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="bi bi-info-circle"></i> Number of trophies in stock
+                                        </small>
+                                    </div>
+                                </div>
+
                                 <!-- Flags -->
                                 <div class="row mb-4">
                                     <div class="col-md-6">
@@ -200,12 +212,13 @@
                                 </h5>
                                 <div class="card bg-light border-2 border-dashed mb-3 p-4">
                                     <label class="form-label fw-semibold mb-2">
-                                        Upload Multiple Images (JPG, PNG, WEBP, GIF - Max 5MB each)
+                                        Upload Multiple Images (JPG, PNG, WEBP, GIF - Max 5MB each) *
                                     </label>
                                     <input type="file" class="form-control" name="images" multiple
                                         accept="image/jpeg,image/png,image/webp,image/gif" id="trophyImagesInput">
                                     <small class="text-muted d-block mt-2">
-                                        <i class="bi bi-info-circle"></i> You can upload up to 3 images. All images
+                                        <i class="bi bi-info-circle"></i> At least one image is required. You can upload
+                                        up to 3 images. All images
                                         will be displayed in the product gallery.
                                     </small>
                                 </div>
@@ -639,9 +652,24 @@
                 const name = addForm.querySelector('input[name="name"]').value.trim();
                 const price = addForm.querySelector('input[name="price"]').value;
                 const size = addForm.querySelector('input[name="size"]').value.trim();
+                const inventory = addForm.querySelector('input[name="inventory"]').value.trim();
+                const imageFiles = trophyImagesInput.files;
+                const hasExistingImages = existingImages && existingImages.length > 0;
 
-                if (!name || !price || !size) {
-                    showStatus('Please fill in all required fields (Name, Price, Size).', 'danger');
+                if (!name || !price || !size || !inventory) {
+                    showStatus('Please fill in all required fields (Name, Price, Size, Inventory).', 'danger');
+                    return;
+                }
+
+                // For new trophy (not editing), require at least one image
+                if (!currentEditingId && imageFiles.length === 0) {
+                    showStatus('Please upload at least one image for the trophy.', 'danger');
+                    return;
+                }
+
+                // For existing trophy, must have at least one image total (existing + new)
+                if (currentEditingId && imageFiles.length === 0 && !hasExistingImages) {
+                    showStatus('Trophy must have at least one image. Please upload an image.', 'danger');
                     return;
                 }
 
