@@ -1357,12 +1357,22 @@
             }
 
             /* ---------- MAIN: create order -> start Zoho widget -> verify payment ---------- */
+            let stringPaymentRequestInProgress = false;
+
             async function onPayNowClicked(e) {
                 e.preventDefault();
+
+                // SET FLAG IMMEDIATELY to prevent race condition from rapid clicks
+                if (stringPaymentRequestInProgress) {
+                    console.warn('⚠️ Payment request already in progress. Ignoring duplicate click.');
+                    return;
+                }
+                stringPaymentRequestInProgress = true;
 
                 // First check all mandatory fields
                 const missingFields = checkMandatoryFields();
                 if (missingFields.length > 0) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert(`⚠️ Please complete the following required fields:\n\n${missingFields.map((field, index) => `${index + 1}. ${field}`).join('\n')}\n\nAll fields are required before proceeding with payment.`);
                     return;
                 }
@@ -1376,6 +1386,7 @@
                     const tension = row.querySelector('.stringTension')?.value;
 
                     if (!racketName) {
+                        stringPaymentRequestInProgress = false;  // Reset flag on validation error
                         alert(`❌ Racket #${i + 1}: Please enter the racket model name.\n\nExample: "Yonex Astrox 99" or "Li-Ning Turbo X"`);
                         // Focus on the racket name input
                         row.querySelector('.racketCustomName')?.focus();
@@ -1383,6 +1394,7 @@
                     }
 
                     if (!stringType) {
+                        stringPaymentRequestInProgress = false;  // Reset flag on validation error
                         alert(`❌ Racket #${i + 1}: Please select a string type.\n\nChoose from available brands:\n• Yonex (BG 65, Aerobite, etc.)\n• Li-Ning (No.1, No.7, etc.)\n• Hundred (Power, Control, Pro)`);
                         // Focus on the string type select
                         row.querySelector('.racketName')?.focus();
@@ -1390,6 +1402,7 @@
                     }
 
                     if (!tension || tension < 10 || tension > 35) {
+                        stringPaymentRequestInProgress = false;  // Reset flag on validation error
                         alert(`❌ Racket #${i + 1}: Please enter a valid string tension.\n\nTension must be between 10-35 lbs.\n\nRecommended:\n• Beginners: 20-22 lbs\n• Intermediate: 23-25 lbs\n• Advanced: 26-28 lbs`);
                         // Focus on the tension input
                         row.querySelector('.stringTension')?.focus();
@@ -1401,30 +1414,35 @@
                 const payload = buildPayload(); // your existing function
 
                 if (!payload.store) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Store location is required.\n\nPlease select a store location from the dropdown.');
                     storeSelect.focus();
                     return;
                 }
 
                 if (!payload.customerName) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Your name is required.\n\nPlease enter your full name so we can identify your order.');
                     nameInput.focus();
                     return;
                 }
 
                 if (!payload.phone) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Phone number is required.\n\nPlease enter your 10-digit WhatsApp number for order updates.');
                     phoneInput.focus();
                     return;
                 }
 
                 if (!validPhone(payload.phone)) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Invalid phone number format.\n\nPlease enter a valid 10-digit WhatsApp number (without +91 or spaces).\n\nExample: 9876543210');
                     phoneInput.focus();
                     return;
                 }
 
                 if (!payload.racketDetails || payload.racketDetails.length === 0) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ No racket details found.\n\nPlease add at least one racket with complete information (model name, string type, and tension).');
                     return;
                 }
@@ -1436,6 +1454,7 @@
 
                 const normalizedPaymentMethod = payload.paymentMethod?.toLowerCase() || '';
                 if (!['online', 'payatoutlet'].includes(normalizedPaymentMethod)) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Payment method is required.\n\nPlease select either:\n• Online Payment\n• Cash (Pay at outlet)');
                     paymentMethodSelect.focus();
                     return;
@@ -1444,6 +1463,7 @@
                 // Check if total amount is valid
                 const totalAmount = payload.payment.finalAmount;
                 if (!totalAmount || totalAmount <= 0) {
+                    stringPaymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Invalid order total.\n\nPlease ensure you have selected at least one racket with string type.');
                     return;
                 }
@@ -1586,6 +1606,7 @@
                     console.error('Payment flow error', err);
                     alert('Something went wrong while processing payment. Please try again.');
                 } finally {
+                    stringPaymentRequestInProgress = false;
                     setButtonLoading(false);
                 }
             }

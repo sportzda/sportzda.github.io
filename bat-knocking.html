@@ -14,7 +14,8 @@
     <title>Cricket Bat Machine Knocking Service | 10k-30k Balls | DA SPORTZ</title>
     <meta name="description"
         content="Professional cricket bat machine knocking service in India. Choose from 10,000 to 30,000 balls packages. Expert bat preparation, threading, and oiling services. Fast turnaround, competitive pricing." />
-    <meta name="keywords" content="cricket bat knocking, bat knocking service, machine bat knocking, cricket bat preparation, bat knocking 10000 balls, bat knocking 20000 balls, cricket bat threading, bat oiling service, cricket equipment, DA SPORTZ" />
+    <meta name="keywords"
+        content="cricket bat knocking, bat knocking service, machine bat knocking, cricket bat preparation, bat knocking 10000 balls, bat knocking 20000 balls, cricket bat threading, bat oiling service, cricket equipment, DA SPORTZ" />
     <link rel="canonical" href="https://dasportz.com/bat-knocking.html" />
 
     <!-- Favicon -->
@@ -1096,6 +1097,9 @@
                 confirmButton.innerHTML = loading ? `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> ${text || 'Processing...'}` : 'Pay Now';
             }
 
+            // Track if a payment request is already in progress to prevent double submissions
+            let paymentRequestInProgress = false;
+
             function checkMandatoryFields() {
                 const missingFields = [];
 
@@ -1150,9 +1154,17 @@
             async function onPayNowClicked(e) {
                 e.preventDefault();
 
+                // SET FLAG IMMEDIATELY to prevent race condition from rapid clicks
+                if (paymentRequestInProgress) {
+                    console.warn('⚠️ Payment request already in progress. Ignoring duplicate click.');
+                    return;
+                }
+                paymentRequestInProgress = true;
+
                 // First check all mandatory fields
                 const missingFields = checkMandatoryFields();
                 if (missingFields.length > 0) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert(`⚠️ Please complete the following required fields:\n\n${missingFields.map((field, index) => `${index + 1}. ${field}`).join('\n')}\n\nAll fields are required before proceeding with payment.`);
                     return;
                 }
@@ -1165,6 +1177,7 @@
                     const packageType = row.querySelector('.packageType')?.value;
 
                     if (!batModel) {
+                        paymentRequestInProgress = false;  // Reset flag on validation error
                         alert(`❌ Bat #${i + 1}: Please enter the bat model name.\n\nExample: "MRF Genius Grand Edition" or "SS TON English Willow"`);
                         // Focus on the bat model input
                         row.querySelector('.batModel')?.focus();
@@ -1172,6 +1185,7 @@
                     }
 
                     if (!packageType) {
+                        paymentRequestInProgress = false;  // Reset flag on validation error
                         alert(`❌ Bat #${i + 1}: Please select a knocking package.\n\nChoose from:\n• Basic (10,000 balls - ₹800)\n• Standard (15,000 balls - ₹1,100)\n• Premium (20,000 balls - ₹1,500)\n• Elite (25,000 balls - ₹1,800)\n• Professional (30,000 balls - ₹2,000)`);
                         // Focus on the package select
                         row.querySelector('.packageType')?.focus();
@@ -1183,36 +1197,42 @@
                 const payload = buildPayload();
 
                 if (!payload.store) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Store location is required.\n\nPlease select a store location from the dropdown.');
                     storeSelect.focus();
                     return;
                 }
 
                 if (!payload.customerName) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Your name is required.\n\nPlease enter your full name so we can identify your order.');
                     nameInput.focus();
                     return;
                 }
 
                 if (!payload.phone) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Phone number is required.\n\nPlease enter your 10-digit WhatsApp number for order updates.');
                     phoneInput.focus();
                     return;
                 }
 
                 if (!validPhone(payload.phone)) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Invalid phone number format.\n\nPlease enter a valid 10-digit WhatsApp number (without +91 or spaces).\n\nExample: 9876543210');
                     phoneInput.focus();
                     return;
                 }
 
                 if (!payload.batDetails || payload.batDetails.length === 0) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ No bat details found.\n\nPlease add at least one bat with complete information (model name and package selection).');
                     return;
                 }
 
                 const normalizedPaymentMethod = payload.paymentMethod?.toLowerCase() || '';
                 if (!['online', 'payatoutlet'].includes(normalizedPaymentMethod)) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Payment method is required.\n\nPlease select either:\n• Online Payment\n• Cash (Pay at outlet)');
                     paymentMethodSelect.focus();
                     return;
@@ -1221,11 +1241,13 @@
                 // Check if total amount is valid
                 const totalAmount = payload.payment.finalAmount;
                 if (!totalAmount || totalAmount <= 0) {
+                    paymentRequestInProgress = false;  // Reset flag on validation error
                     alert('❌ Invalid order total.\n\nPlease ensure you have selected at least one bat with a knocking package.');
                     return;
                 }
 
                 try {
+                    paymentRequestInProgress = true;
                     setButtonLoading(true, 'Creating order...');
 
                     const createResp = await fetch(`${BACKEND_BASE}/api/create-order`, {
@@ -1237,6 +1259,7 @@
                     const createData = await createResp.json().catch(() => ({}));
                     if (!createData || !createData.success) {
                         setButtonLoading(false);
+                        paymentRequestInProgress = false;
                         console.error('create-order failed', createData);
                         alert('Failed to create order. ' + (createData?.message || JSON.stringify(createData)));
                         return;
@@ -1354,6 +1377,7 @@
                     console.error('Payment flow error', err);
                     alert('Something went wrong while processing payment. Please try again.');
                 } finally {
+                    paymentRequestInProgress = false;
                     setButtonLoading(false);
                 }
             }
