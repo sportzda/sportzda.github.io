@@ -461,4 +461,212 @@ test.describe('Badge Count Tests', () => {
             await expect(page.locator('#inProgressCount')).toHaveText('1');
         });
     });
+
+    test.describe('Trophies - Order-Level Status Tracking', () => {
+        test('should count trophy orders by order status, not item count', async ({ page }) => {
+            // Mock orders API with 2 trophy orders: 1 received (status 0), 1 in-progress (status 1)
+            await page.route('**/api/orders*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orders: [
+                            {
+                                orderId: 'DA_TROPHY_001',
+                                customerName: 'John Doe',
+                                phone: '9876543210',
+                                store: 'Test Store',
+                                serviceType: 'trophies',
+                                status: 0, // Received
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [
+                                    { name: 'Gold Trophy', price: 500, qty: 1 },
+                                    { name: 'Silver Trophy', price: 300, qty: 1 }
+                                ]
+                            },
+                            {
+                                orderId: 'DA_TROPHY_002',
+                                customerName: 'Jane Smith',
+                                phone: '9876543211',
+                                store: 'Test Store',
+                                serviceType: 'trophies',
+                                status: 1, // In Progress
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [
+                                    { name: 'Bronze Trophy', price: 200, qty: 1 }
+                                ]
+                            }
+                        ]
+                    })
+                });
+            });
+
+            await page.goto('/staff-dashboard.html');
+
+            // Wait for dashboard to load and trophies service to be selected
+            await page.waitForSelector('.dashboard-content', { timeout: 5000 });
+
+            // Switch to Trophies service
+            await page.click('button[data-service="trophies"]');
+            await page.waitForTimeout(500);
+
+            // Check badge counts - should be 1 order received, 1 order in progress
+            await expect(page.locator('#receivedCount')).toHaveText('1');
+            await expect(page.locator('#inProgressCount')).toHaveText('1');
+            await expect(page.locator('#completedCount')).toHaveText('0');
+        });
+
+        test('should show all trophy statuses correctly', async ({ page }) => {
+            // Mock orders API with trophy orders in all 3 statuses
+            await page.route('**/api/orders*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orders: [
+                            {
+                                orderId: 'DA_TROPHY_R001',
+                                customerName: 'Customer 1',
+                                phone: '9876543210',
+                                store: 'Store 1',
+                                serviceType: 'trophies',
+                                status: 0, // Received
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy A', price: 500, qty: 1 }]
+                            },
+                            {
+                                orderId: 'DA_TROPHY_IP001',
+                                customerName: 'Customer 2',
+                                phone: '9876543211',
+                                store: 'Store 2',
+                                serviceType: 'trophies',
+                                status: 1, // In Progress
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy B', price: 300, qty: 1 }]
+                            },
+                            {
+                                orderId: 'DA_TROPHY_C001',
+                                customerName: 'Customer 3',
+                                phone: '9876543212',
+                                store: 'Store 3',
+                                serviceType: 'trophies',
+                                status: 2, // Completed
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy C', price: 200, qty: 1 }]
+                            }
+                        ]
+                    })
+                });
+            });
+
+            await page.goto('/staff-dashboard.html');
+            await page.waitForSelector('.dashboard-content', { timeout: 5000 });
+
+            // Switch to Trophies service
+            await page.click('button[data-service="trophies"]');
+            await page.waitForTimeout(500);
+
+            // Check all badge counts
+            await expect(page.locator('#receivedCount')).toHaveText('1');
+            await expect(page.locator('#inProgressCount')).toHaveText('1');
+            await expect(page.locator('#completedCount')).toHaveText('1');
+        });
+
+        test('should count multiple trophy orders in same status', async ({ page }) => {
+            // Mock orders API with 3 trophy orders all with status 0 (received)
+            await page.route('**/api/orders*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orders: [
+                            {
+                                orderId: 'DA_TROPHY_M1',
+                                customerName: 'Customer 1',
+                                phone: '1111111111',
+                                store: 'Store 1',
+                                serviceType: 'trophies',
+                                status: 0,
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy 1', price: 500, qty: 1 }]
+                            },
+                            {
+                                orderId: 'DA_TROPHY_M2',
+                                customerName: 'Customer 2',
+                                phone: '2222222222',
+                                store: 'Store 2',
+                                serviceType: 'trophies',
+                                status: 0,
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy 2', price: 300, qty: 2 }] // Multiple qty
+                            },
+                            {
+                                orderId: 'DA_TROPHY_M3',
+                                customerName: 'Customer 3',
+                                phone: '3333333333',
+                                store: 'Store 3',
+                                serviceType: 'trophies',
+                                status: 0,
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy 3', price: 200, qty: 1 }]
+                            }
+                        ]
+                    })
+                });
+            });
+
+            await page.goto('/staff-dashboard.html');
+            await page.waitForSelector('.dashboard-content', { timeout: 5000 });
+
+            // Switch to Trophies service
+            await page.click('button[data-service="trophies"]');
+            await page.waitForTimeout(500);
+
+            // Should count 3 orders (not 4 items), even though order 2 has qty 2
+            await expect(page.locator('#receivedCount')).toHaveText('3');
+        });
+
+        test('should handle missing status field (defaults to 0)', async ({ page }) => {
+            // Mock orders API with trophy order missing status field
+            await page.route('**/api/orders*', async (route) => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        orders: [
+                            {
+                                orderId: 'DA_TROPHY_NO_STATUS',
+                                customerName: 'Customer',
+                                phone: '9876543210',
+                                store: 'Store',
+                                serviceType: 'trophies',
+                                // No status field - should default to 0
+                                createdAt: new Date().toISOString(),
+                                paymentStatus: 'paid',
+                                trophyDetails: [{ name: 'Trophy', price: 500, qty: 1 }]
+                            }
+                        ]
+                    })
+                });
+            });
+
+            await page.goto('/staff-dashboard.html');
+            await page.waitForSelector('.dashboard-content', { timeout: 5000 });
+
+            // Switch to Trophies service
+            await page.click('button[data-service="trophies"]');
+            await page.waitForTimeout(500);
+
+            // Should appear in Received (status 0)
+            await expect(page.locator('#receivedCount')).toHaveText('1');
+        });
+    });
 });

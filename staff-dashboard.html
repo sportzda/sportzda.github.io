@@ -1390,9 +1390,9 @@
             <div class="main-nav-tabs mb-4">
                 <ul class="nav nav-tabs" id="mainNavTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="select-service-tab" data-bs-toggle="tab"
-                            data-bs-target="#select-service" type="button" role="tab">
-                            <i class="bi bi-list-ul"></i> Select Service
+                        <button class="nav-link active" id="select-orders-tab" data-bs-toggle="tab"
+                            data-bs-target="#select-orders" type="button" role="tab">
+                            <i class="bi bi-list-ul"></i> Select Orders
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -1403,17 +1403,20 @@
                     </li>
                 </ul>
                 <div class="tab-content" id="mainNavTabContent">
-                    <!-- Select Service Tab -->
-                    <div class="tab-pane fade show active" id="select-service" role="tabpanel">
+                    <!-- Select Orders Tab -->
+                    <div class="tab-pane fade show active" id="select-orders" role="tabpanel">
                         <!-- Service Selection Menu -->
                         <div class="service-menu">
-                            <h5 class="mb-3"><i class="bi bi-list-ul"></i> Select Service</h5>
+                            <h5 class="mb-3"><i class="bi bi-list-ul"></i> Select Orders</h5>
                             <div class="d-flex flex-wrap gap-2">
                                 <button class="service-menu-btn active" data-service="racket-stringing">
                                     <i class="bi bi-bullseye"></i> Racket Stringing
                                 </button>
                                 <button class="service-menu-btn" data-service="bat-knocking">
                                     <i class="bi bi-hammer"></i> Bat Knocking
+                                </button>
+                                <button class="service-menu-btn" data-service="trophies">
+                                    <i class="bi bi-trophy"></i> Trophies
                                 </button>
                                 <button id="openQRScanBtn" class="service-menu-btn"
                                     style="background-color: #28a745; border-color: #28a745;">
@@ -2326,15 +2329,11 @@
                     console.log('currentService updated to:', currentService);
 
                     // Show/hide sections based on service
-                    if (currentService === 'trophy-management') {
-                        if (statusTabs) statusTabs.style.display = 'none';
-                        if (trophyManagementSection) trophyManagementSection.style.display = 'block';
-                    } else {
-                        if (statusTabs) statusTabs.style.display = 'block';
-                        if (trophyManagementSection) trophyManagementSection.style.display = 'none';
-                        console.log('Calling loadDashboardData...');
-                        loadDashboardData();
-                    }
+                    // For trophies, show the status tabs with orders (not the trophy management section)
+                    if (statusTabs) statusTabs.style.display = 'block';
+                    if (trophyManagementSection) trophyManagementSection.style.display = 'none';
+                    console.log('Calling loadDashboardData...');
+                    loadDashboardData();
                 });
             });
 
@@ -2345,7 +2344,7 @@
                     const targetId = btn.dataset.bsTarget.replace('#', '');
 
                     // Handle main navigation tabs
-                    if (targetId === 'select-service') {
+                    if (targetId === 'select-orders') {
                         // Main navigation tab - no special handling needed
                         return;
                     }
@@ -2414,7 +2413,7 @@
                     console.log('fetchAllOrders completed, cache size:', allOrdersCache.length);
 
                     // Populate all tabs from cache
-                    populateAllTabsFromCache();
+                    await populateAllTabsFromCache();
                     console.log('populateAllTabsFromCache completed');
                 } catch (err) {
                     console.error('Error in loadDashboardData:', err);
@@ -2459,7 +2458,7 @@
             }
 
             // Populate all tabs from cached orders
-            function populateAllTabsFromCache() {
+            async function populateAllTabsFromCache() {
                 console.log('populateAllTabsFromCache called, currentService:', currentService, 'cache size:', allOrdersCache.length);
 
                 // Clear all badge counts first to ensure fresh display
@@ -2468,14 +2467,14 @@
                 updateSingleBadgeCount('completed', 0);
                 updatePendingPaymentsCount(0);
 
-                populateTabFromCache('received', 0);
-                populateTabFromCache('in-progress', 1);
-                populateTabFromCache('completed', 2);
+                await populateTabFromCache('received', 0);
+                await populateTabFromCache('in-progress', 1);
+                await populateTabFromCache('completed', 2);
                 loadPendingPayments(); // Load pending payments separately
             }
 
             // Populate a single tab by filtering cached orders by racket/bat status
-            function populateTabFromCache(tabName, statusValue) {
+            async function populateTabFromCache(tabName, statusValue) {
                 const contentIdMap = {
                     'received': 'receivedContent',
                     'in-progress': 'inProgressContent',
@@ -2493,18 +2492,25 @@
                 // Filter orders by item status (racket or bat)
                 const filteredOrders = filterOrdersByItemStatus(allOrdersCache, statusValue, currentService);
 
-                // Count total number of items (rackets/bats) across all filtered orders
-                const itemCount = filteredOrders.reduce((total, order) => {
-                    if (currentService === 'racket-stringing' && order.racketDetails) {
-                        return total + order.racketDetails.length;
-                    } else if (currentService === 'bat-knocking' && order.batDetails) {
-                        return total + order.batDetails.length;
-                    }
-                    return total;
-                }, 0);
+                // Count total number of items (rackets/bats) or orders (trophies) across all filtered orders
+                let itemCount = 0;
+                if (currentService === 'trophies') {
+                    // For trophies, count number of orders (not items within orders)
+                    itemCount = filteredOrders.length;
+                } else {
+                    // For rackets/bats, count total items across orders
+                    itemCount = filteredOrders.reduce((total, order) => {
+                        if (currentService === 'racket-stringing' && order.racketDetails) {
+                            return total + order.racketDetails.length;
+                        } else if (currentService === 'bat-knocking' && order.batDetails) {
+                            return total + order.batDetails.length;
+                        }
+                        return total;
+                    }, 0);
+                }
 
                 // Don't transform - renderOrders now works directly with raw order objects
-                renderOrders(contentEl, filteredOrders, tabName);
+                await renderOrders(contentEl, filteredOrders, tabName);
                 updateSingleBadgeCount(tabName, itemCount);
             }
 
@@ -2541,6 +2547,17 @@
                             delete orderCopy.racketDetails;
                             filtered.push(orderCopy);
                         }
+                    } else if (service === 'trophies' && order.trophyDetails) {
+                        // Trophy orders have order-level status tracking (0=Received, 1=In Progress, 2=Completed)
+                        // Filter by order status (not item-level like rackets/bats)
+                        const orderStatus = order.status !== undefined && order.status !== null ? Number(order.status) : 0;
+                        if (orderStatus === statusValue) {
+                            // Remove racketDetails and batDetails to avoid rendering confusion
+                            const orderCopy = { ...order };
+                            delete orderCopy.racketDetails;
+                            delete orderCopy.batDetails;
+                            filtered.push(orderCopy);
+                        }
                     }
                 }
 
@@ -2564,7 +2581,7 @@
                     console.error('Failed to refresh orders:', err);
                 }
 
-                populateTabFromCache(status, statusValue);
+                await populateTabFromCache(status, statusValue);
             }
 
             // Format date to include time
@@ -2749,9 +2766,52 @@
                 return data[status] || [];
             }
 
+            // Cache for trophy details fetched from trophies collection
+            let trophyDetailsCache = {};
+
+            // Fetch trophy details from trophies collection by name (case-insensitive)
+            async function getTrophyDetailsByName(trophyName) {
+                if (!trophyName) return null;
+
+                // Check cache first
+                const cacheKey = trophyName.toLowerCase();
+                if (trophyDetailsCache[cacheKey]) {
+                    return trophyDetailsCache[cacheKey];
+                }
+
+                try {
+                    // Fetch all trophies from the trophies collection
+                    const response = await fetch(`${API_BASE_URL}/api/trophies`);
+                    if (!response.ok) return null;
+
+                    const data = await response.json();
+                    // Handle both { trophies: [...] } and [...] response formats
+                    let trophies = Array.isArray(data) ? data : (data.trophies || []);
+
+                    console.log(`Fetched ${trophies.length} trophies from API`);
+
+                    // Find trophy by case-insensitive name match
+                    const matchedTrophy = trophies.find(t =>
+                        t && t.name && t.name.toLowerCase() === cacheKey
+                    );
+
+                    if (matchedTrophy) {
+                        console.log(`Found trophy match for "${trophyName}":`, matchedTrophy);
+                        trophyDetailsCache[cacheKey] = matchedTrophy;
+                        return matchedTrophy;
+                    }
+
+                    console.log(`No matching trophy found for "${trophyName}"`);
+                    return null;
+                } catch (err) {
+                    console.error(`Error fetching trophy details for "${trophyName}":`, err);
+                    return null;
+                }
+            }
+
             // Render orders in the tab
             // Now render one card per racket (or bat) so each item shows its own action button and details.
-            function renderOrders(container, orders, status) {
+            async function renderOrders(container, orders, status) {
                 if (orders.length === 0) {
                     const serviceName = currentService ? currentService.replace('-', ' ') : 'service';
                     const statusName = status ? status.replace('-', ' ') : 'pending';
@@ -2768,10 +2828,12 @@
                 const statusClass = status === 'received' ? 'received' : status === 'in-progress' ? 'in-progress' : 'completed';
                 const statusText = status === 'received' ? 'Received' : status === 'in-progress' ? 'In Progress' : 'Completed';
 
-                // Build cards per item (racket or bat) so it's clear which item's status is being changed
+                // Build cards per item (racket, bat, or trophy) so it's clear which item's status is being changed
                 const cards = [];
 
-                orders.forEach(order => {
+                // Use a regular for loop to handle async operations for trophies
+                for (let orderIdx = 0; orderIdx < orders.length; orderIdx++) {
+                    const order = orders[orderIdx];
                     // For racket-stringing show each racket separately
                     if (currentService === 'racket-stringing' && order.racketDetails) {
                         order.racketDetails.forEach(racket => {
@@ -2888,8 +2950,205 @@
                                 </div>
                             `);
                         });
+                    } else if (currentService === 'trophies' && order.trophyDetails) {
+                        // For trophy orders, show the complete order with status workflow (order-level)
+                        const totalAmount = order.payment?.finalAmount || order.totalAmount || 0;
+                        const paymentStatusText = order.paymentStatus === 'paid' || order.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
+                        const orderStatus = order.status !== undefined && order.status !== null ? Number(order.status) : 0;
+
+                        // Build trophy items HTML with images fetched from trophies collection
+                        let trophyItemsHtml = '';
+                        for (const t of order.trophyDetails) {
+                            console.log(`Processing trophy: ${t.name}`, t);
+
+                            // Fetch trophy details from trophies collection by name
+                            const trophyFromDB = await getTrophyDetailsByName(t.name);
+                            console.log(`Trophy from DB for "${t.name}":`, trophyFromDB);
+
+                            // Get images - priority: trophies collection images/imageUrl > order trophyDetails.images > order trophyDetails.imageUrl
+                            let images = [];
+                            if (trophyFromDB) {
+                                // Check all possible image fields in trophies collection
+                                if (trophyFromDB.images && Array.isArray(trophyFromDB.images) && trophyFromDB.images.length > 0) {
+                                    images = trophyFromDB.images;
+                                    console.log(`Using images from trophies.images: ${images.length} images`);
+                                } else if (trophyFromDB.image) {
+                                    images = [trophyFromDB.image];
+                                    console.log(`Using single image from trophies.image`);
+                                } else if (trophyFromDB.imageUrl) {
+                                    images = [trophyFromDB.imageUrl];
+                                    console.log(`Using single image from trophies.imageUrl`);
+                                }
+                            }
+
+                            // Fallback to order details if no images found in trophies collection
+                            if (images.length === 0) {
+                                if (t.images && Array.isArray(t.images) && t.images.length > 0) {
+                                    images = t.images;
+                                    console.log(`Using images from order trophyDetails.images: ${images.length} images`);
+                                } else if (t.image) {
+                                    images = [t.image];
+                                    console.log(`Using single image from order trophyDetails.image`);
+                                } else if (t.imageUrl) {
+                                    images = [t.imageUrl];
+                                    console.log(`Using single image from order trophyDetails.imageUrl`);
+                                }
+                            }
+
+                            const mainImage = images[0] || null;
+                            console.log(`Main image for "${t.name}": ${mainImage}`);
+
+                            // Build customization details HTML from order details (customer customizations)
+                            let customizationHtml = '';
+                            let customImages = [];
+                            let customizationData = null;
+
+                            // Check order trophyDetails for customization data (from customer)
+                            if (t.customization) {
+                                customizationData = t.customization;
+                                console.log(`Customization found for "${t.name}":`, customizationData);
+                                const details = [];
+
+                                // Display actual customization fields sent from frontend
+                                if (customizationData.text) {
+                                    details.push(`<span style="display: block; margin-bottom: 0.25rem;"><i class="bi bi-pencil-square"></i> <strong>Custom Text:</strong> ${customizationData.text}</span>`);
+                                }
+                                if (customizationData.logoUrl) {
+                                    details.push(`<span style="display: block; margin-bottom: 0.25rem;"><i class="bi bi-file-image"></i> <strong>Logo:</strong> <a href="${customizationData.logoUrl}" target="_blank" class="text-decoration-none">View Logo</a></span>`);
+                                } else if (customizationData.logoFileName) {
+                                    details.push(`<span style="display: block;"><i class="bi bi-file-image"></i> <strong>Logo:</strong> ${customizationData.logoFileName}</span>`);
+                                }
+                                if (customizationData.logoName) {
+                                    details.push(`<span style="display: block;"><i class="bi bi-file-image"></i> <strong>Logo:</strong> ${customizationData.logoName}</span>`);
+                                }
+
+                                // Also check for any other customization fields
+                                if (customizationData.engravingText) details.push(`<span><i class="bi bi-pencil"></i> Engraving: ${customizationData.engravingText}</span>`);
+                                if (customizationData.material) details.push(`<span><i class="bi bi-gem"></i> ${customizationData.material}</span>`);
+                                if (customizationData.color) details.push(`<span><i class="bi bi-palette"></i> ${customizationData.color}</span>`);
+                                if (customizationData.height) details.push(`<span><i class="bi bi-rulers"></i> ${customizationData.height}</span>`);
+                                if (customizationData.finishType) details.push(`<span><i class="bi bi-sparkles"></i> ${customizationData.finishType}</span>`);
+                                if (customizationData.description) details.push(`<span><i class="bi bi-info-circle"></i> ${customizationData.description}</span>`);
+
+                                if (details.length > 0) {
+                                    customizationHtml = `<div class="customization-details" style="margin-top: 0.75rem; padding: 0.75rem; background: #fffbea; border-left: 3px solid #f59e0b; border-radius: 4px;">${details.join('')}</div>`;
+                                    console.log(`Customization HTML generated for "${t.name}"`);
+                                }
+
+                                // Get customization images if available
+                                if (customizationData.images && Array.isArray(customizationData.images) && customizationData.images.length > 0) {
+                                    customImages = customizationData.images;
+                                    console.log(`Found ${customImages.length} customization images`);
+                                }
+                            }
+
+                            trophyItemsHtml += `
+                                <div class="trophy-item-card" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem; padding: 0.75rem; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; min-height: 300px; width: fit-content; max-width: 180px;">
+                                    ${mainImage ? `
+                                        <div style="display: flex; justify-content: center; align-items: center; height: 140px; width: 100%; border-radius: 6px; overflow: hidden; background: #fff; border: 1px solid #d1d5db;">
+                                            <img src="${mainImage}" alt="${t.name}" style="width: 100%; height: 100%; object-fit: contain; max-width: 100%; max-height: 100%;" onerror="console.error('Image failed to load: ${mainImage}'); this.parentElement.innerHTML='<div style=\'text-align: center; padding: 2rem; color: #999;\'>Image not found</div>';">
+                                        </div>
+                                    ` : `<div style="height: 140px; display: flex; align-items: center; justify-content: center; background: #e5e7eb; border-radius: 6px; color: #999; width: 100%;">No image</div>`}
+                                    <div style="flex: 1; width: 100%;">
+                                        <div class="item-title" style="font-weight: 600; font-size: 0.95rem; margin: 0; color: #1f2937; word-break: break-word;">${t.name}</div>
+                                        <div class="item-meta small text-muted" style="margin-top: 0.25rem;">
+                                            <span><i class="bi bi-box"></i> Qty: ${t.quantity || 1}</span> • <span><i class="bi bi-cash"></i> ₹${t.price || 0} each</span>
+                                        </div>
+                                        ${customizationHtml}
+                                        ${customizationData && customizationData.logoUrl ? `
+                                            <div style="margin-top: 0.75rem; border-top: 1px solid #d1d5db; padding-top: 0.75rem;">
+                                                <div class="small text-muted" style="font-weight: 600; margin-bottom: 0.5rem;"><i class="bi bi-file-image"></i> Customer Logo</div>
+                                                <div style="height: 80px; border-radius: 4px; overflow: hidden; background: #fff; border: 1px solid #d1d5db; display: flex; align-items: center; justify-content: center;">
+                                                    <img src="${customizationData.logoUrl}" alt="Customer Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='<div style=\\'text-align: center; color: #999; font-size: 0.75rem;\\'>Logo not found</div>';">
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                        ${customImages.length > 0 ? `
+                                            <div style="margin-top: 0.75rem; border-top: 1px solid #d1d5db; padding-top: 0.75rem;">
+                                                <div class="small text-muted" style="font-weight: 600; margin-bottom: 0.5rem;"><i class="bi bi-images"></i> Customization Images (${customImages.length})</div>
+                                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+                                                    ${customImages.map((img, idx) => `
+                                                        <div style="height: 80px; border-radius: 4px; overflow: hidden; background: #fff; border: 1px solid #d1d5db; display: flex; align-items: center; justify-content: center;">
+                                                            <img src="${img}" alt="Customization ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<div style=\\'text-align: center; color: #999; font-size: 0.75rem;\\'>Not found</div>';">
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                        ${images.length > 1 ? `
+                                            <div class="small text-muted" style="margin-top: 0.5rem;">
+                                                <i class="bi bi-images"></i> ${images.length} product images
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        cards.push(`
+                            <div class="order-card">
+                                <div class="order-card-header">
+                                    <div>
+                                        <div class="order-id">${order.orderId}</div>
+                                        <div class="order-date"><i class="bi bi-calendar"></i> ${new Date(order.createdAt).toLocaleString()}</div>
+                                    </div>
+                                    <span class="status-badge" style="background: #fbbf24; color: #92400e; font-weight: 600;">${statusText}</span>
+                                </div>
+                                <div class="customer-info">
+                                    <div class="customer-name"><i class="bi bi-person"></i> ${order.customerName}</div>
+                                    <div class="customer-phone"><i class="bi bi-telephone"></i> ${order.phone}</div>
+                                    <div class="customer-phone"><i class="bi bi-shop"></i> ${order.store || 'Online'}</div>
+                                </div>
+                                <div class="order-items">
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, auto)); gap: 0.75rem; justify-items: center; justify-content: center;">
+                                        ${trophyItemsHtml}
+                                    </div>
+                                    ${order.deliveryType ? `
+                                        <div class="item-card" style="margin-top: 0.75rem;">
+                                            <div class="item-title"><i class="bi bi-truck"></i> Delivery</div>
+                                            <div class="item-meta small text-muted">${order.deliveryType === 'porter' ? 'Home Delivery' : 'Customer Pickup'}</div>
+                                            ${order.deliveryType === 'porter' && order.deliveryAddress ? `
+                                                <div class="item-meta small text-muted" style="margin-top: 0.25rem;">${order.deliveryAddress}</div>
+                                            ` : ''}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="order-footer">
+                                    <div class="order-total">
+                                        <div><strong>Amount:</strong> ₹${totalAmount}</div>
+                                        <span class="small ${paymentStatusText === 'Paid' ? 'text-success' : 'text-warning'}">(${paymentStatusText})</span>
+                                        <br>
+                                        <span class="small text-muted">
+                                            <i class="bi ${order.paymentMethod === 'Cash' || order.paymentMethod === 'Pay At Outlet' ? 'bi-cash-coin' : order.paymentMethod === 'Zoho' ? 'bi-globe' : 'bi-credit-card'}"></i>
+                                            ${order.paymentMethod || 'N/A'}
+                                        </span>
+                                        ${order.advancePayment ? `
+                                            <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #e5e7eb; font-size: 0.85rem;">
+                                                <i class="bi bi-info-circle"></i> Advance Payment: ₹${order.payNowAmount || 0}
+                                                <br>Balance: ₹${order.balanceAmount || 0}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="action-buttons">
+                                        ${orderStatus !== 2 ? `
+                                            <button class="btn btn-action btn-update-status" onclick="updateOrderStatus('${order.orderId}', '${status}', null, 'trophies')">
+                                                <i class="bi bi-arrow-right-circle"></i> ${orderStatus === 0 ? 'Start Processing' : 'Mark Complete'}
+                                            </button>
+                                        ` : ''}
+                                        ${order.paymentStatus !== 'paid' && order.paymentStatus !== 'Paid' ? `
+                                            <button class="btn btn-action btn-update-payment" onclick="openPaymentModal('${order.orderId}', ${totalAmount})">
+                                                <i class="bi bi-currency-rupee"></i> Update Payment
+                                            </button>
+                                        ` : ''}
+                                        <button class="btn btn-action btn-view-details" onclick="viewOrderDetails('${order.orderId}')">
+                                            <i class="bi bi-eye"></i> View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
                     }
-                });
+                }
 
                 container.innerHTML = cards.join('');
             }
@@ -3169,13 +3428,22 @@
             };
 
             // Global functions for button actions
-            window.updateOrderStatus = async function (orderId, currentStatus, itemId = null) {
-                const nextStatusValue = currentStatus === 'received' ? 1 : 2;
-                const actionText = currentStatus === 'received'
-                    ? (currentService === 'racket-stringing' ? 'start stringing' : 'start knocking')
-                    : 'mark as complete';
+            window.updateOrderStatus = async function (orderId, currentStatus, itemId = null, service = null) {
+                // Use provided service or current service
+                const serviceType = service || currentService;
 
-                const message = `Are you sure you want to ${actionText} for this item?`;
+                // For trophies, currentStatus is used to determine next status (0->1->2)
+                const currentStatusValue = serviceType === 'trophies'
+                    ? (currentStatus === 'received' ? 0 : currentStatus === 'in-progress' ? 1 : 2)
+                    : (currentStatus === 'received' ? 0 : currentStatus === 'in-progress' ? 1 : 2);
+
+                const nextStatusValue = currentStatusValue === 0 ? 1 : 2;
+
+                const actionText = serviceType === 'trophies'
+                    ? (currentStatusValue === 0 ? 'start processing' : 'mark as complete')
+                    : (currentStatusValue === 0 ? (serviceType === 'racket-stringing' ? 'start stringing' : 'start knocking') : 'mark as complete');
+
+                const message = `Are you sure you want to ${actionText} for this order?`;
 
                 if (!confirm(message)) {
                     return;
@@ -3192,15 +3460,48 @@
                         return;
                     }
 
-                    // If itemId is not provided, fallback to previous behaviour (first matching item)
+                    // Handle trophy orders (order-level status)
+                    if (serviceType === 'trophies') {
+                        const endpoint = `/api/orders/${orderId}/status`;
+
+                        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify({ status: nextStatusValue })
+                        });
+
+                        if (response.ok) {
+                            console.log('Trophy order status updated successfully');
+                            await loadDashboardData();
+                            hideLoadingOverlay();
+                            showToast('Order status updated successfully! WhatsApp notification sent to customer.');
+                        } else if (response.status === 401) {
+                            hideLoadingOverlay();
+                            alert('Your session has expired. Please login again.');
+                            sessionStorage.removeItem('staffAuthToken');
+                            sessionStorage.removeItem('staffUser');
+                            window.location.reload();
+                        } else {
+                            hideLoadingOverlay();
+                            const error = await response.json();
+                            console.error('Status update failed:', error);
+                            showToast(`Failed to update status: ${error.message || error.error || 'Unknown error'}`, 'error');
+                        }
+                        return;
+                    }
+
+                    // Handle racket and bat orders (item-level status)
                     let resolvedItemId = itemId;
                     if (!resolvedItemId) {
-                        if (currentService === 'racket-stringing' && order.racketDetails) {
+                        if (serviceType === 'racket-stringing' && order.racketDetails) {
                             const statusMap = { 'received': 0, 'in-progress': 1 };
                             const currentStatusValue = statusMap[currentStatus];
                             const racket = order.racketDetails.find(r => (r.status !== undefined && r.status !== null ? Number(r.status) : 0) === currentStatusValue);
                             if (racket) resolvedItemId = racket.id;
-                        } else if (currentService === 'bat-knocking' && order.batDetails) {
+                        } else if (serviceType === 'bat-knocking' && order.batDetails) {
                             const statusMap = { 'received': 0, 'in-progress': 1 };
                             const currentStatusValue = statusMap[currentStatus];
                             const bat = order.batDetails.find(b => (b.status !== undefined && b.status !== null ? Number(b.status) : 0) === currentStatusValue);
@@ -3214,8 +3515,8 @@
                         return;
                     }
 
-                    // Determine the correct endpoint
-                    const endpoint = currentService === 'racket-stringing'
+                    // Determine the correct endpoint for racket/bat
+                    const endpoint = serviceType === 'racket-stringing'
                         ? `/api/orders/${orderId}/status-by-racket/${resolvedItemId}`
                         : `/api/orders/${orderId}/status-by-bat/${resolvedItemId}`;
 
@@ -3413,6 +3714,82 @@
 
                         itemsSection.appendChild(itemCard);
                     });
+                } else if (currentService === 'trophies' && order.trophyDetails) {
+                    order.trophyDetails.forEach((trophy, idx) => {
+                        const itemCard = document.createElement('div');
+                        itemCard.className = 'item-detail-card';
+
+                        const itemHeader = document.createElement('div');
+                        itemHeader.style.fontWeight = '600';
+                        itemHeader.style.marginBottom = '0.5rem';
+                        itemHeader.textContent = `Trophy ${idx + 1}`;
+                        itemCard.appendChild(itemHeader);
+
+                        const details = [
+                            { label: 'Name', value: trophy.name || 'Trophy' },
+                            { label: 'Quantity', value: trophy.quantity || 1 },
+                            { label: 'Price (Each)', value: `₹${trophy.price || 0}` },
+                            { label: 'Total', value: `₹${(trophy.price || 0) * (trophy.quantity || 1)}` }
+                        ];
+
+                        details.forEach(detail => {
+                            const row = document.createElement('div');
+                            row.className = 'detail-row';
+                            row.style.padding = '0.25rem 0';
+
+                            const label = document.createElement('span');
+                            label.className = 'detail-label';
+                            label.textContent = detail.label;
+
+                            const value = document.createElement('span');
+                            value.className = 'detail-value';
+                            value.textContent = detail.value;
+
+                            row.appendChild(label);
+                            row.appendChild(value);
+                            itemCard.appendChild(row);
+                        });
+
+                        itemsSection.appendChild(itemCard);
+                    });
+
+                    // Delivery Section for Trophies
+                    if (order.deliveryType) {
+                        const deliverySection = document.createElement('div');
+                        deliverySection.className = 'order-details-section';
+                        deliverySection.style.marginTop = '1rem';
+
+                        const deliveryTitle = document.createElement('h4');
+                        deliveryTitle.innerHTML = '<i class="bi bi-truck"></i> Delivery Information';
+                        deliverySection.appendChild(deliveryTitle);
+
+                        const deliveryDetails = [
+                            { label: 'Delivery Type', value: order.deliveryType === 'porter' ? 'Home Delivery (Porter)' : 'Customer Pickup' }
+                        ];
+
+                        if (order.deliveryType === 'porter' && order.deliveryAddress) {
+                            deliveryDetails.push({ label: 'Delivery Address', value: order.deliveryAddress });
+                        }
+
+                        deliveryDetails.forEach(detail => {
+                            const row = document.createElement('div');
+                            row.className = 'detail-row';
+
+                            const label = document.createElement('span');
+                            label.className = 'detail-label';
+                            label.textContent = detail.label;
+
+                            const value = document.createElement('span');
+                            value.className = 'detail-value';
+                            value.textContent = detail.value;
+
+                            row.appendChild(label);
+                            row.appendChild(value);
+                            deliverySection.appendChild(row);
+                        });
+
+                        content.appendChild(deliverySection);
+                    }
                 }
 
                 content.appendChild(itemsSection);
@@ -3438,6 +3815,17 @@
                     if (order.payment.discount.couponDiscount) {
                         paymentDetails.push({ label: 'Discount Amount', value: `₹${order.payment.discount.couponDiscount}` });
                     }
+                }
+
+                // Add bulk discount for trophies
+                if (currentService === 'trophies' && order.bulkDiscount) {
+                    paymentDetails.push({ label: 'Bulk Discount (10%)', value: `₹${order.bulkDiscount}` });
+                }
+
+                // Add advance payment details for trophies
+                if (currentService === 'trophies' && order.advancePayment) {
+                    paymentDetails.push({ label: 'Advance Payment', value: `₹${order.payNowAmount || 0}` });
+                    paymentDetails.push({ label: 'Balance Payment Due', value: `₹${order.balanceAmount || 0}` });
                 }
 
                 // Add pricing details
