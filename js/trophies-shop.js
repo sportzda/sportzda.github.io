@@ -177,6 +177,11 @@ function displayProducts() {
                     <div class="product-image" style="position: relative;">
                         <img src="${product.image}" alt="${product.name}" ${isSoldOut ? 'style="opacity: 0.65;"' : ''}>
                         ${isSoldOut ? '<div class="sold-out-overlay-badge">SOLD OUT</div>' : ''}
+                        
+                        ${/^\d+$/.test(product.type) ? `
+                            <span class="product-height-badge"><i class="bi bi-rulers me-1"></i>${product.type}"</span>
+                        ` : ''}
+                        
                         ${product.images && product.images.length > 1 ? `
                             <span class="product-badge"><i class="bi bi-images me-1"></i>+${product.images.length - 1}</span>
                         ` : ''}
