@@ -577,7 +577,8 @@ function showProductImage(productId) {
 
     // Format type to show "X inches" if it's numeric
     const typeDisplay = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
-    modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay} | ₹${product.price.toLocaleString('en-IN')}`;
+    const sportDisplay = Array.isArray(product.sport) ? product.sport.map(s => capitalizeFirst(s)).join(', ') : capitalizeFirst(product.sport);
+    modalProductDetails.textContent = `${sportDisplay} | ${typeDisplay} | ₹${product.price.toLocaleString('en-IN')}`;
 
     // Show/hide carousel navigation if multiple images
     if (allImages.length > 1) {
@@ -607,7 +608,7 @@ function showProductImage(productId) {
     document.getElementById('customPreviewImg').src = product.image;
     document.getElementById('customPreviewName').textContent = product.name;
     const typeDisplay2 = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
-    document.getElementById('customPreviewDetails').textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay2}`;
+    document.getElementById('customPreviewDetails').textContent = `${sportDisplay} | ${typeDisplay2}`;
 
     // Disable/enable buttons based on inventory - ensure proper disable state
     buyNowBtn.disabled = isSoldOut;
