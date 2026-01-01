@@ -42,7 +42,7 @@ test.describe('Trophy Management & Shop', () => {
         await expect(typeFilter).toHaveCount(0);
 
         // 2. Verify Height Badge on First Product (Type "12")
-        // It should display '12"'
+        // It should display '12"' (Minimal style)
         const heightBadge = page.locator('.product-card').first().locator('.product-height-badge');
         await expect(heightBadge).toBeVisible();
         await expect(heightBadge).toContainText('12"');
