@@ -42,6 +42,15 @@ test.describe('Trophy Management & Shop', () => {
             const modal = page.locator('#imageModal');
             await expect(modal).toHaveClass(/show/);
             await expect(modal).toBeVisible();
+
+            // Click Buy button in modal
+            const buyBtn = modal.locator('#modalBuyNow');
+            await expect(buyBtn).toBeEnabled();
+            await buyBtn.click();
+
+            // Verify customization modal opens
+            const customModal = page.locator('#customizationModal');
+            await expect(customModal).toHaveClass(/show/);
         } else {
             console.log('No available products found to test modal click');
         }
