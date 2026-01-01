@@ -729,7 +729,10 @@ test.describe('Payment Update - E2E Tests', () => {
     test.describe('Payment Modal Data Extraction', () => {
         test('should extract finalAmount from payment.finalAmount field', async ({ page }) => {
             // This test verifies that the modal correctly extracts amount from nested payment object
-            await page.goto('/staff-dashboard.html');
+            // page.goto already handled in beforeEach
+
+            // Ensure dashboard is ready
+            await page.waitForSelector('.dashboard-content', { state: 'visible' });
 
             // Check console logs for successful extraction
             const logs: string[] = [];
@@ -739,8 +742,10 @@ test.describe('Payment Update - E2E Tests', () => {
                 }
             });
 
-            // Click Pending Payments tab
-            await page.click('button:has-text("Pending Payments")');
+            // Click Pending Payments tab - wait for it to be stable
+            const pendingTab = page.locator('button:has-text("Pending Payments")');
+            await expect(pendingTab).toBeVisible();
+            await pendingTab.click();
             await page.waitForTimeout(500);
 
             const updateBtn = page.locator('.btn-update-payment').first();

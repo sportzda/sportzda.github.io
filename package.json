@@ -8,10 +8,12 @@
         "test:headed": "playwright test --headed",
         "test:report": "playwright show-report",
         "test:e2e": "BACKEND_RUNNING=true playwright test tests/e2e/payment-update.spec.ts",
-        "test:e2e:headed": "BACKEND_RUNNING=true playwright test tests/e2e/payment-update.spec.ts --headed"
+        "test:e2e": "BACKEND_RUNNING=true playwright test tests/e2e/payment-update.spec.ts",
+        "test:e2e:headed": "BACKEND_RUNNING=true playwright test tests/e2e/payment-update.spec.ts --headed",
+        "start": "live-server . --port=5500 --cors --entry-file=index.html"
     },
     "devDependencies": {
         "@playwright/test": "^1.56.1",
-        "http-server": "^14.1.1"
+        "live-server": "^1.2.2"
     }
 }
