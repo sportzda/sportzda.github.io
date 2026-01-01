@@ -331,7 +331,8 @@
             color: #1a1a1a;
             letter-spacing: 0.3px;
             line-height: 1.3;
-            height: 44px;
+            height: 48px;
+            /* Force 2 lines */
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -343,8 +344,13 @@
             color: #555555;
             margin-bottom: 12px;
             font-weight: 500;
-            height: 22px;
             line-height: 1.3;
+            height: 60px;
+            /* Force 3 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .product-price {
@@ -1622,19 +1628,7 @@
                             </div>
                         </div>
 
-                        <div>
-                            <h6 class="text-uppercase fw-bold text-muted mb-3" style="font-size: 0.85rem;">Type</h6>
-                            <div id="typeFilters">
-                                <span class="filter-chip active" data-type="all"><i class="bi bi-grid"></i>All
-                                    Types</span>
-                                <span class="filter-chip" data-type="trophy"><i class="bi bi-trophy"></i>Trophies</span>
-                                <span class="filter-chip" data-type="medal"><i class="bi bi-award"></i>Medals</span>
-                                <span class="filter-chip" data-type="shield"><i class="bi bi-shield"></i>Shields</span>
-                                <span class="filter-chip" data-type="plaque"><i
-                                        class="bi bi-bookmark"></i>Plaques</span>
-                                <span class="filter-chip" data-type="cup"><i class="bi bi-cup"></i>Cups</span>
-                            </div>
-                        </div>
+                        <!-- Type Filter Removed -->
                     </div>
                 </div>
 

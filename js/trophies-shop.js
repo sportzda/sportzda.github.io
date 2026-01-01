@@ -13,8 +13,7 @@ let products = [];
 // State Management
 let cart = JSON.parse(localStorage.getItem('dasportz_cart')) || [];
 let currentFilters = {
-    sport: 'all',
-    type: 'all'
+    sport: 'all'
 };
 
 // Initialize
@@ -50,7 +49,7 @@ async function loadProducts() {
             products = data.trophies.map(trophy => ({
                 id: trophy._id || trophy.id,
                 name: trophy.name,
-                sport: trophy.category || trophy.sport || 'general',
+                sport: Array.isArray(trophy.category) ? trophy.category : (trophy.category ? [trophy.category] : (trophy.sport ? [trophy.sport] : ['general'])),
                 type: trophy.size || trophy.type || 'trophy',
                 price: trophy.price,
                 image: trophy.imageUrl || trophy.image || 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400',
@@ -120,15 +119,7 @@ function initializeFilters() {
         });
     });
 
-    // Type Filters
-    document.querySelectorAll('#typeFilters .filter-chip').forEach(chip => {
-        chip.addEventListener('click', function () {
-            document.querySelectorAll('#typeFilters .filter-chip').forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            currentFilters.type = this.dataset.type;
-            displayProducts();
-        });
-    });
+    // Type Filters Removed
 }
 
 /**
@@ -148,9 +139,14 @@ function displayProducts() {
     setTimeout(() => {
         // Filter products
         let filtered = products.filter(product => {
-            const sportMatch = currentFilters.sport === 'all' || product.sport === currentFilters.sport;
-            const typeMatch = currentFilters.type === 'all' || product.type === currentFilters.type;
-            return sportMatch && typeMatch;
+            const sport = currentFilters.sport;
+            if (sport === 'all') return true;
+
+            // Handle both string (legacy) and array (new) formats for product.sport
+            if (Array.isArray(product.sport)) {
+                return product.sport.includes(sport);
+            }
+            return product.sport === sport;
         });
 
         loading.style.display = 'none';
@@ -172,7 +168,8 @@ function displayProducts() {
             // Check inventory
             const inventory = parseInt(product.inventory) || 0;
             const isSoldOut = inventory === 0;
-            const inventoryDisplay = isSoldOut ? 'SOLD OUT' : `In Stock (${inventory})`;
+            // Easy to understand language
+            const inventoryDisplay = isSoldOut ? 'SOLD OUT' : `${inventory} available`;
             const inventoryBadgeClass = isSoldOut ? 'inventory-sold-out' : 'inventory-in-stock';
 
             col.innerHTML = `
@@ -187,7 +184,7 @@ function displayProducts() {
                     <div class="product-body">
                         <div class="product-title">${product.name}</div>
                         <div class="product-category">
-                            <i class="bi bi-tag me-1"></i>${capitalizeFirst(product.sport)}
+                            <i class="bi bi-tag me-1"></i>${Array.isArray(product.sport) ? product.sport.map(s => capitalizeFirst(s)).join(', ') : capitalizeFirst(product.sport)}
                         </div>
                         <div class="product-inventory ${inventoryBadgeClass}">
                             <i class="bi ${isSoldOut ? 'bi-exclamation-circle' : 'bi-check-circle'} me-1"></i>${inventoryDisplay}

@@ -1278,17 +1278,50 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="trophyCategory" class="form-label">Category</label>
-                                    <select class="form-select" id="trophyCategory">
-                                        <option value="">Select category</option>
-                                        <option value="cricket">Cricket</option>
-                                        <option value="football">Football</option>
-                                        <option value="basketball">Basketball</option>
-                                        <option value="badminton">Badminton</option>
-                                        <option value="karate">Karate</option>
-                                        <option value="running">Running</option>
-                                        <option value="tennis">Tennis</option>
-                                        <option value="general">General</option>
-                                    </select>
+                                    <div id="trophyCategoryContainer" class="border p-2 rounded"
+                                        style="max-height: 150px; overflow-y: auto;">
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="cricket" id="cat_cricket">
+                                            <label class="form-check-label" for="cat_cricket">Cricket</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="football" id="cat_football">
+                                            <label class="form-check-label" for="cat_football">Football</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="basketball" id="cat_basketball">
+                                            <label class="form-check-label" for="cat_basketball">Basketball</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="badminton" id="cat_badminton">
+                                            <label class="form-check-label" for="cat_badminton">Badminton</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="karate" id="cat_karate">
+                                            <label class="form-check-label" for="cat_karate">Karate</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="running" id="cat_running">
+                                            <label class="form-check-label" for="cat_running">Running</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="tennis" id="cat_tennis">
+                                            <label class="form-check-label" for="cat_tennis">Tennis</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input trophy-category-checkbox" type="checkbox"
+                                                value="general" id="cat_general">
+                                            <label class="form-check-label" for="cat_general">General</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-text">Select one or more categories</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1940,7 +1973,28 @@
 
             formData.append('name', nameValue);
             formData.append('price', priceValue);
-            formData.append('category', document.getElementById('trophyCategory').value);
+            // Handle multiple categories from checkboxes
+            const selectedCategories = Array.from(document.querySelectorAll('.trophy-category-checkbox:checked')).map(cb => cb.value);
+
+            // Append each category individually - likely expected by Multer/backend
+            // Or send as JSON string if backend expects single field. 
+            // Based on typical express-multer behavior with same field name, it creates an array.
+            // Let's assume sending multiple fields with same name 'category' works or we can send as JSON.
+            // Safe bet: If previously it was a single string, let's try sending it as a JSON string to ensure structure is preserved 
+            // and we don't depend on backend parser behavior for repeated keys (which sometimes defaults to last value).
+            // Actually, for better compatibility if the backend was expecting a string, sending a JSON array string is safe.
+            // But wait, if I send a JSON string, existing backend logic might break if it expects a simple string value for 'category'.
+            // However, the task is to enable multiple. The backend MUST be able to handle it.
+            // Since I can't see backend code, I will assume it can handle array or I need to send array.
+            // Let's send it as a JSON string and we'll decode it on the frontend if needed, 
+            // OR if the backend is smart enough (Mongoose often handles array of strings passed as repeated keys).
+            // Let's try repeated keys which is standard HTTP form data for arrays.
+            if (selectedCategories.length === 0) {
+                // Fallback or validation?
+                formData.append('category', 'general');
+            } else {
+                selectedCategories.forEach(cat => formData.append('category', cat));
+            }
             formData.append('size', document.getElementById('trophySize').value);
             formData.append('inventory', inventoryValue);
             formData.append('available', document.getElementById('trophyAvailable').checked);
@@ -5124,7 +5178,7 @@
                         </td>
                         <td>${trophy.name}</td>
                         <td>₹${trophy.price}</td>
-                        <td>${trophy.category || 'N/A'}</td>
+                        <td>${Array.isArray(trophy.category) ? trophy.category.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ') : (trophy.category || 'N/A')}</td>
                         <td>${trophy.size} inches</td>
                         <td><span class="badge ${trophy.inventory > 0 ? 'bg-success' : 'bg-danger'}">${trophy.inventory || 0}</span></td>
                         <td><span class="badge ${trophy.available ? 'bg-success' : 'bg-danger'}">${trophy.available ? 'Yes' : 'No'}</span></td>
@@ -5145,7 +5199,8 @@
                 document.getElementById('trophyId').value = '';
                 document.getElementById('trophyName').value = '';
                 document.getElementById('trophyPrice').value = '';
-                document.getElementById('trophyCategory').value = '';
+                // Reset checkboxes
+                document.querySelectorAll('.trophy-category-checkbox').forEach(cb => cb.checked = false);
                 document.getElementById('trophySize').value = '';
                 document.getElementById('trophyInventory').value = '0';
                 document.getElementById('trophyAvailable').checked = true;
@@ -5192,7 +5247,19 @@
                             document.getElementById('trophyId').value = trophy._id;
                             document.getElementById('trophyName').value = trophy.name;
                             document.getElementById('trophyPrice').value = trophy.price;
-                            document.getElementById('trophyCategory').value = trophy.category || '';
+                            // Handle multiple categories in edit - populate checkboxes
+                            const categories = Array.isArray(trophy.category) ? trophy.category : (trophy.category ? [trophy.category] : []);
+
+                            // Reset all checkboxes first
+                            document.querySelectorAll('.trophy-category-checkbox').forEach(cb => cb.checked = false);
+
+                            // Check the appropriate boxes
+                            if (categories.length > 0) {
+                                categories.forEach(cat => {
+                                    const checkbox = document.querySelector(`.trophy-category-checkbox[value="${cat}"]`);
+                                    if (checkbox) checkbox.checked = true;
+                                });
+                            }
                             document.getElementById('trophySize').value = trophy.size;
                             document.getElementById('trophyInventory').value = trophy.inventory || 0;
                             document.getElementById('trophyAvailable').checked = trophy.available;
