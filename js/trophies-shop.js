@@ -930,9 +930,18 @@ function setButtonLoading(loading, text = 'Processing...') {
 /**
  * Handle Checkout - Integrates with backend and Zoho payment
  */
+let trophyPaymentRequestInProgress = false;
+
 async function handleCheckout(e) {
     e.preventDefault();
     console.log('handleCheckout called');
+
+    // SET FLAG IMMEDIATELY to prevent race condition from rapid clicks
+    if (trophyPaymentRequestInProgress) {
+        console.warn('⚠️ Payment request already in progress. Ignoring duplicate click.');
+        return;
+    }
+    trophyPaymentRequestInProgress = true;
 
     const selectedPaymentMethod = document.querySelector('.payment-method-option.selected');
     const selectedPaymentAmount = document.querySelector('.payment-option.selected');
@@ -951,23 +960,27 @@ async function handleCheckout(e) {
 
     // Validation
     if (!customerName) {
+        trophyPaymentRequestInProgress = false;  // Reset flag on validation error
         alert('Please enter your name');
         document.getElementById('customerName')?.focus();
         return;
     }
 
     if (!customerPhone || !/^\d{10}$/.test(customerPhone)) {
+        trophyPaymentRequestInProgress = false;  // Reset flag on validation error
         alert('Please enter a valid 10-digit phone number');
         document.getElementById('customerPhone')?.focus();
         return;
     }
 
     if (!selectedPaymentMethod) {
+        trophyPaymentRequestInProgress = false;  // Reset flag on validation error
         alert('Please select a payment method');
         return;
     }
 
     if (!selectedDelivery) {
+        trophyPaymentRequestInProgress = false;  // Reset flag on validation error
         alert('Please select a delivery option');
         return;
     }
@@ -977,12 +990,14 @@ async function handleCheckout(e) {
     const deliveryAddress = document.getElementById('deliveryAddress')?.value?.trim();
 
     if (deliveryType === 'porter' && !deliveryAddress) {
+        trophyPaymentRequestInProgress = false;  // Reset flag on validation error
         alert('Please enter your delivery address');
         document.getElementById('deliveryAddress')?.focus();
         return;
     }
 
     if (cart.length === 0) {
+        trophyPaymentRequestInProgress = false;  // Reset flag on validation error
         alert('Your cart is empty');
         return;
     }
@@ -1189,6 +1204,8 @@ async function handleCheckout(e) {
         setButtonLoading(false);
         console.error('Checkout error:', error);
         alert('An error occurred. Please try again.');
+    } finally {
+        trophyPaymentRequestInProgress = false;
     }
 }
 
