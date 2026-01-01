@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Trophy Management & Shop', () => {
     test('Shop page filters trophies by multiple categories and displays correctly', async ({ page }) => {
-        await page.goto('http://localhost:5500/trophies-shop.html');
+        await page.goto('/trophies-shop.html');
 
         // 1. Verify "Type" filter is REMOVED
         const typeFilter = page.locator('text=Type');
