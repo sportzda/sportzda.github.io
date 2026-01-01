@@ -479,11 +479,14 @@
 
             // Customize content based on service type
             const isBatKnocking = serviceType === 'bat-knocking';
+            const isGlovesRepairing = serviceType === 'gloves-repairing';
 
             // Update WhatsApp notice
             const whatsappText = document.getElementById('whatsappText');
             if (isBatKnocking) {
                 whatsappText.textContent = "You'll receive live status updates on WhatsApp as we knock your bat(s)!";
+            } else if (isGlovesRepairing) {
+                whatsappText.textContent = "You'll receive live status updates on WhatsApp as we repair your gloves!";
             } else {
                 whatsappText.textContent = "You'll receive live status updates on WhatsApp as we string your racket(s)!";
             }
@@ -494,6 +497,12 @@
                 nextStepsList.innerHTML = `
                     <li class="mb-1">📱 You'll get WhatsApp updates on your bat knocking progress</li>
                     <li class="mb-1">🏏 Ready within 25 minutes to 3 hours</li>
+                    <li class="mb-1">🏪 Collect from your selected store location</li>
+                `;
+            } else if (isGlovesRepairing) {
+                nextStepsList.innerHTML = `
+                    <li class="mb-1">📱 You'll get WhatsApp updates on your gloves repair progress</li>
+                    <li class="mb-1">🧤 Repair time depends on the nature of damage</li>
                     <li class="mb-1">🏪 Collect from your selected store location</li>
                 `;
             } else {
@@ -509,6 +518,9 @@
             if (isBatKnocking) {
                 orderAgainBtn.href = 'bat-knocking.html';
                 orderAgainBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Knock Another Bat';
+            } else if (isGlovesRepairing) {
+                orderAgainBtn.href = 'gloves-repairing.html';
+                orderAgainBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Repair More Gloves';
             } else {
                 orderAgainBtn.href = 'stringing-booking.html';
                 orderAgainBtn.innerHTML = '<i class="bi bi-plus-circle me-2"></i>String Another Racket';
