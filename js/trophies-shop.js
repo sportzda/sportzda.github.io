@@ -404,7 +404,9 @@ function quickView(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
-    alert(`${product.name}\nSport: ${capitalizeFirst(product.sport)}\nType: ${capitalizeFirst(product.type)}\nPrice: ₹${product.price.toLocaleString('en-IN')}\n\nClick "Buy Now" to purchase!`);
+    const sportDisplay = Array.isArray(product.sport) ? product.sport.map(s => capitalizeFirst(s)).join(', ') : capitalizeFirst(product.sport);
+    const typeDisplay = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
+    alert(`${product.name}\nSport: ${sportDisplay}\nType: ${typeDisplay}\nPrice: ₹${product.price.toLocaleString('en-IN')}\n\nClick "Buy Now" to purchase!`);
 }
 
 // Store pending action for customization modal
@@ -423,7 +425,9 @@ function showCustomizationModal(productId, action = 'add') {
     // Populate modal with product info
     document.getElementById('customModalProductImage').src = product.image;
     document.getElementById('customModalProductName').textContent = product.name;
-    document.getElementById('customModalProductDetails').textContent = `${capitalizeFirst(product.sport)} | ${capitalizeFirst(product.type)}`;
+    const sportDisplay = Array.isArray(product.sport) ? product.sport.map(s => capitalizeFirst(s)).join(', ') : capitalizeFirst(product.sport);
+    const typeDisplay = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
+    document.getElementById('customModalProductDetails').textContent = `${sportDisplay} | ${typeDisplay}`;
     document.getElementById('customModalProductPrice').textContent = `₹${product.price.toLocaleString('en-IN')}`;
 
     // Reset form
@@ -577,7 +581,8 @@ function showProductImage(productId) {
 
     // Format type to show "X inches" if it's numeric
     const typeDisplay = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
-    modalProductDetails.textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay} | ₹${product.price.toLocaleString('en-IN')}`;
+    const sportDisplay = Array.isArray(product.sport) ? product.sport.map(s => capitalizeFirst(s)).join(', ') : capitalizeFirst(product.sport);
+    modalProductDetails.textContent = `${sportDisplay} | ${typeDisplay} | ₹${product.price.toLocaleString('en-IN')}`;
 
     // Show/hide carousel navigation if multiple images
     if (allImages.length > 1) {
@@ -607,7 +612,7 @@ function showProductImage(productId) {
     document.getElementById('customPreviewImg').src = product.image;
     document.getElementById('customPreviewName').textContent = product.name;
     const typeDisplay2 = /^\d+$/.test(product.type) ? `${product.type} inches` : capitalizeFirst(product.type);
-    document.getElementById('customPreviewDetails').textContent = `${capitalizeFirst(product.sport)} | ${typeDisplay2}`;
+    document.getElementById('customPreviewDetails').textContent = `${sportDisplay} | ${typeDisplay2}`;
 
     // Disable/enable buttons based on inventory - ensure proper disable state
     buyNowBtn.disabled = isSoldOut;
