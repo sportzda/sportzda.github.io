@@ -11,7 +11,7 @@ test.describe('Trophy Management & Shop', () => {
                     name: 'Test Cricket Trophy',
                     category: ['Cricket', 'Sports'],
                     sport: ['Cricket'],
-                    type: 'Cup',
+                    type: '12', // Numeric type = 12 inches
                     price: 500,
                     inventory: 10,
                     image: 'test.jpg'
@@ -22,7 +22,7 @@ test.describe('Trophy Management & Shop', () => {
                     name: 'Test Football Medal',
                     category: ['Football'],
                     sport: ['Football'],
-                    type: 'Medal',
+                    type: 'Medal', // Non-numeric type
                     price: 150,
                     inventory: 0,
                     image: 'medal.jpg'
@@ -41,10 +41,16 @@ test.describe('Trophy Management & Shop', () => {
         const typeFilter = page.locator('text=Type');
         await expect(typeFilter).toHaveCount(0);
 
-        // 2. Verify "Sport" filters exist (Assuming filters are static or match mock data)
-        // If filters are dynamic based on API data, this will work. If static, verify HTML.
-        // The original test checked for 'cricket'. Our mock has 'Cricket'.
-        // Check filtering logic.
+        // 2. Verify Height Badge on First Product (Type "12")
+        // It should display '12"' (Minimal style)
+        const heightBadge = page.locator('.product-card').first().locator('.product-height-badge');
+        await expect(heightBadge).toBeVisible();
+        await expect(heightBadge).toContainText('12"');
+
+        // Verify NO Height Badge on Second Product (Type "Medal")
+        const secondProductBadge = page.locator('.product-card').nth(1).locator('.product-height-badge');
+        await expect(secondProductBadge).toHaveCount(0);
+
 
         // 3. Verify UI Refinements (Stock Text Removal)
         const productCard = page.locator('.product-card').first();
