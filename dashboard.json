@@ -1,10 +1,10 @@
 Connected to MongoDB
 Disconnected from MongoDB
 {
-  "generatedAt": "2026-03-08T05:41:31.137Z",
+  "generatedAt": "2026-03-09T05:56:33.769Z",
   "period": {
-    "start": "2026-02-06T05:41:30.307Z",
-    "end": "2026-03-08T05:41:31.137Z"
+    "start": "2026-02-07T05:56:32.780Z",
+    "end": "2026-03-09T05:56:33.769Z"
   },
   "overview": {
     "totalOrders": 0,
