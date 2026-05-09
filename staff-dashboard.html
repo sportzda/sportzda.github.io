@@ -2484,7 +2484,8 @@
                     const params = new URLSearchParams({
                         serviceType: currentService,
                         limit: 100,
-                        sort: 'desc'
+                        sort: 'desc',
+                        _t: Date.now()
                     });
 
                     const response = await fetch(`${API_BASE_URL}/api/orders?${params.toString()}`, {
@@ -3935,7 +3936,7 @@
                     console.log(`[${orderId}] Fetching complete order from API...`);
 
                     // Fetch complete order from API to get full payment details
-                    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`);
+                    const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}?_t=${Date.now()}`);
 
                     console.log(`[${orderId}] API response status:`, response.status);
 
